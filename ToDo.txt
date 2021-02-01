@@ -1,0 +1,13 @@
+
+
+Check units for Efield and Charge
+Check units for force
+Check "static force" terminology
+
+
+Convert force to frequency shift and dissipation
+In phase and out of phase force contributions
+1w and 2w frequency shift and dissipation contributions
+
+Would be nice:
+- zsem set rather than variable, solve instead for psi
