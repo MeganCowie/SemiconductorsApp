@@ -28,36 +28,45 @@ app.layout = dbc.Container(
     dcc.Tab(label='Surface Physics', children=[
         html.Hr(),
         html.H1(children='The MIS Capacitor'),
-        html.Hr(),
+        html.Br(),
         dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
             dbc.Col(dcc.Graph(id="SurfaceGraph"), md=9),
-        ], align="center",),
+        ], align="top",),
         html.Hr(),
         ]),
     dcc.Tab(label='Surface Measurements', children=[
         html.Hr(),
-        html.H1(children='ncAFM'),
-        html.Hr(),
+        html.H1(children='ncAFM Oscillations'),
+        html.Br(),
         dbc.Row([
-        dbc.Col(ControlsAFM.AFM_Cards, md=4),
-        dbc.Col(dcc.Graph(id="AFMGraph"), md=8),
-        ], align="center",),
+        dbc.Col(ControlsAFM.AFM_Cards1, md=4),
+        dbc.Col(dcc.Graph(id="AFMGraph1"), md=8),
+        ], align="top",),
+        html.Hr(),
+        html.H1(children='Bias Sweep Experiment'),
+        html.Br(),
+        dbc.Row([
+        dbc.Col(ControlsAFM.AFM_Cards2, md=4),
+        dbc.Col(dcc.Graph(id="AFMGraph2"), md=8),
+        ], align="top",),
         html.Hr(),
         ]),
     dcc.Tab(label='Bulk Physics', children=[
         html.Hr(),
-        html.H1(children='Equilibrium Carrier Statistics'),
-        html.Hr(),
+        html.H1(children='Probability Distributions'),
+        html.Br(),
         dbc.Row([
         dbc.Col(ControlsBulk.Distributions, md=4),
         dbc.Col(dcc.Graph(id="DistributionsGraph"), md=8),
-        ], align="center",),
+        ], align="top",),
         html.Hr(),
+        html.H1(children='Carrier Statistics'),
+        html.Br(),
         dbc.Row([
         dbc.Col(ControlsBulk.Bulk_Cards, md=4),
         dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
-        ], align="center",),
+        ], align="top",),
         html.Hr(),
         ]),
     ])],
@@ -190,9 +199,9 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
 ################################################################################################################################################################
 # AFM
 
-# AFM figure
+# ncAFM figure
 @app.callback(
-    Output('AFMGraph', 'figure'),
+    Output('AFMGraph1', 'figure'),
     [Input('AFMSlider_Vg', 'value'),
      Input('AFMSlider_zins', 'value'),
      Input('SurfaceSlider_bandgap', 'value'),
@@ -207,20 +216,52 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('AFMSlider_amplitude', 'value'),
      Input('AFMbutton_Calculate', 'n_clicks')])
 def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton):
-    fig = CallbacksAFM.fig_AFM(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton)
+    fig = CallbacksAFM.fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton)
+    return fig
+
+# Bias experiment figure
+@app.callback(
+    Output('AFMGraph2', 'figure'),
+    [Input('AFMSlider_Vg', 'value'),
+     Input('AFMSlider_zins', 'value'),
+     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_epsilonsem', 'value'),
+     Input('SurfaceSlider_WFmet', 'value'),
+     Input('SurfaceSlider_EAsem', 'value'),
+     Input('SurfaceSlider_donor', 'value'),
+     Input('SurfaceSlider_acceptor', 'value'),
+     Input('SurfaceSlider_emass', 'value'),
+     Input('SurfaceSlider_hmass', 'value'),
+     Input('SurfaceSlider_T', 'value'),
+     Input('AFMSlider_amplitude', 'value'),
+     Input('AFMSlider_resfreq', 'value'),
+     Input('AFMSlider_springconst', 'value'),
+     Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_Qfactor', 'value'),
+     Input('AFMbutton_CalculateBiasExp', 'n_clicks')])
+def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton):
+    fig = CallbacksAFM.fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton)
     return fig
 
 # AFM readouts
 @app.callback(
     [Output('AFMText_Vg', 'children'),
      Output('AFMText_zins', 'children'),
-     Output('AFMText_amplitude', 'children')],
+     Output('AFMText_amplitude', 'children'),
+     Output('AFMText_resfreq', 'children'),
+     Output('AFMText_springconst', 'children'),
+     Output('AFMText_Qfactor', 'children'),
+     Output('AFMText_tipradius', 'children')],
     [Input('AFMSlider_Vg', 'value'),
      Input('AFMSlider_zins', 'value'),
-     Input('AFMSlider_amplitude', 'value')])
-def update_output(slider_Vg, slider_zins, slider_amplitude):
-    readout_Vg, readout_zins, readout_amplitude = CallbacksAFM.readouts_AFM(slider_Vg, slider_zins, slider_amplitude)
-    return readout_Vg, readout_zins, readout_amplitude
+     Input('AFMSlider_amplitude', 'value'),
+     Input('AFMSlider_resfreq', 'value'),
+     Input('AFMSlider_springconst', 'value'),
+     Input('AFMSlider_Qfactor', 'value'),
+     Input('AFMSlider_tipradius', 'value')])
+def update_output(slider_Vg, slider_zins, slider_amplitude, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius):
+    readout_Vg, readout_zins, readout_amplitude, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius = CallbacksAFM.readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius)
+    return readout_Vg, readout_zins, readout_amplitude, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius
 
 
 

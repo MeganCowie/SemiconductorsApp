@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-import Physics_SemiconductorSurface
+import Physics_Semiconductors
 import Physics_BandDiagram
 import Check2
 
@@ -19,8 +19,8 @@ WFmet = 5.5 #eV
 EAsem = 2.7 #eV
 Nd = round((10**19*10**8)/(1000**3))
 Na = round((10**0*10**8)/(1000**3))
-mn = 1.1*Physics_SemiconductorSurface.me #kg
-mp = 1.2*Physics_SemiconductorSurface.me #kg
+mn = 1.1*Physics_Semiconductors.me #kg
+mp = 1.2*Physics_Semiconductors.me #kg
 T = 300 # K
 
 

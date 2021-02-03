@@ -3,7 +3,7 @@ from plotly.subplots import make_subplots
 import scipy.constants as sp
 import numpy as np
 
-import Physics_SemiconductorBulk
+import Physics_Semiconductors
 
 
 ################################################################################
@@ -15,8 +15,9 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
     # input (slider) parameters
     Ef, T = slider_Ef, slider_T
 
-    E = Physics_SemiconductorBulk.E()
-    fc,fv = Physics_SemiconductorBulk.fcfv(E, Ef, T)
+    E = np.arange(5000)/1000
+    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
+    g = Physics_Semiconductors.MaxwellBoltzmann(E, Ef, T)
     min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
 
     fig = go.Figure()
@@ -26,56 +27,54 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
         line_color=color_fc
         ))
     fig.add_trace(go.Scatter(
-        x = E, y = Physics_SemiconductorBulk.MaxwellBoltzmann(E, Ef, T),
+        x = E, y = g,
         name = "Maxwell Boltzmann", mode='lines',
         line_color=color_other
         ))
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(1,1)*Ef, y = Physics_SemiconductorBulk.Constant(min_y,max_y),
+        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
         name = "Ef", mode='lines',
         line_color=color_Ef
         ))
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(1,1)*3*sp.value('Boltzmann constant in eV/K')*T+Ef, y = Physics_SemiconductorBulk.Constant(min_y,max_y),
+        x = np.array([1,1])*3*sp.value('Boltzmann constant in eV/K')*T+Ef, y = np.array([min_y, max_y]),
         name = "3kBT+Ef", mode='lines',
         line_color=color_vac
         ))
-    fig.update_layout(title='Probability Distributions',
-                      xaxis_title='Energy (eV)', yaxis_title='f(E)',
+    fig.update_layout(xaxis_title='Energy (eV)', yaxis_title='f(E)',
                       xaxis=dict(range=[min_x,max_x]), yaxis=dict(range=[min_y,max_y]),
-                      transition_duration=500)
+                      transition_duration=500, margin=dict(t=0))
     return fig
 
 
 def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
 
     # input (slider) parameters
-    ND_ion=round((10**slider_donor*10**8)/(1000**3))
-    NA_ion=round((10**slider_acceptor*10**8)/(1000**3))
-    T = slider_T
-    mn = slider_emass*Physics_SemiconductorBulk.me
-    mp = slider_hmass*Physics_SemiconductorBulk.me
+    ND_ion=round((10**slider_donor*10**8))/(1000**3) #cm-3
+    NA_ion=round((10**slider_acceptor*10**8)/(1000**3)) #cm-3
+    T = slider_T #K
+    mn = slider_emass*Physics_Semiconductors.me #kg
+    mp = slider_hmass*Physics_Semiconductors.me #kg
     type=toggle_type
 
-    NC,NV = Physics_SemiconductorBulk.NCNV(T, mn, mp)
-    Ec,Ev = Physics_SemiconductorBulk.EcEv()
-    Ei = Physics_SemiconductorBulk.Ei(Ec, Ev, T, mn, mp)
-    ni = Physics_SemiconductorBulk.ni(NC, NV, Ec, Ev, T)
-    n = Physics_SemiconductorBulk.n(ni, NA_ion)
-    p = Physics_SemiconductorBulk.p(ni, ND_ion)
-    Efn = Physics_SemiconductorBulk.Efn(T, p, ND_ion, NA_ion, ni, Ei)
-    Efp = Physics_SemiconductorBulk.Efp(T, n, ND_ion, NA_ion, ni, Ei)
-    E = Physics_SemiconductorBulk.E()
-    gc = Physics_SemiconductorBulk.gc(E, Ec, mn)
-    gv = Physics_SemiconductorBulk.gv(E, Ev, mp)
+    E = np.arange(5000)/1000
+    Ec,Ev = 2,1
 
-    if type==False: Ef=Efn
-    else: Ef=Efp
-    fc,fv = Physics_SemiconductorBulk.fcfv(E, Ef, T)
-    nc = Physics_SemiconductorBulk.nc(E, Ei, Ef, fc, gc, Ec, Ev, T, ND_ion, n, ni)
-    pv = Physics_SemiconductorBulk.pv(E, Ei, Ef, fv, gv, Ec, Ev, T, ND_ion, n, ni)
+    NC,NV = Physics_Semiconductors.NCNV(T, mn, mp)
+    NC = NC/(100**3)
+    NV = NV/(100**3)
 
-    constant = np.arange(2)*2
+    Eg = Physics_Semiconductors.Eg(Ec, Ev)
+    Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
+    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, ND_ion, NA_ion)
+
+    gc, gv = Physics_Semiconductors.gcgv(E, Ec, Ev, mn, mp)
+    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
+
+    ni = Physics_Semiconductors.ni(NC, NV, Eg, T)
+    n,p = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
+    Ne,Nh = Physics_Semiconductors.NeNh(E, Ei, Ef, fc, fv, gc, gv, Ec, Ev, T, ND_ion, n, ni)
+
     min_x, max_x, min_y, max_y = 0, 1, 0, 3
 
     fig = make_subplots(
@@ -92,22 +91,22 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
         line_color=color_fv
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(min_x, max_x), y = Physics_SemiconductorBulk.Constant(1, 1)*Ec,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ec,
         name = "Conduction Band", mode='lines',
         line_color=color_Ec
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(min_x, max_x), y = Physics_SemiconductorBulk.Constant(1, 1)*Ev,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ev,
         name = "Valence Band", mode='lines',
         line_color=color_Ev
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(min_x, max_x), y = Physics_SemiconductorBulk.Constant(1, 1)*Ef,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ef,
         name = "Fermi Energy", mode='lines',
         line_color=color_Ef
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = Physics_SemiconductorBulk.Constant(min_x, max_x), y = Physics_SemiconductorBulk.Constant(1, 1)*Ei,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ei,
         name = "Intrinsic Energy", mode='lines',
         line_color=color_Ei
         ), row=1, col=1)
@@ -122,18 +121,17 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
         line_color=color_Ev, showlegend=False
         ), row=1, col=2)
     fig.add_trace(go.Scatter(
-        x = nc, y = E,
+        x = Ne, y = E,
         name = "Electrons", mode='lines',
         line_color=color_n
         ), row=1, col=3)
     fig.add_trace(go.Scatter(
-        x = pv, y = E,
+        x = Nh, y = E,
         name = "Holes", mode='lines',
         line_color=color_p
         ), row=1, col=3)
-    fig.update_layout(title='Semiconductor Bulk',
-                      yaxis_title='Energy (eV)',
-                      yaxis=dict(range=[min_y,max_y]), transition_duration=100)
+    fig.update_layout(yaxis_title='Energy (eV)',
+                      yaxis=dict(range=[min_y,max_y]), transition_duration=100, margin=dict(t=0))
     fig.update_xaxes(title_text="f(E)", range=[min_x,max_x], row=1, col=1)
     fig.update_xaxes(title_text="g(E)", row=1, col=2)
     fig.update_xaxes(title_text="Carriers", row=1, col=3)
