@@ -1,6 +1,7 @@
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+import dash_daq as daq
 
 ################################################################################
 ################################################################################
@@ -11,7 +12,6 @@ AFM_Card1 = dbc.Card([
         dbc.Button("Calculate", id="AFMbutton_Calculate", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
 ],style={"width": "400px"})
-
 
 AFM_Card2 = dbc.Card([
     dbc.FormGroup([
@@ -39,7 +39,16 @@ AFM_Card2 = dbc.Card([
     ]),
 ],style={"width": "400px"})
 
-AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2)]
+
+AFM_Card3 = dbc.Card([
+    dbc.Row([
+        dbc.Col(html.Div(id='AFMText_semiconducting'),  md=3),
+        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False), md=6),
+        dbc.Col(html.Div(id='AFMText_metallic'),  md=3),
+    ], style={'padding': 10}),
+],style={"width": "400px"}),
+
+AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2), dbc.Col(AFM_Card3)]
 
 
 ################################################################################

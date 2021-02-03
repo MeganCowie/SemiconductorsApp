@@ -5,6 +5,7 @@ Figure out a better numerical solution method
 
 Figure out dissipation...
 I think Freqshift looks okay but check.
+It could very well be that this curve is an artefact from my insufficient fsolve method
 
 Look at 1w and 2w force components
 

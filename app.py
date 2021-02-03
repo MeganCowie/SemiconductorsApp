@@ -199,7 +199,7 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
 ################################################################################################################################################################
 # AFM
 
-# ncAFM figure
+# ncAFM oscillations figure
 @app.callback(
     Output('AFMGraph1', 'figure'),
     [Input('AFMSlider_Vg', 'value'),
@@ -214,9 +214,10 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('SurfaceSlider_hmass', 'value'),
      Input('SurfaceSlider_T', 'value'),
      Input('AFMSlider_amplitude', 'value'),
-     Input('AFMbutton_Calculate', 'n_clicks')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton):
-    fig = CallbacksAFM.fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton)
+     Input('AFMbutton_Calculate', 'n_clicks'),
+     Input('AFMtoggle_sampletype', 'value')])
+def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton, toggle_sampletype):
+    fig = CallbacksAFM.fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton, toggle_sampletype)
     return fig
 
 # Bias experiment figure
@@ -238,9 +239,10 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('AFMSlider_springconst', 'value'),
      Input('AFMSlider_tipradius', 'value'),
      Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateBiasExp', 'n_clicks')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton):
-    fig = CallbacksAFM.fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton)
+     Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
+     Input('AFMtoggle_sampletype', 'value')])
+def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype):
+    fig = CallbacksAFM.fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype)
     return fig
 
 # AFM readouts
@@ -263,6 +265,16 @@ def update_output(slider_Vg, slider_zins, slider_amplitude, slider_resfreq, slid
     readout_Vg, readout_zins, readout_amplitude, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius = CallbacksAFM.readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius)
     return readout_Vg, readout_zins, readout_amplitude, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius
 
+# toggle functionality
+@app.callback(
+    [Output('AFMText_semiconducting', 'style'),
+     Output('AFMText_metallic', 'style'),
+     Output('AFMText_semiconducting', 'children'),
+     Output('AFMText_metallic', 'children')],
+    [Input('AFMtoggle_sampletype', 'value')])
+def update_output(toggle):
+    style_s, style_m = CallbacksAFM.togglefunctions(toggle)
+    return style_s, style_m, 'Semiconducting', 'Metallic'
 
 
 ################################################################################################################################################################

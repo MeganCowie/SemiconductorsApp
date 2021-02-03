@@ -21,7 +21,7 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 ################################################################################
 # Calculate band bending
 
-def BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     Ec, Ev = Physics_Semiconductors.EcEv(T, bandgap)
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
@@ -52,7 +52,7 @@ def BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 ################################################################################
 # Create arrays needed to draw the band diagram
 
-def BandDiagram(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
     Ec,Ev = Physics_Semiconductors.EcEv(T,bandgap)
@@ -60,7 +60,7 @@ def BandDiagram(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     ni = Physics_Semiconductors.ni(NC,NV,Eg,T)
     Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
     Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    zsem, psi = BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    zsem, psi = BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, Ec, Ef)
 
 

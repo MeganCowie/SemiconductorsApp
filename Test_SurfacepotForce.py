@@ -37,10 +37,7 @@ T = 300 # K
 Vg_array = np.arange(2000)/100-10 #eV
 zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
-Vs_biasarray, guess_biasarray, Vs_array, guessarray, ni = Physics_SurfacepotForce.Experiments(zins,T,mn,mp,Nd,Na,epsilon_sem,bandgap,WFmet,EAsem,Vg, Vg_array,zins_array)
-
-col_zins = np.where(zins_array==zins)
-row_Vg = np.where(Vg_array==Vg)
+Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
 ################################################################################
 ################################################################################
@@ -51,27 +48,18 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 fig = make_subplots(rows=2, cols=2, shared_yaxes=False, shared_xaxes=True)
 fig.add_trace(go.Scatter(
-    x = Vg_array, y = [column[col_zins] for column in Vs_array],
+    x = Vg_array, y = Vs_biasarray,
     name = "Contact Potential (zins)", mode='lines', showlegend=False,
     ), row=1, col=1)
 fig.add_trace(go.Scatter(
-    x = Vg_array, y = [column[col_zins] for column in guessarray],
+    x = Vg_array, y = F_biasarray,
     name = "Guess", mode='lines', showlegend=False,
     ), row=2, col=1)
-fig.add_trace(go.Scatter(
-    x = Vg_array, y = Vs_biasarray,
-    name = "Contact Potential (zins)", mode='lines', showlegend=False,
-    ), row=1, col=2)
-fig.add_trace(go.Scatter(
-    x = Vg_array, y = guess_biasarray,
-    name = "Guess", mode='lines', showlegend=False,
-    ), row=2, col=2)
 
-fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), max(Vg_array)], row=2, col=1)
-fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), max(Vg_array)], row=2, col=2)
+fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), 8], row=2, col=1)
+fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), 8], row=2, col=2)
 fig.update_yaxes(title_text= "Vs (eV)", row=1, col=1)
-fig.update_yaxes(title_text= "Guess", row=2, col=1)
-fig.update_yaxes(title_text= "Vs (eV)", row=1, col=2)
-fig.update_yaxes(title_text= "Guess", row=2, col=2)
+fig.update_yaxes(title_text= "F", row=2, col=1)
+
 
 fig.show()

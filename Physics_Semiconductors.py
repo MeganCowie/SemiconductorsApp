@@ -113,40 +113,7 @@ def Coxp(eox,epsilon_o,tox): # C / (V*cm**2)
     Coxp = eox * epsilon_o / tox
     return Coxp
 
-
 # Debye length
 def LD(epsilon_sem, Nd, T):
     LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*Nd*e)) #m
     return LD
-
-
-################################################################################
-################################################################################
-# Solve for Vg given Vs
-
-def Vgbuttons(Vs,   zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
-
-    NC,NV = NCNV(T,mn,mp)
-    Ec,Ev = EcEv(T,bandgap)
-    Eg_value = Eg(Ec,Ev)
-    ni_value = ni(NC,NV,Eg_value,T)
-    Ef_value = Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    CPD_metsem_value = CPD_metsem(WFmet, EAsem, Ec, Ef_value)
-
-    n_i = ni_value*(100)**3 #m**-3
-    N_D = Nd*(100)**3 #m**-3
-    L_D = LD(epsilon_sem, N_D, T)
-
-    def Vg_eqn(Vg,Vs_variable,zins_variable):
-
-        C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
-
-        u = Vs_variable/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/N_D**2)*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
-        Qs = -np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
-        eqn = Vg+CPD_metsem_value-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
-        return eqn
-
-    Vg = fsolve(Vg_eqn, 0, args=(Vs,zins))[0]
-
-    return [Vg]

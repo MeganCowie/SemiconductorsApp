@@ -13,11 +13,10 @@ import Physics_FreqshiftDissipation
 ################################################################################
 # FIGURE: ncAFM
 
-def fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton):
+def fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, calculatebutton, toggle_sampletype):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
-
         # input (slider) parameters
         Vg = slider_Vg
         zins = slider_zins*1e-7 # cm
@@ -30,6 +29,7 @@ def fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
         mn = slider_emass*Physics_Semiconductors.me # kg
         mp = slider_hmass*Physics_Semiconductors.me # kg
         T = slider_T # K
+        sampletype = toggle_sampletype #false=semiconducting, true = metallic
 
         amplitude = slider_amplitude #nm
         steps = 50
@@ -39,9 +39,9 @@ def fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
         time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
         zins_AFMarray = Physics_AFMoscillation.zins_AFMarray(time_AFMarray,amplitude,zins)
 
-        Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFMoscillation.BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFMoscillation.BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # stack AFM arrays to display two periods (with half calculation time)
         steps = steps*2
@@ -233,7 +233,7 @@ def fig_AFM1(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
 ################################################################################
 # FIGURE: Bias sweep experiment
 
-def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton):
+def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
@@ -250,6 +250,7 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
         mn = slider_emass*Physics_Semiconductors.me # kg
         mp = slider_hmass*Physics_Semiconductors.me # kg
         T = slider_T # K
+        sampletype = toggle_sampletype
 
         amplitude = slider_amplitude #nm
         frequency = slider_resfreq #Hz
@@ -261,8 +262,8 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
         Vg_array = np.arange(200)/10-10 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
-        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        df_biasarray, dg_biasarray = Physics_FreqshiftDissipation.dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_biasarray, dg_biasarray = Physics_FreqshiftDissipation.dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         F_biasarray = F_biasarray*np.pi*tipradius**2
         F_zinsarray = F_zinsarray*np.pi*tipradius**2
@@ -346,6 +347,14 @@ def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_resfreq, slide
 ################################################################################
 # FUNCTIONALITY
 
+def togglefunctions(toggle):
+    if toggle == True:
+        style_s = {'color': '#7f7f7f', 'fontSize': 14, 'width':110, 'text-align': 'center'}
+        style_m = {'color': '#57c5f7', 'fontSize': 14, 'width':50, 'text-align': 'left'}
+    elif toggle == False:
+        style_s = {'color': '#57c5f7', 'fontSize': 14, 'width':110, 'text-align': 'center'}
+        style_m = {'color': '#7f7f7f', 'fontSize': 14, 'width':50, 'text-align': 'left'}
+    return style_s, style_m
 
 
 

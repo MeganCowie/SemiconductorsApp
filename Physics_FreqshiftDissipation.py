@@ -19,7 +19,7 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 ################################################################################
 # Integrals from Holscher 2001 and RoyGobeil thesis
 
-def dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
 
     time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
@@ -30,7 +30,7 @@ def dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,  Vg,z
 
 
 
-    df_prefactor = frequency**2/(springconst*amplitude*1e-9)
+    df_prefactor = -1*(frequency**2)/(springconst*amplitude*1e-9)
     dg_prefactor = 2*frequency/(springconst*amplitude*1e-9)
     tiparea = np.pi*tipradius**2
 
@@ -38,7 +38,7 @@ def dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,  Vg,z
     dg_biasarray = []
     for Vg_index in range(len(Vg_array)):
         Vg_variable = Vg_array[Vg_index]
-        Vs_AFMarraysoln, F_AFMarraysoln = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zins_AFMarray,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarraysoln, F_AFMarraysoln = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zins_AFMarray,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         df_soln = df_prefactor*trapz(F_AFMarraysoln*tiparea*np.sin(time_AFMarray), time_AFMarray/frequency)
         dg_soln = dg_prefactor*trapz(F_AFMarraysoln*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency)+1/Qfactor

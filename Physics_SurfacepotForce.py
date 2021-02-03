@@ -19,7 +19,7 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 ################################################################################
 # Surface potential and force expressions from Hudlet 1995
 
-def VsF(guess,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def VsF(guess,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
     Ec,Ev = Physics_Semiconductors.EcEv(T,bandgap)
@@ -48,8 +48,14 @@ def VsF(guess,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
         F_soln = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/L_D*f)**2 #N/m**2
         return F_soln
 
-    Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0]
-    F = F_eqn(Vs)*(1e-9)**2 #N/nm**2
+
+
+    if sampletype==False: # semiconducting case
+        Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0]
+        F = -1*F_eqn(Vs)*(1e-9)**2 #N/nm**2 (I multiplied by -1, not done in Hudlet, to represent attractive force)
+    elif sampletype==True:# metallic case
+        Vs = Vg-CPD_metsem
+        F = -0.5*(epsilon_o*100)*(Vs)**2/(zins/100)**2*(1e-9)**2 #U=0.5CV**2
 
     return Vs, F
 
@@ -59,7 +65,7 @@ def VsF(guess,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 ################################################################################
 # Organize arrays for Vs and F experimental sweeps
 
-def VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     Vs_biasarray = []
     F_biasarray = []
@@ -68,9 +74,9 @@ def VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd
         guess = Vs_soln
         Vg_variable = Vg_array[Vg_index]
         if guess >0:
-            Vs_soln, F_soln = VsF(guess+0.1,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_soln, F_soln = VsF(guess+0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         else:
-            Vs_soln, F_soln = VsF(guess-0.1,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray = np.append(Vs_biasarray, Vs_soln)
         F_biasarray = np.append(F_biasarray, F_soln)
 
@@ -81,9 +87,9 @@ def VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd
         guess = Vs_soln
         zins_variable = zins_array[zins_index]
         if guess >0:
-            Vs_soln, F_soln = VsF(guess+0.1,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_soln, F_soln = VsF(guess+0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         else:
-            Vs_soln, F_soln = VsF(guess-0.1,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_zinsarray = np.append(Vs_zinsarray, Vs_soln)
         F_zinsarray = np.append(F_zinsarray, F_soln)
 
