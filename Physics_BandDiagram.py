@@ -3,18 +3,18 @@ import scipy.constants as sp
 from scipy.integrate import quad
 from scipy.integrate import trapz
 
-import Physics_SemiconductorSurface
+import Physics_Semiconductors
 
 
 ################################################################################
 ################################################################################
 # physical constants
 
-kB = Physics_SemiconductorSurface.kB
-hbar = Physics_SemiconductorSurface.hbar
-me = Physics_SemiconductorSurface.me
-e = Physics_SemiconductorSurface.e
-epsilon_o = Physics_SemiconductorSurface.epsilon_o
+kB = Physics_Semiconductors.kB
+hbar = Physics_Semiconductors.hbar
+me = Physics_Semiconductors.me
+e = Physics_Semiconductors.e
+epsilon_o = Physics_Semiconductors.epsilon_o
 
 
 ################################################################################
@@ -23,10 +23,10 @@ epsilon_o = Physics_SemiconductorSurface.epsilon_o
 
 def BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    Ec, Ev = Physics_SemiconductorSurface.EcEv(T, bandgap)
-    NC,NV = Physics_SemiconductorSurface.NCNV(T,mn,mp)
-    Ef = Physics_SemiconductorSurface.Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    no,po = Physics_SemiconductorSurface.nopo(NC, NV, Ec, Ev, Ef, T)
+    Ec, Ev = Physics_Semiconductors.EcEv(T, bandgap)
+    NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
+    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    no,po = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
 
 
     def zsem_eqn(psi_variable):
@@ -54,14 +54,14 @@ def BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
 def BandDiagram(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    NC,NV = Physics_SemiconductorSurface.NCNV(T,mn,mp)
-    Ec,Ev = Physics_SemiconductorSurface.EcEv(T,bandgap)
-    Eg = Physics_SemiconductorSurface.Eg(Ec,Ev)
-    ni = Physics_SemiconductorSurface.ni(NC,NV,Eg,T)
-    Ei = Physics_SemiconductorSurface.Ei(T, ni, NC, NV, Ec, Eg)
-    Ef = Physics_SemiconductorSurface.Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
+    Ec,Ev = Physics_Semiconductors.EcEv(T,bandgap)
+    Eg = Physics_Semiconductors.Eg(Ec,Ev)
+    ni = Physics_Semiconductors.ni(NC,NV,Eg,T)
+    Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
+    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
     zsem, psi = BandBending(Vs,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    CPD_metsem = Physics_SemiconductorSurface.CPD_metsem(WFmet, EAsem, Ec, Ef)
+    CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, Ec, Ef)
 
 
     Vins = Vg - Vs - CPD_metsem # potential drop across insulator

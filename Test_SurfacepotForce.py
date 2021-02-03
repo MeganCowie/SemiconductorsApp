@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import fsolve
-import Physics_SemiconductorSurface
+import Physics_Semiconductors
 import Physics_SurfacepotForce
 
 
@@ -11,11 +11,11 @@ import Physics_SurfacepotForce
 ################################################################################
 # Input variables (would be slider values)
 
-kB = Physics_SemiconductorSurface.kB
-hbar = Physics_SemiconductorSurface.hbar
-me = Physics_SemiconductorSurface.me
-e = Physics_SemiconductorSurface.e
-epsilon_o = Physics_SemiconductorSurface.epsilon_o
+kB = Physics_Semiconductors.kB
+hbar = Physics_Semiconductors.hbar
+me = Physics_Semiconductors.me
+e = Physics_Semiconductors.e
+epsilon_o = Physics_Semiconductors.epsilon_o
 
 Vg = 5
 zins = 5e-7 #cm
@@ -25,8 +25,8 @@ WFmet = 5.5 #eV
 EAsem = 2.7 #eV
 Nd = round((10**19*10**8)/(1000**3))
 Na = round((10**0*10**8)/(1000**3))
-mn = 1.1*Physics_SemiconductorSurface.me #kg
-mp = 1.2*Physics_SemiconductorSurface.me #kg
+mn = 1.1*Physics_Semiconductors.me #kg
+mp = 1.2*Physics_Semiconductors.me #kg
 T = 300 # K
 
 

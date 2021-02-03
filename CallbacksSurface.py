@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 
-import Physics_SemiconductorSurface
+import Physics_Semiconductors
 import Physics_SurfacepotForce
 import Physics_BandDiagram
 
@@ -23,12 +23,13 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     EAsem = slider_EAsem #eV
     Nd = round((10**slider_donor*10**8)/(1000**3))
     Na = round((10**slider_acceptor*10**8)/(1000**3))
-    mn = slider_emass*Physics_SemiconductorSurface.me # kg
-    mp = slider_hmass*Physics_SemiconductorSurface.me # kg
+    mn = slider_emass*Physics_Semiconductors.me # kg
+    mp = slider_hmass*Physics_Semiconductors.me # kg
     T = slider_T # K
 
-    Vg_array = np.arange(2000)/100-10 #eV
+    Vg_array = np.arange(200)/10-10 #eV
     zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
+
 
     Vs, F = Physics_SurfacepotForce.VsF(1,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
@@ -134,34 +135,25 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=3)
 
-    fig.update_layout(transition_duration=300, height=800,)
-    fig.update_layout({"showlegend": False},
-        annotations=[
-            dict(x=0, y=1.04, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Energy (eV)"),
-            dict(x=0, y=0.52, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Potential (eV)"),
-            dict(x=0, y=0.315, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Electric Field"),
-            dict(x=0, y=0.13, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Charge"),
-            dict(x=0.355, y=1.04, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Contact Potential (eV)"),
-            dict(x=0.355, y=0.52, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Fo Force (N/m^2)"),
-            dict(x=0.713, y=1.04, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Contact Potential (eV)"),
-            dict(x=0.713, y=0.52, xref="paper", yref="paper", showarrow=False, font=dict(size=14), xanchor="left",
-                 text="Fo Force (N/m^2)"),
-        ])
+    fig.update_layout(transition_duration=300, height=800,margin=dict(t=0), showlegend=False)
 
     fig.update_xaxes(title_text="", row=1, col=1)
     fig.update_xaxes(title_text="", row=3, col=1)
     fig.update_xaxes(title_text="", row=4, col=1)
-    fig.update_xaxes(title_text="z (nm)", row=5, col=1)
+    fig.update_xaxes(title_text="z (nm)", row=5, col=1, range=[-zins*1e7-10, 20])
     fig.update_xaxes(title_text="", row=1, col=2)
     fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), max(Vg_array)], row=3, col=2)
+    fig.update_xaxes(title_text="", row=1, col=3)
     fig.update_xaxes(title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=3, col=3)
+
+    fig.update_yaxes(title_text="Energy (eV)", row=1, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Potential (V)", row=3, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Electric Field", row=4, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Charge", row=5, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
 
     return fig, format(ni, ".1E")
 
@@ -174,7 +166,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
 
 def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T):
     readout_Vg = '{0:.4g}'.format(slider_Vg)
-    readout_zins = '{0:.1f}'.format(slider_zins)
+    readout_zins = '{0:.0f}'.format(slider_zins)
     readout_bandgap = '{0:.1f}'.format(slider_bandgap)
     readout_epsilonsem = '{0:.1f}'.format(slider_epsilonsem)
     readout_WFmet = '{0:.2f}'.format(slider_WFmet)

@@ -1,13 +1,16 @@
 
+Figure out a better numerical solution method
+(Currently have runtime warnings from SurfacepotForce fsolve.)
+(Might be able to get rid of it by rewriting Vs equation to get rid of large #s)
+
+Figure out dissipation...
+I think Freqshift looks okay but check.
+
+Look at 1w and 2w force components
 
 Check units for Efield and Charge
-Check units for force
 Check "static force" terminology
 
+Check units for bulk - shouldn't need the division in CallbacksBulk
 
-Convert force to frequency shift and dissipation
-In phase and out of phase force contributions
-1w and 2w frequency shift and dissipation contributions
-
-Would be nice:
-- zsem set rather than variable, solve instead for psi
+Figure out why p-type doping is so unreliable.

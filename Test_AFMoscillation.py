@@ -3,9 +3,9 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import fsolve
-import Physics_SemiconductorSurface
+import Physics_Semiconductors
 import Physics_SurfacepotForce
-import Physics_AFM
+import Physics_AFMoscillation
 
 
 
@@ -29,11 +29,11 @@ color_other='#2f4f4f'
 ################################################################################
 # Input variables (would be slider values)
 
-kB = Physics_SemiconductorSurface.kB
-hbar = Physics_SemiconductorSurface.hbar
-me = Physics_SemiconductorSurface.me
-e = Physics_SemiconductorSurface.e
-epsilon_o = Physics_SemiconductorSurface.epsilon_o
+kB = Physics_Semiconductors.kB
+hbar = Physics_Semiconductors.hbar
+me = Physics_Semiconductors.me
+e = Physics_Semiconductors.e
+epsilon_o = Physics_Semiconductors.epsilon_o
 
 Vg = 5
 zins = 5e-7 #cm
@@ -43,8 +43,8 @@ WFmet = 5.5 #eV
 EAsem = 2.7 #eV
 Nd = round((10**19*10**8)/(1000**3))
 Na = round((10**0*10**8)/(1000**3))
-mn = 1.1*Physics_SemiconductorSurface.me #kg
-mp = 1.2*Physics_SemiconductorSurface.me #kg
+mn = 1.1*Physics_Semiconductors.me #kg
+mp = 1.2*Physics_Semiconductors.me #kg
 T = 300 # K
 
 
@@ -52,16 +52,15 @@ T = 300 # K
 ################################################################################
 # Function being tested
 
-steps = 100
+steps = 2
 amplitude = 6
 
 time_AFMarray = Physics_AFM.time_AFMarray(steps)
-position_AFMarray = Physics_AFM.position_AFMarray(time_AFMarray,amplitude)
-zins_AFMarray = zins+position_AFMarray*1e-7 #cm
+zins_AFMarray = Physics_AFM.zins_AFMarray(time_AFMarray,amplitude, zins)
 
 
 Vs_AFMarray, F_AFMarray = Physics_AFM.SurfacepotForce_AFMarray(1,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-#Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFM.BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFM.BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
 
 ################################################################################
@@ -73,12 +72,17 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 fig = make_subplots(rows=2, cols=2, shared_yaxes=False, shared_xaxes=False)
 fig.add_trace(go.Scatter(
-    x = time_AFMarray, y = position_AFMarray*-800000+13000000,
+    x = np.append(time_AFMarray, time_AFMarray+2*np.pi), y = np.append(zins_AFMarray, zins_AFMarray),
     name = "Position", mode='lines', showlegend=False,
     ), row=1, col=1)
 fig.add_trace(go.Scatter(
-    x = time_AFMarray, y = F_AFMarray,
+    x = np.append(time_AFMarray, time_AFMarray+2*np.pi), y = np.append(F_AFMarray, F_AFMarray),
     name = "Force", mode='lines', showlegend=False,
-    ), row=1, col=1)
+    ), row=1, col=2)
 
-fig.show()
+#fig.show()
+
+print(Ec_AFMarray)
+Ec_AFMarray = Ec_AFMarray + Ec_AFMarray
+
+print(Ec_AFMarray)

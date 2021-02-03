@@ -1,7 +1,6 @@
 import numpy as np
 import scipy.constants as sp
 
-import Physics_SemiconductorSurface
 import Physics_SurfacepotForce
 import Physics_BandDiagram
 
@@ -10,12 +9,11 @@ import Physics_BandDiagram
 # Cantilever motion arrays
 
 def time_AFMarray(steps):
-    time_AFMarray = np.linspace(0, 4*np.pi, steps)
+    time_AFMarray = np.linspace(0, 2*np.pi, steps)
     return time_AFMarray
 
 def zins_AFMarray(time_AFMarray, amplitude, zins):
-    frequency = 1
-    position_AFMarray = amplitude*np.sin(frequency*time_AFMarray)+amplitude #nm
+    position_AFMarray = amplitude*np.sin(time_AFMarray)+amplitude #nm
     zins_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zins_AFMarray
 
@@ -23,7 +21,6 @@ def zins_AFMarray(time_AFMarray, amplitude, zins):
 ################################################################################
 ################################################################################
 # Physics as the cantilever position varies
-
 
 def SurfacepotForce_AFMarray(guess,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Vs_AFMarray = []
@@ -71,9 +68,3 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,   Vg,zins,bandgap,epsilon_se
         Gatey_AFMarray.append(Gatey)
 
     return Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray
-
-
-
-################################################################################
-################################################################################
-# Separate the in-phase and out-of-phase force contributions

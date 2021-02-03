@@ -16,7 +16,7 @@ Controls.py defines the initial values, appearance, and layout of the controls
 (e.g. buttons) in the app. The script itself is called in the layout section of
 app.py, but each separate control is also called by callbacks in app.py.
 
-Callbacks.py defines what to do when a user ineracts with the controls. The
+Callbacks.py defines what to do when a user interacts with the controls. The
 script itself is called in the callbacks section of app.py.
 
 Physics scripts contain all of the actual physics behind the app. Some physics
