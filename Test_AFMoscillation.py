@@ -6,7 +6,7 @@ from scipy.optimize import fsolve
 import Physics_Semiconductors
 import Physics_SurfacepotForce
 import Physics_AFMoscillation
-
+import Physics_FreqshiftDissipation
 
 
 
@@ -52,16 +52,29 @@ T = 300 # K
 ################################################################################
 # Function being tested
 
-steps = 2
-amplitude = 6
+steps = 50
+amplitude = 6 #nm
+frequency = 300000 #Hz
+springconst = 42 #N/m
+Qfactor = 20000
+tipradius = 2 #nm**2
+steps = 50
 
-time_AFMarray = Physics_AFM.time_AFMarray(steps)
-zins_AFMarray = Physics_AFM.zins_AFMarray(time_AFMarray,amplitude, zins)
+Vg_array = np.arange(1000)/50-10 #eV
+zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
+time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
+zins_AFMarray = Physics_AFMoscillation.zins_AFMarray(time_AFMarray,amplitude, zins)
+
+sampletype = False
+Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+df_biasarray, dg_biasarray = Physics_FreqshiftDissipation.dfdg(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
 
-Vs_AFMarray, F_AFMarray = Physics_AFM.SurfacepotForce_AFMarray(1,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFM.BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
+time_AFMarray = np.append(time_AFMarray, time_AFMarray+2*np.pi)
+zins_AFMarray = np.append(zins_AFMarray, zins_AFMarray)
+Vs_AFMarray = np.append(Vs_AFMarray, Vs_AFMarray)
+F_AFMarray = np.append(F_AFMarray, F_AFMarray)
+F1_AFMarray = np.append(F1_AFMarray, F1_AFMarray)
 
 ################################################################################
 ################################################################################
@@ -72,17 +85,31 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 fig = make_subplots(rows=2, cols=2, shared_yaxes=False, shared_xaxes=False)
 fig.add_trace(go.Scatter(
-    x = np.append(time_AFMarray, time_AFMarray+2*np.pi), y = np.append(zins_AFMarray, zins_AFMarray),
+    x = time_AFMarray, y = zins_AFMarray,
     name = "Position", mode='lines', showlegend=False,
     ), row=1, col=1)
 fig.add_trace(go.Scatter(
-    x = np.append(time_AFMarray, time_AFMarray+2*np.pi), y = np.append(F_AFMarray, F_AFMarray),
-    name = "Force", mode='lines', showlegend=False,
+    x = time_AFMarray, y = F_AFMarray,
+    name = "SC_F", mode='lines', showlegend=True,
+    ), row=2, col=1)
+fig.add_trace(go.Scatter(
+    x = time_AFMarray, y = F1_AFMarray,
+    name = "M_F", mode='lines', showlegend=True,
+    ), row=2, col=1)
+fig.add_trace(go.Scatter(
+    x = Vg_array, y = df_biasarray,
+    name = "SC_df", mode='lines', showlegend=True,
     ), row=1, col=2)
-
-#fig.show()
-
-print(Ec_AFMarray)
-Ec_AFMarray = Ec_AFMarray + Ec_AFMarray
-
-print(Ec_AFMarray)
+fig.add_trace(go.Scatter(
+    x = Vg_array, y = df1_biasarray,
+    name = "M_df", mode='lines', showlegend=True,
+    ), row=1, col=2)
+fig.add_trace(go.Scatter(
+    x = Vg_array, y = dg_biasarray,
+    name = "SC_dg", mode='lines', showlegend=True,
+    ), row=2, col=2)
+fig.add_trace(go.Scatter(
+    x = Vg_array, y = dg1_biasarray,
+    name = "M_dg", mode='lines', showlegend=True,
+    ), row=2, col=2)
+fig.show()

@@ -37,6 +37,14 @@ def gcgv(E, Ec, Ev, mn, mp): # units?
     gv = 1/(2*sp.pi**2)*((2*mp/e)/(hbar**2))**(3/2)*np.sqrt(Earg)
     return gc, gv
 
+# Number of electrons/holes in the conduction/valence band
+def NeNh(E, fc, fv, gc, gv, Ec, Ev): #dimensionless
+    Ne=fc*gc
+    Ne[E<Ec]=0
+    Nh=fv*gv
+    Nh[E>Ev]=0
+    return Ne, Nh
+
 ################################################################################
 ################################################################################
 # carrier & energy definitions
@@ -85,14 +93,6 @@ def Ef(NC, NV, Ec, Ev, T, Nd, Na): #eV
     #Efn = Ei+kB*T*np.log((ND_ion+p)/ni)
     #Efp = Ei-kB*T*np.log((NA_ion+n)/ni)
     return Ef
-
-# Number of electrons/holes in the conduction/valence band
-def NeNh(E, Ei, Ef, fc, fv, gc, gv, Ec, Ev, T, ND_ion, n, ni): #dimensionless
-    Ne=fc*gc
-    Ne[E<Ec]=0
-    Nh=fv*gv
-    Nh[E>Ev]=0
-    return Ne, Nh
 
 
 ################################################################################

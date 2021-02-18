@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import random
 import scipy.constants as sp
 
 import Physics_Semiconductors
@@ -18,15 +19,29 @@ def zins_AFMarray(time_AFMarray, amplitude, zins):
     zins_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zins_AFMarray
 
+def zinslag_AFMarray(time_AFMarray, amplitude, zins, lag):
+    position_AFMarray = amplitude*np.sin(time_AFMarray-lag)+amplitude #nm
+    zinslag_AFMarray = zins+position_AFMarray*1e-7 #cm
+    return zinslag_AFMarray
+
 
 ################################################################################
 ################################################################################
 # Physics as the cantilever position varies
 
-def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+# Finds how the surface position varies over a cantilever oscillation
+def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Vs_AFMarray = []
     F_AFMarray = []
+
     for zins_AFMindex in range(len(zins_AFMarray)):
+
+        if RTN==True:
+            #Set Nd to Nd+1 with a random probability at one moment in the cycle
+            if np.remainder(zins_AFMindex,2)==0:
+                slider_donor = 19+ np.random.randint(2)*0.5
+                Nd = round((10**slider_donor*10**8)/(1000**3))
+
         zins_variable = zins_AFMarray[zins_AFMindex]
         Vs_soln, F_soln = Physics_SurfacepotForce.VsF(guess+0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_AFMarray = np.append(Vs_AFMarray,Vs_soln)
@@ -34,6 +49,7 @@ def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,   Vg,zins,bandgap,e
     return Vs_AFMarray, F_AFMarray
 
 
+# Plots the band diagream as the cantilever position varies.
 def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     Ec_AFMarray = []
@@ -69,8 +85,7 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap
             Gatey_AFMarray.append(Gatey)
 
 
-        elif sampletype == True: #metal band diagram
-
+        elif sampletype == True: # metal band diagram
             CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, 0, 0)
             Ef = [0-CPD_metsem]
             Ec = [Ef[0], Ef[0]]
@@ -87,7 +102,6 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap
             Gatex = np.array([-zins_variable*1e7-20, -zins_variable*1e7])
             Gatey = np.array([Vg, Vg])
 
-
             Ec_AFMarray.append(Ec)
             Ev_AFMarray.append(Ev)
             Ei_AFMarray.append(Ei)
@@ -100,6 +114,5 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap
             Vacuumy_AFMarray.append(Vacuumy)
             Gatex_AFMarray.append(Gatex)
             Gatey_AFMarray.append(Gatey)
-
 
     return Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray

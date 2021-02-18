@@ -3,10 +3,6 @@ Figure out a better numerical solution method
 (Currently have runtime warnings from SurfacepotForce fsolve.)
 (Might be able to get rid of it by rewriting Vs equation to get rid of large #s)
 
-Figure out dissipation...
-I think Freqshift looks okay but check.
-It could very well be that this curve is an artefact from my insufficient fsolve method
-
 Look at 1w and 2w force components
 
 Check units for Efield and Charge
@@ -15,3 +11,11 @@ Check "static force" terminology
 Check units for bulk - shouldn't need the division in CallbacksBulk
 
 Figure out why p-type doping is so unreliable.
+
+
+Dissipation and freqshift prefactors are wrong.
+
+Add save button
+
+RTN stuff is a mess.gnitude slider.
+Add a hopping ma

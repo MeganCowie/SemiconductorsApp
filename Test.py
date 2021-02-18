@@ -1,5 +1,5 @@
 import numpy as np
+from numpy import random
 
-Vg_array = np.arange(1000)/50-10 #eV
-
-print(Vg_array)
+number = np.random.randint(2)
+print(number)

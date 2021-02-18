@@ -73,7 +73,7 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
 
     ni = Physics_Semiconductors.ni(NC, NV, Eg, T)
     n,p = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
-    Ne,Nh = Physics_Semiconductors.NeNh(E, Ei, Ef, fc, fv, gc, gv, Ec, Ev, T, ND_ion, n, ni)
+    Ne,Nh = Physics_Semiconductors.NeNh(E, fc, fv, gc, gv, Ec, Ev)
 
     min_x, max_x, min_y, max_y = 0, 1, 0, 3
 

@@ -14,7 +14,6 @@ me = Physics_Semiconductors.me
 e = Physics_Semiconductors.e
 epsilon_o = Physics_Semiconductors.epsilon_o
 
-
 ################################################################################
 ################################################################################
 # Surface potential and force expressions from Hudlet 1995
@@ -54,8 +53,8 @@ def VsF(guess,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
         Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0]
         F = -1*F_eqn(Vs)*(1e-9)**2 #N/nm**2 (I multiplied by -1, not done in Hudlet, to represent attractive force)
     elif sampletype==True:# metallic case
-        Vs = Vg-CPD_metsem
-        F = -0.5*(epsilon_o*100)*(Vs)**2/(zins/100)**2*(1e-9)**2 #U=0.5CV**2
+        Vs = -CPD_metsem
+        F = -0.5*(epsilon_o*100)*(Vg-Vs)**2/(zins/100)**2*(1e-9)**2 #U=0.5CV**2
 
     return Vs, F
 

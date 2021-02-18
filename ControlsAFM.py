@@ -36,6 +36,13 @@ AFM_Card2 = dbc.Card([
         dbc.Row([
             dbc.Col(dcc.Slider(id='AFMSlider_amplitude', min=1, max=20, step=1, value=6,), md=12),
         ]),
+        dbc.Row([
+            dbc.Col(dbc.Label("Resonant Frequency (Hz)", id="AFMText_resfreqlabel", style={"margin-left": "10px"}), md=8),
+            dbc.Col(html.Div(id='AFMText_resfreq', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', min=200000, max=400000, step=10000, value=300000,), md=12),
+        ]),
     ]),
 ],style={"width": "400px"})
 
@@ -46,6 +53,18 @@ AFM_Card3 = dbc.Card([
         dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False), md=6),
         dbc.Col(html.Div(id='AFMText_metallic'),  md=3),
     ], style={'padding': 10}),
+    dbc.Row([
+        dbc.Col(html.Div(id='AFMText_RTNoff'),  md=3),
+        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_RTN', value=False), md=6),
+        dbc.Col(html.Div(id='AFMText_RTNon'),  md=3),
+    ], style={'padding': 10}),
+    dbc.Row([
+        dbc.Col(dbc.Label("Lag (ns)", id="AFMText_laglabel", style={"margin-left": "10px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=1000, step=50, value=0,), md=12),
+    ]),
 ],style={"width": "400px"}),
 
 AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2), dbc.Col(AFM_Card3)]
@@ -65,15 +84,8 @@ AFM_Card1 = dbc.Card([
 AFM_Card2 = dbc.Card([
     dbc.FormGroup([
         dbc.Row([
-            dbc.Col(dbc.Label("Resonant Frequency (Hz)", id="AFMText_resfreqlabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_resfreq', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', min=200000, max=400000, step=10000, value=300000,), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Spring Constant (N/m)", id="AFMText_springconstlabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_springconst', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+            dbc.Col(dbc.Label("Spring Constant (N/m)", id="AFMText_springconstlabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+            dbc.Col(html.Div(id='AFMText_springconst', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
         ], justify="between"),
         dbc.Row([
             dbc.Col(dcc.Slider(id='AFMSlider_springconst', min=30, max=50, step=1, value=42,), md=12),
@@ -96,3 +108,16 @@ AFM_Card2 = dbc.Card([
 ],style={"width": "400px"})
 
 AFM_Cards2 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2)]
+
+################################################################################
+################################################################################
+# Time trace experiment cards
+
+AFM_Card1 = dbc.Card([
+    dbc.Row([
+        dbc.Button("Calculate", id="AFMbutton_CalculateTimeExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
+    ], style={'padding': 10}, justify="center"),
+],style={"width": "400px"})
+
+
+AFM_Cards3 = [dbc.Col(AFM_Card1)]
