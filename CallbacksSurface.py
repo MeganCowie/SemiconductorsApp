@@ -141,9 +141,9 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_xaxes(title_text="", row=1, col=1)
     fig.update_xaxes(title_text="", row=3, col=1)
     fig.update_xaxes(title_text="", row=4, col=1)
-    fig.update_xaxes(title_text="z (nm)", row=5, col=1, range=[-zins*1e7-10, 20])
+    fig.update_xaxes(title_text="z (nm)", row=5, col=1)
     fig.update_xaxes(title_text="", row=1, col=2)
-    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[min(Vg_array), max(Vg_array)], row=3, col=2)
+    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[-3,2],row=3,col=2)#range=[min(Vg_array), max(Vg_array)], row=3, col=2)
     fig.update_xaxes(title_text="", row=1, col=3)
     fig.update_xaxes(title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=3, col=3)
 
@@ -152,7 +152,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_yaxes(title_text="Electric Field", row=4, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Charge", row=5, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
+    fig.update_yaxes(title_text="Force (N/nm^2)", range=[-3*10**-12,0],row=3, col=2, title_standoff = 5)#, range=[min(F_biasarray), max(F_biasarray)])
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
     fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
 

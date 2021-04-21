@@ -19,7 +19,7 @@ Surface_Card1 = dbc.Card([
             dbc.Col(html.Div(id='SurfaceText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='SurfaceSlider_zins', min=1, max=25, step=1, value=5,), style={"margin-bottom":"-20px"}, md=12),
+            dbc.Col(dcc.Slider(id='SurfaceSlider_zins', min=1, max=25, step=1, value=10,), style={"margin-bottom":"-20px"}, md=12),
         ]),
     ]),
 ], style={"width": "325px"})
@@ -33,7 +33,7 @@ dbc.Row([
                 dbc.Col(html.Div(id='SurfaceText_bandgap',style={'fontSize': 10, 'text-align': 'right',"margin-top": "10px"}), md=4),
             ], justify="between"),
             dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_bandgap', min=0.1, max=5, step=0.1, value=2.5,), md=12),
+                dbc.Col(dcc.Slider(id='SurfaceSlider_bandgap', min=0.1, max=5, step=0.01, value=1.55,), md=12),
             ]),
         ]),
     ], style={"margin-bottom":"-20px"}, md=6),
@@ -44,7 +44,7 @@ dbc.Row([
                 dbc.Col(html.Div(id='SurfaceText_epsilonsem',style={'fontSize': 10, 'text-align': 'right', "margin-right": "10px", "margin-top": "10px"}), md=4),
             ], justify="between"),
             dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_epsilonsem', min=0.1, max=22, step=0.1, value=22)),
+                dbc.Col(dcc.Slider(id='SurfaceSlider_epsilonsem', min=0.01, max=22, step=0.01, value=4.74)),
             ]),
         ]),
     ], md=6),
@@ -57,42 +57,18 @@ dbc.Row([
                 dbc.Col(html.Div(id='SurfaceText_WFmet',style={'fontSize': 10, 'text-align': 'right'}), md=4),
             ], justify="between"),
             dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_WFmet', min=0.1, max=8, step=0.1, value=5.5,)),
+                dbc.Col(dcc.Slider(id='SurfaceSlider_WFmet', min=0.1, max=8, step=0.1, value=4,)),
             ]),
         ]),
     ], md=6),
     dbc.Col([
         dbc.FormGroup([
             dbc.Row([
-                dbc.Col(dbc.Label("Elec. Afinity. (S) (eV)", id="SurfaceText_EAsemlabel", style={'fontSize': 10, "margin-left": "-10px"}), md=8),
+                dbc.Col(dbc.Label("Elec. Affinity (S) (eV)", id="SurfaceText_EAsemlabel", style={'fontSize': 10, "margin-left": "-10px"}), md=8),
                 dbc.Col(html.Div(id='SurfaceText_EAsem',style={'fontSize': 10, 'text-align': 'right', "margin-right": "10px"}), md=4),
             ], justify="between"),
             dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_EAsem', min=0.1, max=5, step=0.1, value=2.7,)),
-            ]),
-        ]),
-    ], md=6)
-]),
-dbc.Row([
-    dbc.Col([
-        dbc.FormGroup([
-            dbc.Row([
-                dbc.Col(dbc.Label("Donors (cm-3)", id="SurfaceText_donorlabel", style={'fontSize': 10, "margin-left": "10px"}), md=8),
-                dbc.Col(html.Div(id='SurfaceText_donor',style={'fontSize': 10, 'text-align': 'right'}), md=4),
-            ], justify="between"),
-            dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_donor', min=1, max=26, step=1, value=19,)),
-            ]),
-        ]),
-    ], md=6),
-    dbc.Col([
-        dbc.FormGroup([
-            dbc.Row([
-                dbc.Col(dbc.Label("Acceptors (cm-3)", id="SurfaceText_acceptorlabel", style={'fontSize': 10}), md=8),
-                dbc.Col(html.Div(id='SurfaceText_acceptor',style={'fontSize': 10, 'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
-            ], justify="between"),
-            dbc.Row([
-                dbc.Col(dcc.Slider(id='SurfaceSlider_acceptor', min=1, max=26, step=1, value=0,)),
+                dbc.Col(dcc.Slider(id='SurfaceSlider_EAsem', min=0.1, max=5, step=0.1, value=3.5,)),
             ]),
         ]),
     ], md=6)
@@ -121,6 +97,25 @@ dbc.Row([
         ]),
     ], md=6)
 ]),
+
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Donors (cm-3)", id="SurfaceText_donorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_donor',style={'fontSize': 10, 'text-align': 'right'}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='SurfaceSlider_donor', min=1, max=26, step=0.5, value=0,)),
+        ]),
+    ]),
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Acceptors (cm-3)", id="SurfaceText_acceptorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_acceptor',style={'fontSize': 10, 'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='SurfaceSlider_acceptor', min=1, max=26, step=0.5, value=17,)),
+        ]),
+    ]),
     dbc.FormGroup([
         dbc.Row([
             dbc.Col(dbc.Label("Temperature (K)", id="SurfaceText_Tlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),

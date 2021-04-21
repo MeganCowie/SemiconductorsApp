@@ -27,7 +27,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=1, value=5,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=1, value=10,), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px"}), md=8),
@@ -41,7 +41,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_resfreq', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', min=200000, max=400000, step=10000, value=300000,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', min=200000, max=400000, step=10000, value=330000,), md=12),
         ]),
     ]),
 ],style={"width": "400px"})
@@ -49,22 +49,29 @@ AFM_Card2 = dbc.Card([
 
 AFM_Card3 = dbc.Card([
     dbc.Row([
-        dbc.Col(html.Div(id='AFMText_semiconducting'),  md=3),
-        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False), md=6),
-        dbc.Col(html.Div(id='AFMText_metallic'),  md=3),
-    ], style={'padding': 10}),
-    dbc.Row([
-        dbc.Col(html.Div(id='AFMText_RTNoff'),  md=3),
-        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_RTN', value=False), md=6),
-        dbc.Col(html.Div(id='AFMText_RTNon'),  md=3),
-    ], style={'padding': 10}),
-    dbc.Row([
-        dbc.Col(dbc.Label("Lag (ns)", id="AFMText_laglabel", style={"margin-left": "10px"}), md=8),
-        dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+        dbc.Col(dbc.Label("Lag (ns)", id="AFMText_laglabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
         dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=1000, step=50, value=0,), md=12),
     ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("Hop", id="AFMText_hoplabel", style={"margin-left": "10px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_hop', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_hop', min=0, max=1, step=0.01, value=0,), md=12),
+    ]),
+    dbc.Row([
+        dbc.Col(html.Div(id='AFMText_RTNoff'),  md=4),
+        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_RTN', value=False), md=4),
+        dbc.Col(html.Div(id='AFMText_RTNon',style={"margin-bottom": "20px"}),  md=4),
+    ], style={'padding': 5}),
+    dbc.Row([
+        dbc.Col(html.Div(id='AFMText_semiconducting'),  md=4),
+        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False, style={ "margin-bottom": "20px"}), md=4),
+        dbc.Col(html.Div(id='AFMText_metallic'),  md=4),
+    ], style={'padding': 5}),
 ],style={"width": "400px"}),
 
 AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2), dbc.Col(AFM_Card3)]
@@ -95,14 +102,14 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_Qfactor', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Qfactor', min=200, max=30000, step=100, value=20000,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_Qfactor', min=200, max=30000, step=100, value=18000,), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Tip Radius (nm)", id="AFMText_tipradiuslabel", style={"margin-left": "10px"}), md=8),
             dbc.Col(html.Div(id='AFMText_tipradius', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_tipradius', min=1, max=20, step=1, value=2,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_tipradius', min=1, max=25, step=1, value=10,), md=12),
         ]),
     ]),
 ],style={"width": "400px"})

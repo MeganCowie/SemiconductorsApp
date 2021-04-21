@@ -4,6 +4,9 @@ from scipy.optimize import fsolve
 from scipy.integrate import quad
 import Physics_Semiconductors
 
+#import warnings
+#warnings.filterwarnings("error")
+
 ################################################################################
 ################################################################################
 # physical constants
@@ -29,24 +32,25 @@ def VsF(guess,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 
     n_i = ni*(100)**3 #m**-3
     N_D = Nd*(100)**3 #m**-3
-    L_D = Physics_Semiconductors.LD(epsilon_sem, N_D, T)
+    N_A = Na*(100)**3 #m**-3
+    L_D = Physics_Semiconductors.LD(epsilon_sem, N_D, N_A, T)
 
     def Vs_eqn(Vs,Vg_variable,zins_variable):
 
         C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
-
         u = Vs/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/N_D**2)*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
-        Qs = -np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
-        eqn = Vg_variable+CPD_metsem-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
-        return eqn
+        f = (np.exp(u)-u-1+(n_i**2/(N_D**2+N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+        Qs = np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
+        
+        expression = Vg_variable+CPD_metsem-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
+        
+        return expression
 
     def F_eqn(Vs_variable):
         u = Vs_variable/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/N_D**2)*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+        f = (np.exp(u)-u-1+(n_i**2/(N_D**2+N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
         F_soln = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/L_D*f)**2 #N/m**2
         return F_soln
-
 
 
     if sampletype==False: # semiconducting case
@@ -71,11 +75,31 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
     Vs_soln = 1
     for Vg_index in range(len(Vg_array)):
         guess = Vs_soln
+        
         Vg_variable = Vg_array[Vg_index]
         if guess >0:
-            Vs_soln, F_soln = VsF(guess+0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         else:
             Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        
+        #try: 
+        #    Vs_soln, F_soln = VsF(-10,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        #    attempt=1
+        #except:
+        #    try:
+        #        Vs_soln, F_soln = VsF(10,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        #        attempt=2
+        #    except:
+        #        try:
+        #            Vs_soln, F_soln = VsF(0,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        #            attempt=3
+        #        except:
+        #            Vs_soln, F_soln = 0,0
+        #            attempt = 4
+        
+        #if np.remainder(Vg_array[Vg_index]*10,2)==0:
+        #    print([Vg_array[Vg_index], guess, attempt])
+        
         Vs_biasarray = np.append(Vs_biasarray, Vs_soln)
         F_biasarray = np.append(F_biasarray, F_soln)
 
@@ -93,21 +117,3 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
         F_zinsarray = np.append(F_zinsarray, F_soln)
 
     return Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray
-
-
-
-#    Vs_array = [[] for _ in range(len(Vg_array))]
-#    guessarray = [[] for _ in range(len(Vg_array))]
-#    Vs_soln = 1
-#    for Vg_index in range(len(Vg_array)):
-#        guess = Vs_soln
-#        for zins_index in range(len(zins_array)):
-#            guess = Vs_soln
-#            if guess >0:
-#                Vs_soln = fsolve(Vs_eqn, guess+0.1, args=(Vg_array[Vg_index],zins_array[zins_index]))[0]
-#                guessarray[Vg_index] = np.append(guessarray[Vg_index], guess+0.1)
-#            else:
-#                Vs_soln = fsolve(Vs_eqn, guess-0.1, args=(Vg_array[Vg_index],zins_array[zins_index]))[0]
-#                guessarray[Vg_index] = np.append(guessarray[Vg_index], guess-0.1)
-#
-#            Vs_array[Vg_index] = np.append(Vs_array[Vg_index], Vs_soln)

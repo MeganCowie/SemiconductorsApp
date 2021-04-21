@@ -10,12 +10,14 @@ Check "static force" terminology
 
 Check units for bulk - shouldn't need the division in CallbacksBulk
 
-Figure out why p-type doping is so unreliable.
+n-type to p-type is a mess: I need a toggle like the bulk situation which forces 
+one or the other to zero. Or to check my equations because blech.
 
 
 Dissipation and freqshift prefactors are wrong.
 
 Add save button
 
-RTN stuff is a mess.gnitude slider.
-Add a hopping ma
+Rephrase "hop" units. 
+
+Do some heavy duty commenting.

@@ -30,7 +30,7 @@ def zinslag_AFMarray(time_AFMarray, amplitude, zins, lag):
 # Physics as the cantilever position varies
 
 # Finds how the surface position varies over a cantilever oscillation
-def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Vs_AFMarray = []
     F_AFMarray = []
 
@@ -39,7 +39,7 @@ def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,   Vg,zins,bandg
         if RTN==True:
             #Set Nd to Nd+1 with a random probability at one moment in the cycle
             if np.remainder(zins_AFMindex,2)==0:
-                slider_donor = 19+ np.random.randint(2)*0.5
+                slider_donor = 19+ np.random.randint(2)*hop
                 Nd = round((10**slider_donor*10**8)/(1000**3))
 
         zins_variable = zins_AFMarray[zins_AFMindex]

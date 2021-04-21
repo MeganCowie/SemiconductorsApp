@@ -87,8 +87,8 @@ def nopo(NC, NV, Ec, Ev, Ef, T): #1/cm**3
 def Ef(NC, NV, Ec, Ev, T, Nd, Na): #eV
     def Ef_eqn(Ef):
         no, po = nopo(NC, NV, Ec, Ev, Ef, T)
-        eqn = po-no+Nd-Na
-        return eqn
+        expression = po-no+Nd-Na
+        return expression
     Ef = fsolve(Ef_eqn, 1)[0]
     #Efn = Ei+kB*T*np.log((ND_ion+p)/ni)
     #Efp = Ei-kB*T*np.log((NA_ion+n)/ni)
@@ -114,6 +114,6 @@ def Coxp(eox,epsilon_o,tox): # C / (V*cm**2)
     return Coxp
 
 # Debye length
-def LD(epsilon_sem, Nd, T):
-    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*Nd*e)) #m
+def LD(epsilon_sem, Nd, Na, T):
+    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(Na)*e)) #m
     return LD

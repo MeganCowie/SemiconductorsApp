@@ -14,7 +14,7 @@ import Physics_FreqshiftDissipation
 ################################################################################
 # FIGURE: ncAFM oscillations
 
-def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_lag,calculatebutton,toggle_sampletype,toggle_RTN):
+def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_hop,slider_lag,calculatebutton,toggle_sampletype,toggle_RTN):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
@@ -32,41 +32,35 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         T = slider_T # K
         sampletype = toggle_sampletype #false = semiconducting, true = metallic
         RTN = toggle_RTN #false = off, true = on
-
         amplitude = slider_amplitude #nm
         frequency = slider_resfreq #Hz
+        hop = slider_hop
         lag = slider_lag/10**9*frequency #radians
         steps = 50
 
+        # Independent variable arrays
         Vg_array = np.arange(200)/10-10 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
         time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
         zins_AFMarray = Physics_AFMoscillation.zins_AFMarray(time_AFMarray,amplitude,zins)
         zinslag_AFMarray = Physics_AFMoscillation.zinslag_AFMarray(time_AFMarray,amplitude,zins, lag)
 
-        Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        # Dependent variable arrays calculations
+        Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFMoscillation.BandDiagram_AFMarray(Vs_AFMarray,zinslag_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        # This can't be here - this needs to be rewritten elsewhere.
-        if RTN == True:
-            RTN = False
-            Vs_AFMarray0, F_AFMarray0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            slider_donor = 19+ 1*0.5
-            Nd = round((10**slider_donor*10**8)/(1000**3))
+        # Find traces for bottom and top of hop
+        RTN = False
+        Vs_AFMarray0, F_AFMarray0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Nd = round((10**(slider_donor+hop)*10**8)/(1000**3))
+        Vs_AFMarray1, F_AFMarray1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-            Vs_AFMarray1, F_AFMarray1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-            Vs_zinsarray = np.append(Vs_zinsarray, np.flipud(Vs_zinsarray1))
-            F_zinsarray = np.append(F_zinsarray, np.flipud(F_zinsarray1))
-            zins_array = np.append(zins_array, np.flipud(zins_array))
-        else:
-            Vs_AFMarray0 = []
-            F_AFMarray0 = []
-            Vs_AFMarray1 = []
-            F_AFMarray1 = []
-
+        # Display traces for bottom and top of hop
+        Vs_zinsarray = np.append(Vs_zinsarray, np.flipud(Vs_zinsarray1))
+        F_zinsarray = np.append(F_zinsarray, np.flipud(F_zinsarray1))
+        zins_array = np.append(zins_array, np.flipud(zins_array))
 
         # stack AFM arrays to display two periods (with half calculation time)
         steps = steps*2
@@ -270,7 +264,7 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 ################################################################################
 # FIGURE: Bias sweep experiment
 
-def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude,slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, toggle_RTN,  slider_lag):
+def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
@@ -288,31 +282,35 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
         mp = slider_hmass*Physics_Semiconductors.me # kg
         T = slider_T # K
         sampletype = toggle_sampletype #false = semiconducting, true = metallic
-        RTN = toggle_RTN #false = off, true = on
-
-
         amplitude = slider_amplitude #nm
         frequency = slider_resfreq #Hz
         springconst = slider_springconst #N/m
         Qfactor = slider_Qfactor
         tipradius = slider_tipradius #nm
+        hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
         steps = 50
 
         Vg_array = np.arange(200)/10-10 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
-        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        df_biasarray, dg_biasarray = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,RTN,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray0, F_biasarray0, Vs_zinsarray0, F_zinsarray0= Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_biasarray0, dg_biasarray0 = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        Nd = round((10**(slider_donor+0.05)*10**8)/(1000**3))
-        df_biasarray_temp, dg_biasarray_temp = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,RTN,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
+        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_biasarray1, dg_biasarray1 = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        df_biasarray = np.append(df_biasarray, np.flipud(df_biasarray_temp))
-        dg_biasarray = np.append(dg_biasarray, np.flipud(dg_biasarray_temp))
+        Vg_array = np.append(Vg_array, np.flipud(Vg_array))
+        Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
+        F_biasarray = np.append(F_biasarray0, np.flipud(F_biasarray1))
+        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))
+        dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
-        F_biasarray = F_biasarray*np.pi*tipradius**2
-        F_zinsarray = F_zinsarray*np.pi*tipradius**2
+        F_biasarray = F_biasarray0*np.pi*tipradius**2
+        F_zinsarray = F_zinsarray0*np.pi*tipradius**2
+
+        savedata(df_biasarray0, df_biasarray1, 'FreqShiftTrace.csv', 'message')
 
         #########################################################
         #########################################################
@@ -332,12 +330,12 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
             line_color=color_other
             ), row=2, col=1)
         fig.add_trace(go.Scatter(
-            x = np.append(Vg_array, np.flipud(Vg_array)), y = df_biasarray,
+            x = Vg_array, y = df_biasarray,
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=2)
         fig.add_trace(go.Scatter(
-            x = np.append(Vg_array, np.flipud(Vg_array)), y = dg_biasarray,
+            x = Vg_array, y = dg_biasarray,
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2)
@@ -364,10 +362,11 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
     fig.update_yaxes(row=1, col=2, title_text = "Frequency Shift (Hz)")
     fig.update_yaxes(row=2, col=2, title_text = "Dissipation")
 
-    fig.update_xaxes(row=1, col=1, showticklabels=True)
-    fig.update_xaxes(row=2, col=1, title_text= "Gate Bias (V)")
-    fig.update_xaxes(row=1, col=2, showticklabels=True)
-    fig.update_xaxes(row=2, col=2, title_text= "Gate Bias (V)")
+    fig.update_xaxes(row=1, col=1,showticklabels=True,range=[-3,2])
+    fig.update_xaxes(row=2, col=1,title_text= "Gate Bias (V)",range=[-3,2])
+    fig.update_xaxes(row=1, col=2,showticklabels=True,range=[-3,2])
+    fig.update_xaxes(row=2, col=2,title_text= "Gate Bias (V)",range=[-3,2])
+
 
     return fig
 
@@ -375,7 +374,7 @@ def fig_AFM2(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_W
 ################################################################################
 # FIGURE: Time trace experiment
 
-def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,toggle_RTN,slider_lag):
+def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateTimeExp' in changed_id:
@@ -393,13 +392,12 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         mp = slider_hmass*Physics_Semiconductors.me # kg
         T = slider_T # K
         sampletype = toggle_sampletype #false = semiconducting, true = metallic
-        RTN = toggle_RTN #false = off, true = on
-
         amplitude = slider_amplitude #nm
         frequency = slider_resfreq #Hz
         springconst = slider_springconst #N/m
         Qfactor = slider_Qfactor
         tipradius = slider_tipradius #nm
+        hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
         steps = 50
 
@@ -407,9 +405,7 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
         time_array = np.arange(200)/10
 
-        df_AFMtimearray, dg_AFMtimearray = Physics_FreqshiftDissipation.dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,RTN,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-        #message = savedata(time_array,df_AFMtimearray,'FreqShiftTrace.csv', 'message')
+        df_AFMtimearray, dg_AFMtimearray = Physics_FreqshiftDissipation.dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         #########################################################
         #########################################################
@@ -456,16 +452,17 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 ################################################################################
 # READOUTS
 
-def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius):
+def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius):
     readout_Vg = '{0:.4g}'.format(slider_Vg)
     readout_zins = '{0:.0f}'.format(slider_zins)
     readout_amplitude = '{0:.0f}'.format(slider_amplitude)
     readout_lag = '{0:.0f}'.format(slider_lag)
+    readout_hop = '{0:.2f}'.format(slider_hop)
     readout_resfreq = '{0:.0f}'.format(slider_resfreq)
     readout_springconst = '{0:.0f}'.format(slider_springconst)
     readout_Qfactor = '{0:.0f}'.format(slider_Qfactor)
     readout_tipradius = '{0:.0f}'.format(slider_tipradius)
-    return readout_Vg, readout_zins, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius
+    return readout_Vg, readout_zins, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius
 
 
 ################################################################################
@@ -474,11 +471,11 @@ def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_lag, slider_re
 
 def togglefunctions(toggle):
     if toggle == True:
-        style_L = {'color': '#7f7f7f', 'fontSize': 14, 'width':110, 'text-align': 'center'}
-        style_R = {'color': '#57c5f7', 'fontSize': 14, 'width':50, 'text-align': 'left'}
+        style_L = {'color': '#7f7f7f', 'fontSize': 14, 'width':130, 'text-align': 'center'}
+        style_R = {'color': '#57c5f7', 'fontSize': 14, 'width':60, 'text-align': 'left'}
     elif toggle == False:
-        style_L = {'color': '#57c5f7', 'fontSize': 14, 'width':110, 'text-align': 'center'}
-        style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':50, 'text-align': 'left'}
+        style_L = {'color': '#57c5f7', 'fontSize': 14, 'width':130, 'text-align': 'center'}
+        style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':60, 'text-align': 'left'}
     return style_L, style_R
 
 def savedata(xdata,ydata,filenamestr, messagestring):
