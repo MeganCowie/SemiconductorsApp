@@ -1,3 +1,11 @@
+################################################################################
+################################################################################
+# This script primarily calculates the surface potential and force by
+# numerically solving a nonlinear equation. The second function uses the first
+# to calculate Vs and F as a function of bias and tip-sample separation.
+################################################################################
+################################################################################
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import fsolve
@@ -41,9 +49,9 @@ def VsF(guess,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
         u = Vs/(kB*T) #dimensionless
         f = (np.exp(u)-u-1+(n_i**2/(N_D**2+N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
         Qs = np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
-        
+
         expression = Vg_variable+CPD_metsem-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
-        
+
         return expression
 
     def F_eqn(Vs_variable):
@@ -75,14 +83,14 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
     Vs_soln = 1
     for Vg_index in range(len(Vg_array)):
         guess = Vs_soln
-        
+
         Vg_variable = Vg_array[Vg_index]
         if guess >0:
             Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         else:
             Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        
-        #try: 
+
+        #try:
         #    Vs_soln, F_soln = VsF(-10,sampletype,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         #    attempt=1
         #except:
@@ -96,10 +104,10 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
         #        except:
         #            Vs_soln, F_soln = 0,0
         #            attempt = 4
-        
+
         #if np.remainder(Vg_array[Vg_index]*10,2)==0:
         #    print([Vg_array[Vg_index], guess, attempt])
-        
+
         Vs_biasarray = np.append(Vs_biasarray, Vs_soln)
         F_biasarray = np.append(F_biasarray, F_soln)
 

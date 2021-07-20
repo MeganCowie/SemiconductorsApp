@@ -1,3 +1,11 @@
+################################################################################
+################################################################################
+# This script calculates the frequency shift and dissipation by integrating the
+# in-phase and out-of phase contributions to the time-dependent force (found in
+# Physics_AFMoscillaiton). The second function is simply to visualize hopping.
+################################################################################
+################################################################################
+
 import numpy as np
 from numpy import random
 from scipy.integrate import trapz
@@ -22,7 +30,6 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 # Integrals from Holscher 2001 and RoyGobeil thesis
 
 def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
-
 
     time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
     zins_AFMarray = Physics_AFMoscillation.zins_AFMarray(time_AFMarray,amplitude,zins)
@@ -55,7 +62,7 @@ def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tiprad
 
 ################################################################################
 ################################################################################
-# Physics over time
+# Physics over time -- NOT FINISHED YET and not needed for MoSe2 data.
 
 def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
@@ -89,9 +96,9 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
     df_Nd1 = df_prefactor*trapz(F_AFMarray_Nd1*tiparea*np.sin(time_AFMarray), time_AFMarray/frequency)
     dg_Nd1 = dg_prefactor*trapz(F_AFMarray_Nd1*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency)
 
+
     ######################################################
     #Set Nd to Nd+1 with a random probability at one moment in the time trace
-
     for time_arrayindex in range(len(time_array)):
 
         flip = np.random.randint(2)
@@ -105,8 +112,5 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
 
         df_AFMtimearray = np.append(df_AFMtimearray,df_Nd)
         dg_AFMtimearray = np.append(dg_AFMtimearray,dg_Nd)
-
-
-
 
     return df_AFMtimearray, dg_AFMtimearray

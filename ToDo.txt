@@ -3,21 +3,16 @@ Figure out a better numerical solution method
 (Currently have runtime warnings from SurfacepotForce fsolve.)
 (Might be able to get rid of it by rewriting Vs equation to get rid of large #s)
 
-Look at 1w and 2w force components
-
 Check units for Efield and Charge
-Check "static force" terminology
 
 Check units for bulk - shouldn't need the division in CallbacksBulk
 
-n-type to p-type is a mess: I need a toggle like the bulk situation which forces 
-one or the other to zero. Or to check my equations because blech.
-
+converting between n-type to p-type is a mess: I need a toggle like the bulk
+situation which forces one or the other to zero.
 
 Dissipation and freqshift prefactors are wrong.
 
-Add save button
+Add save buttons everywhere.
+Or at least organize saving better.
 
-Rephrase "hop" units. 
-
-Do some heavy duty commenting.
+Rephrase "hop" units and the RTN stuff is almost outdated.

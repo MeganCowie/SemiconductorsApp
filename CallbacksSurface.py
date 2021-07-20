@@ -2,6 +2,7 @@ import dash
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import pandas as pd
 
 import Physics_Semiconductors
 import Physics_SurfacepotForce
@@ -156,6 +157,12 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
     fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
 
+    #savedata(Vg_array, Vs_biasarray, 'savedatabias_Vs.csv')
+    #savedata(Vg_array, F_biasarray, 'savedatabias_F.csv')
+    #savedata(zins_array*1e7, Vs_zinsarray, 'savedatazins_Vs.csv')
+    #savedata(zins_array*1e7, F_zinsarray, 'savedatazins_F.csv')
+
+
     return fig, format(ni, ".1E")
 
 
@@ -183,6 +190,14 @@ def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, 
 ################################################################################
 ################################################################################
 # FUNCTIONALITY
+
+def savedata(xdata,ydata,filenamestr):
+    xstr = [str(xi) for xi in xdata]
+    ystr = [str(yi) for yi in ydata]
+    save = pd.DataFrame({'x': xstr, 'y': ystr})
+    save.to_csv(filenamestr,index=False)
+    return 1
+
 
 
 ################################################################################

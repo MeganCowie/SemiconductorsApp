@@ -13,8 +13,9 @@ Callbacks.py). The layout defines appearance of the app, and the callbacks
 define how the app updates with user interaction.
 
 Controls.py defines the initial values, appearance, and layout of the controls
-(e.g. buttons) in the app. The script itself is called in the layout section of
-app.py, but each separate control is also called by callbacks in app.py.
+(e.g. buttons / sliders) in the app. The script itself is called in the layout
+section of app.py, but each separate control is also called by callbacks in
+app.py.
 
 Callbacks.py defines what to do when a user interacts with the controls. The
 script itself is called in the callbacks section of app.py.
@@ -26,9 +27,23 @@ called in a Callback must be inside a function so that the calculation is
 re-done every time the Callback is called (by updating a control).
 
 
-
 This app contains multiple tabs. I let each tab have its own Controls.py and
 Callbacks.py scripts, for their own tab-specific functions. Separating things
 out this way introduces a lot of redundancy in the code (as does writing the
 callbacks in Callbacks.py instead of app.py), but I find this improves
 readability.
+
+
+################################################################################
+
+Below is the dependency order of the Physics scripts:
+a. Semiconductors
+b. SurfacepotForce
+c. BandDiagram
+d. AFMoscillation
+e. FreqshiftDissipation
+
+Note that in Physics functions, I included all available slider values as inputs
+even if they aren't needed in the function. This just helped me keep things
+(e.g. order of variables in functions) consistent and in my head it's neater and
+easier to read, though it's probably slower.

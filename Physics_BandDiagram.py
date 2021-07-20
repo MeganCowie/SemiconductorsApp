@@ -1,3 +1,11 @@
+################################################################################
+################################################################################
+# This script has one primary purpose: draw a band diagram. With the first
+# function we simply calculate band bending. The second function uses the first
+# to create the arrays needed to draw the band diagram.
+################################################################################
+################################################################################
+
 import numpy as np
 import scipy.constants as sp
 from scipy.integrate import quad

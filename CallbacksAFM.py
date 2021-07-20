@@ -190,6 +190,21 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
 
+        #savebanddiagdata(zsem_AFMarray*1e7,'savebandarray_zsem.csv')
+        #savebanddiagdata(Ec_AFMarray,'savebandarray_Ec.csv')
+        #savebanddiagdata(Ev_AFMarray,'savebandarray_Ev.csv')
+        #savebanddiagdata(psi_AFMarray,'savebandarray_psi.csv')
+        #savebanddiagdata(Ef_AFMarray,'savebandarray_Ef.csv')
+        #savebanddiagdata(Gatex_AFMarray,'savebandarray_Gatez.csv')
+        #savebanddiagdata(Gatey_AFMarray,'savebandarray_GateE.csv')
+        #savebanddiagdata(Insulatorx_AFMarray,'savebandarray_Insulatorz.csv')
+        #savebanddiagdata(Insulatory_AFMarray,'savebandarray_InsulatorE.csv')
+        #savezinsdata(zins_array, Vs_zinsarray, F_zinsarray,'savezinsarray.csv')
+        #savebanddiagdata(zinslag_AFMarray,'savezinsarray_zins.csv')
+        #savebanddiagdata(Vs_AFMarray,'savezinsarray_Vs.csv')
+        #savebanddiagdata(F_AFMarray,'savezinsarray_F.csv')
+        #savetimedata(time_AFMarray[:100], zins_AFMarray[:100], Vs_AFMarray[:100], F_AFMarray[:100],'savetimearray.csv')
+
         fig.frames=[
             go.Frame(data=[
 
@@ -269,6 +284,14 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
 
+        model_dg = pd.read_csv('XData_ExcitationvBias-Sweep315.csv')
+        model_dgx = model_dg.Bias
+        model_dgy = model_dg.Excitation
+
+        model_df = pd.read_csv('XData_FreqShiftvBias-Sweep315.csv')
+        model315_dfx = model_df.Bias
+        model315_dfy = model_df.FreqShift
+
         # input (slider) parameters
         Vg = slider_Vg
         zins = slider_zins*1e-7 # cm
@@ -291,7 +314,7 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         lag = slider_lag/10**9*frequency #rad
         steps = 50
 
-        Vg_array = np.arange(200)/10-10 #eV
+        Vg_array = np.arange(100)/20-3 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
         Vs_biasarray0, F_biasarray0, Vs_zinsarray0, F_zinsarray0= Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
@@ -299,18 +322,19 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 
         Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
         Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        df_biasarray1, dg_biasarray1 = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_biasarray1, dg_biasarray1 =  Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
         Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
         F_biasarray = np.append(F_biasarray0, np.flipud(F_biasarray1))
-        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))
-        dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
+        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset, delete
+        dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))-0.16#Experimental offset, delete
 
         F_biasarray = F_biasarray0*np.pi*tipradius**2
         F_zinsarray = F_zinsarray0*np.pi*tipradius**2
 
-        savedata(df_biasarray0, df_biasarray1, 'FreqShiftTrace.csv', 'message')
+        #savedata(Vg_array, df_biasarray, 'FreqShift.csv')
+        #savedata(Vg_array, dg_biasarray, 'Excitation.csv')
 
         #########################################################
         #########################################################
@@ -318,6 +342,12 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             rows=2, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.5, 0.5], row_heights=[1,1],
             specs=[[{}, {}], [{}, {}]])
+
+        fig.add_trace(go.Scatter(
+            x = model315_dfx, y = model315_dfy,
+            name = "FreqShift", mode='lines', showlegend=False,
+            line_color=color_Ei
+            ), row=1, col=2)
 
         fig.add_trace(go.Scatter(
             x = Vg_array, y = Vs_biasarray,
@@ -339,7 +369,11 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2)
-
+        fig.add_trace(go.Scatter(
+            x = model_dgx, y = model_dgy,
+            name = "Dissipation", mode='lines', showlegend=False,
+            line_color=color_Ei
+            ), row=2, col=2)
 
     ############################################################################
 
@@ -454,8 +488,8 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 
 def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius):
     readout_Vg = '{0:.4g}'.format(slider_Vg)
-    readout_zins = '{0:.0f}'.format(slider_zins)
-    readout_amplitude = '{0:.0f}'.format(slider_amplitude)
+    readout_zins = '{0:.1f}'.format(slider_zins)
+    readout_amplitude = '{0:.1f}'.format(slider_amplitude)
     readout_lag = '{0:.0f}'.format(slider_lag)
     readout_hop = '{0:.2f}'.format(slider_hop)
     readout_resfreq = '{0:.0f}'.format(slider_resfreq)
@@ -478,13 +512,40 @@ def togglefunctions(toggle):
         style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':60, 'text-align': 'left'}
     return style_L, style_R
 
-def savedata(xdata,ydata,filenamestr, messagestring):
+def savedata(xdata,ydata,filenamestr):
     xstr = [str(xi) for xi in xdata]
     ystr = [str(yi) for yi in ydata]
     save = pd.DataFrame({'x': xstr, 'y': ystr})
     save.to_csv(filenamestr,index=False)
-    message = messagestring
-    return message
+    return
+
+def savebanddiagdata(x,filenamestr):
+    np.savetxt(filenamestr,x,delimiter=",")
+    return 1
+
+def savezinsdata(zins,Vs,F,filenamestr):
+    zins_str = [str(x) for x in zins]
+    Vs_str = [str(x) for x in Vs]
+    F_str = [str(x) for x in F]
+    save = pd.DataFrame({'zins': zins_str, 'Vs': Vs_str, 'F': F_str})
+    save.to_csv(filenamestr,index=False)
+    return 1
+
+def savetimedata(time,zins,Vs,F,filenamestr):
+    time_str = [str(x) for x in time]
+    zins_str = [str(x) for x in zins]
+    Vs_str = [str(x) for x in Vs]
+    F_str = [str(x) for x in F]
+    save = pd.DataFrame({'time': time_str, 'zins': zins_str, 'Vs': Vs_str, 'F': F_str})
+    save.to_csv(filenamestr,index=False)
+    return 1
+
+def savepointdata(xdata,ydata,filenamestr):
+    xstr = [str(xi) for xi in xdata]
+    ystr = [str(yi) for yi in ydata]
+    save = pd.DataFrame({'x': xstr, 'y': ystr})
+    save.to_csv(filenamestr,index=False)
+    return
 
 ################################################################################
 ################################################################################

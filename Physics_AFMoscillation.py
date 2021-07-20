@@ -1,3 +1,13 @@
+################################################################################
+################################################################################
+# This script has two main functions:
+# 1) calculates how the surface potential and force vary as the
+#    cantilever oscillates.
+# 2) creates band bending diagram arrays to visualize changes in band bending
+#    over every oscillation cycle.
+################################################################################
+################################################################################
+
 import numpy as np
 from numpy import random
 import scipy.constants as sp
@@ -49,7 +59,7 @@ def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,hop,   Vg,zins,b
     return Vs_AFMarray, F_AFMarray
 
 
-# Plots the band diagream as the cantilever position varies.
+# Plots the band diagram as the cantilever position varies.
 def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     Ec_AFMarray = []
