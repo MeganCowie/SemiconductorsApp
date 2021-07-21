@@ -27,7 +27,7 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 
 ################################################################################
 ################################################################################
-# Integrals from Holscher 2001 and RoyGobeil thesis
+# Integrals to calculate frequency shift and dissipation
 
 def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
@@ -38,9 +38,8 @@ def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tiprad
     ######################################################
 
     df_prefactor = -1*(frequency**2)/(2*np.pi*springconst*amplitude*1e-9)
-    dg_prefactor = -frequency**2/(np.pi)
-    dg_addedterm = (1*amplitude)/(2*Qfactor)
-    scaling = 400
+    dg_prefactor = -1*(frequency)/(np.pi)
+    dg_addedterm = (springconst*amplitude*1e-9)/(Qfactor)
     tiparea = np.pi*tipradius**2
 
     df_biasarray = []
@@ -50,8 +49,16 @@ def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tiprad
 
         Vs_AFMarraysoln, F_AFMarraysoln = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
+        # Integrals, RoyGobeil thesis eq. 2.33 & 2.34
         df_soln = df_prefactor*trapz(F_AFMarraysoln*tiparea*np.sin(time_AFMarray), time_AFMarray/frequency)
-        dg_soln = scaling*(dg_addedterm+dg_prefactor*trapz(F_AFMarraysoln*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency))
+        dg_soln = dg_addedterm+dg_prefactor*trapz(F_AFMarraysoln*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency)
+
+        # Convert excitation model to energy units, Cockins thesis eq. 2.15
+        E_o = np.pi*springconst*(amplitude*10**-9)**2/Qfactor*(1/Physics_Semiconductors.e)*1000 #meV
+        A_exc = dg_soln
+        A_exco = dg_addedterm
+        E_ts = E_o*(A_exc-A_exco)/A_exc
+        dg_soln = E_ts
 
         df_biasarray = np.append(df_biasarray, df_soln)
         dg_biasarray = np.append(dg_biasarray, dg_soln)

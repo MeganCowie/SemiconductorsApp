@@ -57,12 +57,12 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         Vs_AFMarray1, F_AFMarray1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        # Display traces for bottom and top of hop
+        # Stack arrays at bottom and top of hop
         Vs_zinsarray = np.append(Vs_zinsarray, np.flipud(Vs_zinsarray1))
         F_zinsarray = np.append(F_zinsarray, np.flipud(F_zinsarray1))
         zins_array = np.append(zins_array, np.flipud(zins_array))
 
-        # stack AFM arrays to display two periods (with half calculation time)
+        # Stack AFM arrays to display two periods (with half calculation time)
         steps = steps*2
         time_AFMarray = np.append(time_AFMarray, time_AFMarray+2*np.pi)
         zins_AFMarray = np.append(zins_AFMarray, zins_AFMarray)
@@ -137,7 +137,6 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             line_color=color_vac
             ), row=1, col=1)
 
-
         fig.add_trace(go.Scatter(
             x = zins_array*1e7, y = Vs_zinsarray,
             name = "ContactPotential", mode='lines', showlegend=False,
@@ -190,20 +189,6 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
 
-        #savebanddiagdata(zsem_AFMarray*1e7,'savebandarray_zsem.csv')
-        #savebanddiagdata(Ec_AFMarray,'savebandarray_Ec.csv')
-        #savebanddiagdata(Ev_AFMarray,'savebandarray_Ev.csv')
-        #savebanddiagdata(psi_AFMarray,'savebandarray_psi.csv')
-        #savebanddiagdata(Ef_AFMarray,'savebandarray_Ef.csv')
-        #savebanddiagdata(Gatex_AFMarray,'savebandarray_Gatez.csv')
-        #savebanddiagdata(Gatey_AFMarray,'savebandarray_GateE.csv')
-        #savebanddiagdata(Insulatorx_AFMarray,'savebandarray_Insulatorz.csv')
-        #savebanddiagdata(Insulatory_AFMarray,'savebandarray_InsulatorE.csv')
-        #savezinsdata(zins_array, Vs_zinsarray, F_zinsarray,'savezinsarray.csv')
-        #savebanddiagdata(zinslag_AFMarray,'savezinsarray_zins.csv')
-        #savebanddiagdata(Vs_AFMarray,'savezinsarray_Vs.csv')
-        #savebanddiagdata(F_AFMarray,'savezinsarray_F.csv')
-        #savetimedata(time_AFMarray[:100], zins_AFMarray[:100], Vs_AFMarray[:100], F_AFMarray[:100],'savetimearray.csv')
 
         fig.frames=[
             go.Frame(data=[
@@ -284,13 +269,6 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
 
-        model_dg = pd.read_csv('XData_ExcitationvBias-Sweep315.csv')
-        model_dgx = model_dg.Bias
-        model_dgy = model_dg.Excitation
-
-        model_df = pd.read_csv('XData_FreqShiftvBias-Sweep315.csv')
-        model315_dfx = model_df.Bias
-        model315_dfy = model_df.FreqShift
 
         # input (slider) parameters
         Vg = slider_Vg
@@ -327,14 +305,34 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
         Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
         F_biasarray = np.append(F_biasarray0, np.flipud(F_biasarray1))
-        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset, delete
-        dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))-0.16#Experimental offset, delete
+        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset
+        dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
         F_biasarray = F_biasarray0*np.pi*tipradius**2
         F_zinsarray = F_zinsarray0*np.pi*tipradius**2
 
         #savedata(Vg_array, df_biasarray, 'FreqShift.csv')
         #savedata(Vg_array, dg_biasarray, 'Excitation.csv')
+
+        #########################################################
+        # Load experimental data (for plotting / comparison only, no fitting in this code)
+
+        Xdata315_df = pd.read_csv('XData_FreqShiftvBias-Sweep315.csv')
+        Xdata315_dfx = Xdata315_df.Bias
+        Xdata315_dfy = Xdata315_df.FreqShift
+
+        Xdata315_dg = pd.read_csv('XData_ExcitationvBias-Sweep315.csv')
+        Xdata315_dgx = Xdata315_dg.Bias
+        Xdata315_dgy = Xdata315_dg.Excitation
+
+        # Convert excitation data to energy units, Cockins eq. 2.15
+        E_o = np.pi*springconst*(amplitude*10**-9)**2/Qfactor*(1/Physics_Semiconductors.e)*1000 #meV
+        A_exc = Xdata315_dgy
+        A_exco = 0.09
+        E_ts = E_o*(A_exc-A_exco)/A_exc
+        Xdata315_dgy = E_ts
+
+
 
         #########################################################
         #########################################################
@@ -344,7 +342,7 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             specs=[[{}, {}], [{}, {}]])
 
         fig.add_trace(go.Scatter(
-            x = model315_dfx, y = model315_dfy,
+            x = Xdata315_dfx, y = Xdata315_dfy,
             name = "FreqShift", mode='lines', showlegend=False,
             line_color=color_Ei
             ), row=1, col=2)
@@ -365,14 +363,14 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             line_color=color_other
             ), row=1, col=2)
         fig.add_trace(go.Scatter(
+            x = Xdata315_dgx, y = Xdata315_dgy,
+            name = "Dissipation", mode='lines', showlegend=False,
+            line_color=color_Ei
+            ), row=2, col=2)
+        fig.add_trace(go.Scatter(
             x = Vg_array, y = dg_biasarray,
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
-            ), row=2, col=2)
-        fig.add_trace(go.Scatter(
-            x = model_dgx, y = model_dgy,
-            name = "Dissipation", mode='lines', showlegend=False,
-            line_color=color_Ei
             ), row=2, col=2)
 
     ############################################################################
@@ -394,7 +392,7 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
     fig.update_yaxes(row=1, col=1, title_text= "Contact Potential (eV)")
     fig.update_yaxes(row=2, col=1, title_text= "Force (N)")
     fig.update_yaxes(row=1, col=2, title_text = "Frequency Shift (Hz)")
-    fig.update_yaxes(row=2, col=2, title_text = "Dissipation")
+    fig.update_yaxes(row=2, col=2, title_text = "Dissipation (meV / cycle)")
 
     fig.update_xaxes(row=1, col=1,showticklabels=True,range=[-3,2])
     fig.update_xaxes(row=2, col=1,title_text= "Gate Bias (V)",range=[-3,2])

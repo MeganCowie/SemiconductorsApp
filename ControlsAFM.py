@@ -53,7 +53,7 @@ AFM_Card3 = dbc.Card([
         dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=1000, step=50, value=0,), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=50, step=5, value=30,), md=12),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Hop", id="AFMText_hoplabel", style={"margin-left": "10px"}), md=8),
