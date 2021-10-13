@@ -17,7 +17,6 @@ import CallbacksAFM
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-
 ################################################################################
 ################################################################################
 # LAYOUT
@@ -340,3 +339,5 @@ def update_output(toggle):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+else:
+    server = app.server
