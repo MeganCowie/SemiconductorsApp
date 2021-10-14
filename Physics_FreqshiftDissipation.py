@@ -13,6 +13,7 @@ from scipy.optimize import fsolve
 import Physics_Semiconductors
 import Physics_SurfacepotForce
 import Physics_AFMoscillation
+from joblib import Parallel, delayed
 
 ################################################################################
 ################################################################################
@@ -42,11 +43,7 @@ def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tiprad
     dg_addedterm = (springconst*amplitude*1e-9)/(Qfactor)
     tiparea = np.pi*tipradius**2
 
-    df_biasarray = []
-    dg_biasarray = []
-    for Vg_index in range(len(Vg_array)):
-        Vg_variable = Vg_array[Vg_index]
-
+    def compute(Vg_variable):
         Vs_AFMarraysoln, F_AFMarraysoln = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # Integrals, RoyGobeil thesis eq. 2.33 & 2.34
@@ -60,10 +57,15 @@ def dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tiprad
         E_ts = E_o*(A_exc-A_exco)/A_exc
         dg_soln = E_ts
 
-        df_biasarray = np.append(df_biasarray, df_soln)
-        dg_biasarray = np.append(dg_biasarray, dg_soln)
+        return [df_soln, dg_soln]
 
-    return df_biasarray, dg_biasarray
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(Vg) for Vg in Vg_array
+    )
+    return [
+        [df_soln for df_soln, dg_soln in result],
+        [dg_soln for df_soln, dg_soln in result]
+    ]
 
 
 

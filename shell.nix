@@ -40,8 +40,10 @@ pkgs.mkShell {
     dash_bootstrap_components
     dash_daq
 
+    joblib
     scipy
     pandas
     gunicorn
+    flake8
   ];
 }
