@@ -31,7 +31,7 @@ app.layout = dbc.Container(
         html.Br(),
         dbc.Row([
         dbc.Col(ControlsBulk.Distributions, md=4),
-        dbc.Col(dcc.Graph(id="DistributionsGraph"), md=8),
+        dbc.Col(html.Div(id="DistributionsGraph"), md=8),
         ], align="top",),
         html.Hr(),
         html.H1(children='Carrier Statistics'),
@@ -88,12 +88,12 @@ app.layout = dbc.Container(
 
 # probability distributions figure
 @app.callback(
-    Output('DistributionsGraph', 'figure'),
+    Output('DistributionsGraph', 'children'),
     [Input('DistributionsSlider_Ef', 'value'),
      Input('DistributionsSlider_T', 'value')])
 def update_figure(slider_Ef, slider_T):
      fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
-     return fig
+     return dcc.Graph(figure=fig)
 
 # carriers figure
 @app.callback(
