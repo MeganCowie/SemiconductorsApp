@@ -47,7 +47,8 @@ def BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,m
         zsem = np.linspace(0, 150, 101)
         psi = 0 * zsem
     else:
-        psi = np.linspace(Vs, Vs * 0.01, 1001)
+        psi = np.linspace(Vs, Vs * 0.0001, 2001)
+        #psi = np.linspace(Vs, Vs * 0.01, 1001)
         zsem = np.array([])
         for value in psi:
             zsem_current, error = quad(zsem_eqn, value, Vs)

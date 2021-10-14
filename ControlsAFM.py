@@ -20,14 +20,14 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_Vg', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Vg', min=-10, max=10, step=0.1, value=-1.5), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_Vg', min=-10, max=10, step=0.1, value=-1.4), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Insulator Thickness (nm)", id="AFMText_zinslabel", style={"margin-left": "10px"}), md=8),
             dbc.Col(html.Div(id='AFMText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=0.1, value=5.5), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=0.1, value=5.2), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px"}), md=8),
@@ -53,14 +53,14 @@ AFM_Card3 = dbc.Card([
         dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=50, step=5, value=30,), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_lag', min=0, max=100, step=5, value=30,), md=12),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Hop", id="AFMText_hoplabel", style={"margin-left": "10px"}), md=8),
         dbc.Col(html.Div(id='AFMText_hop', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_hop', min=0, max=1, step=0.01, value=0.1,), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_hop', min=0, max=1, step=0.01, value=0.05,), md=12),
     ]),
     dbc.Row([
         dbc.Col(html.Div(id='AFMText_RTNoff'),  md=4),

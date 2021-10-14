@@ -12,9 +12,6 @@ from scipy.optimize import fsolve
 from scipy.integrate import quad
 import Physics_Semiconductors
 
-#import warnings
-#warnings.filterwarnings("error")
-
 ################################################################################
 ################################################################################
 # physical constants

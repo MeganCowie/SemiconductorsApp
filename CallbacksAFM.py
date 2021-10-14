@@ -36,7 +36,7 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         frequency = slider_resfreq #Hz
         hop = slider_hop
         lag = slider_lag/10**9*frequency #radians
-        steps = 50
+        steps = 200
 
         # Independent variable arrays
         Vg_array = np.arange(200)/10-10 #eV
@@ -53,7 +53,7 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         # Find traces for bottom and top of hop
         RTN = False
         Vs_AFMarray0, F_AFMarray0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Nd = round((10**(slider_donor+hop)*10**8)/(1000**3))
+        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
         Vs_AFMarray1, F_AFMarray1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
@@ -87,9 +87,11 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         F_AFMarray0 = np.append(F_AFMarray0, F_AFMarray0)
         F_AFMarray1 = np.append(F_AFMarray1, F_AFMarray1)
 
+        zins_AFMarray = np.append(zins_AFMarray, np.flipud(zins_AFMarray))
         Vs_AFMarray = np.append(Vs_AFMarray, np.flipud(Vs_AFMarray0))
         F_AFMarray = np.append(F_AFMarray, np.flipud(F_AFMarray0))
         time_AFMarray = np.append(time_AFMarray, np.flipud(time_AFMarray))
+        zins_AFMarray = np.append(zins_AFMarray, np.flipud(zins_AFMarray))
         Vs_AFMarray = np.append(Vs_AFMarray, Vs_AFMarray1)
         F_AFMarray = np.append(F_AFMarray, F_AFMarray1)
         time_AFMarray = np.append(time_AFMarray, time_AFMarray)
@@ -188,6 +190,42 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             name = "Force", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
+
+        # Saving results
+        save_zins_zinsarray = pd.DataFrame({"zins_zinsarray": [str(x) for x in zins_array*10**7]})
+        save_Vs_zinsarray = pd.DataFrame({"Vs_zinsarray": [str(x) for x in Vs_zinsarray]})
+        save_F_zinsarray = pd.DataFrame({"F_zinsarray": [str(x) for x in F_zinsarray]})
+        save_zinsarrays = pd.concat([save_zins_zinsarray,save_Vs_zinsarray,save_F_zinsarray], axis=1, join="inner")
+        save_zinsarrays.to_csv('Xsave_ncAFM_zinsarrays.csv',index=False)
+
+        save_time_timearray = pd.DataFrame({"time_timearray": [str(x) for x in time_AFMarray]})
+        save_zins_timearray = pd.DataFrame({"zins_timearray": [str(x) for x in zins_AFMarray*10**7]})
+        save_Vs_timearray = pd.DataFrame({"Vs_timearray": [str(x) for x in Vs_AFMarray]})
+        save_F_timearray = pd.DataFrame({"F_timearray": [str(x) for x in F_AFMarray]})
+        save_timearrays = pd.concat([save_time_timearray,save_zins_timearray,save_Vs_timearray,save_F_timearray], axis=1, join="inner")
+        save_timearrays.to_csv('Xsave_ncAFM_timearrays.csv',index=False)
+
+        save_Ec_AFMarray = pd.DataFrame({"Ec_AFMarray": [str(x) for x in Ec_AFMarray]})
+        save_Ev_AFMarray = pd.DataFrame({"Ev_AFMarray": [str(x) for x in Ev_AFMarray]})
+        save_Ef_AFMarray = pd.DataFrame({"Ef_AFMarray": [str(x) for x in Ef_AFMarray]})
+        save_Gatez1_AFMarray = pd.DataFrame({"Gatez1_AFMarray": [str(x) for x in Gatex_AFMarray[:,0]]})
+        save_GateE1_AFMarray = pd.DataFrame({"GateE1_AFMarray": [str(x) for x in Gatey_AFMarray[:,0]]})
+        save_Gatez2_AFMarray = pd.DataFrame({"Gatez2_AFMarray": [str(x) for x in Gatex_AFMarray[:,1]]})
+        save_GateE2_AFMarray = pd.DataFrame({"GateE2_AFMarray": [str(x) for x in Gatey_AFMarray[:,1]]})
+        save_Insulatorz1_AFMarray = pd.DataFrame({"Insulatorz1_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,0]]})
+        save_InsulatorE1_AFMarray = pd.DataFrame({"InsulatorE1_AFMarray": [str(x) for x in Insulatory_AFMarray[:,0]]})
+        save_Insulatorz2_AFMarray = pd.DataFrame({"Insulatorz2_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,1]]})
+        save_InsulatorE2_AFMarray = pd.DataFrame({"InsulatorE2_AFMarray": [str(x) for x in Insulatory_AFMarray[:,1]]})
+        save_Insulatorz3_AFMarray = pd.DataFrame({"Insulatorz3_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,2]]})
+        save_InsulatorE3_AFMarray = pd.DataFrame({"InsulatorE3_AFMarray": [str(x) for x in Insulatory_AFMarray[:,2]]})
+        save_Insulatorz4_AFMarray = pd.DataFrame({"Insulatorz4_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,3]]})
+        save_InsulatorE4_AFMarray = pd.DataFrame({"InsulatorE4_AFMarray": [str(x) for x in Insulatory_AFMarray[:,3]]})
+
+        save_banddiagram = pd.concat([save_Ec_AFMarray,save_Ev_AFMarray,save_Ef_AFMarray,save_Gatez1_AFMarray,save_GateE1_AFMarray,save_Gatez2_AFMarray,save_GateE2_AFMarray,save_Insulatorz1_AFMarray,save_InsulatorE1_AFMarray,save_Insulatorz2_AFMarray,save_InsulatorE2_AFMarray,save_Insulatorz3_AFMarray,save_InsulatorE3_AFMarray,save_Insulatorz4_AFMarray,save_InsulatorE4_AFMarray], axis=1, join="inner")
+        save_banddiagram.to_csv('Xsave_ncAFM_banddiagram.csv',index=False)
+        pd.DataFrame(zsem_AFMarray*10**7).to_csv("Xsave_ncAFM_banddiagram_zsem.csv")
+        pd.DataFrame(psi_AFMarray).to_csv("Xsave_ncAFM_banddiagram_psi.csv")
+
 
 
         fig.frames=[
@@ -308,11 +346,10 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset
         dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
-        F_biasarray = F_biasarray0*np.pi*tipradius**2
+        # Convert force per unit area to force
+        F_biasarray = F_biasarray*np.pi*tipradius**2
         F_zinsarray = F_zinsarray0*np.pi*tipradius**2
 
-        #savedata(Vg_array, df_biasarray, 'FreqShift.csv')
-        #savedata(Vg_array, dg_biasarray, 'Excitation.csv')
 
         #########################################################
         # Load experimental data (for plotting / comparison only, no fitting in this code)
@@ -372,6 +409,16 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2)
+
+        # Saving results
+        save_bias_biasarray = pd.DataFrame({"Vg_biasarray": [str(x) for x in Vg_array]})
+        save_Vs_biasarray = pd.DataFrame({"Vs_biasarray": [str(x) for x in Vs_biasarray]})
+        save_F_biasarray = pd.DataFrame({"F_biasarray": [str(x) for x in F_biasarray]})
+        save_df_biasarray = pd.DataFrame({"df_biasarray": [str(x) for x in df_biasarray]})
+        save_dg_biasarray = pd.DataFrame({"dg_biasarray": [str(x) for x in dg_biasarray]})
+        save_biasarrays = pd.concat([save_bias_biasarray,save_Vs_biasarray,save_F_biasarray,save_df_biasarray,save_dg_biasarray], axis=1, join="inner")
+        save_biasarrays.to_csv('Xsave_BiasSweep_biasarrays.csv',index=False)
+
 
     ############################################################################
 
