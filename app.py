@@ -57,7 +57,7 @@ app.layout = dbc.Container(
 
     dcc.Tab(label='Surface Measurements', children=[
         html.Hr(),
-        html.H1(children='ncAFM Oscillations'),
+        html.H1(children='fm-AFM Oscillations'),
         html.Br(),
         dbc.Row([
         dbc.Col(ControlsAFM.AFM_Cards1, md=4),
