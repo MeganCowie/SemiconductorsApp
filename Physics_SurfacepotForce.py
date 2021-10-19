@@ -7,7 +7,6 @@
 ################################################################################
 
 import numpy as np
-import pandas as pd
 from scipy.optimize import fsolve
 from scipy.integrate import quad
 import Physics_Semiconductors

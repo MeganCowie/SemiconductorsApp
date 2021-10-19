@@ -1,8 +1,5 @@
 
-Figure out a better numerical solution method
-(Currently have runtime warnings from SurfacepotForce fsolve & can only explore
-a limited dopant concentration range)
-(Might be able to get rid of it by rewriting Vs equation to get rid of large #s)
+# To Do
 
 Check units for Efield and Charge
 
@@ -14,6 +11,7 @@ Or at least organize saving better.
 
 Rephrase "hop" units and the RTN stuff is almost outdated.
 
-
 Change pixels to 'em', or some better way to improve accessibility across
 different monitors.
+
+Calculate fm-AFM oscillations in parallel.

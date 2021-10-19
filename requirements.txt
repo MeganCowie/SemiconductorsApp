@@ -4,7 +4,8 @@ dash_bootstrap_components
 dash_html_components
 plotly
 numpy
-pandas
 scipy
 dash_daq
 joblib
+pandas
+gunicorn
