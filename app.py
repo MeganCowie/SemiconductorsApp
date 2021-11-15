@@ -15,8 +15,49 @@ import CallbacksBulk
 import CallbacksSurface
 import CallbacksAFM
 
+###### important for latex ######
+import dash_defer_js_import as dji
+
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
+
+###### important for latex ######
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                inlineMath: [ ['$','$']],
+                processEscapes: true
+                }
+            });
+            </script>
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
+Distributions_text = open("Text_Distributions.md", "r").read()
+ElectronicStructure_text = open("Text_ElectronicStructure.md", "r").read()
+CarrierStatistics_text = open("Text_CarrierStatistics.md", "r").read()
+ElectricalGating_text = open("Text_ElectricalGating.md", "r").read()
+
+axis_latex_script = dji.Import(src="https://cdn.jsdelivr.net/gh/yueyericardo/simuc@master/apps/dash/resources/redraw.js")
+mathjax_script = dji.Import(src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_SVG")
+
 
 ################################################################################
 ################################################################################
@@ -24,38 +65,42 @@ server = app.server
 
 app.layout = dbc.Container(
     [
-    dcc.Tabs([
-
-    dcc.Tab(label='Bulk Physics', children=[
         html.Hr(),
-        html.H1(children='Probability Distributions'),
         html.Br(),
         dbc.Row([
-        dbc.Col(ControlsBulk.Distributions, md=4),
-        dbc.Col(html.Div(id="DistributionsGraph"), md=8),
+            dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
         ], align="top",),
-        html.Hr(),
-        html.H1(children='Carrier Statistics'),
+        html.Br(),
         html.Br(),
         dbc.Row([
-        dbc.Col(ControlsBulk.Bulk_Cards, md=4),
-        dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
+            dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
+        ], align="top",),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(ControlsBulk.Distributions, md=4),
+            dbc.Col(html.Div(id="DistributionsGraph"), md=8),
         ], align="top",),
         html.Hr(),
-        ]),
-
-    dcc.Tab(label='Surface Physics', children=[
-        html.Hr(),
-        html.H1(children='The MIS Capacitor'),
         html.Br(),
+        dbc.Row([
+            dbc.Col(dcc.Markdown(CarrierStatistics_text, dangerously_allow_html=True), md=12),
+        ], align="top",),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(ControlsBulk.Bulk_Cards, md=4),
+            dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
+        ], align="top",),
+
+        html.Hr(),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
+        ], align="top",),
         dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
             dbc.Col(dcc.Graph(id="SurfaceGraph"), md=9),
         ], align="top",),
-        html.Hr(),
-        ]),
 
-    dcc.Tab(label='Surface Measurements', children=[
         html.Hr(),
         html.H1(children='fm-AFM Oscillations'),
         html.Br(),
@@ -70,18 +115,25 @@ app.layout = dbc.Container(
         dbc.Col(ControlsAFM.AFM_Cards2, md=4),
         dbc.Col(dcc.Graph(id="AFMGraph2"), md=8),
         ], align="top",),
-        html.Hr(),
-        html.H1(children='Time Trace Experiment'),
-        html.Br(),
-        dbc.Row([
-        dbc.Col(ControlsAFM.AFM_Cards3, md=4),
-        dbc.Col(dcc.Graph(id="AFMGraph3"), md=8),
-        ], align="top",),
-        html.Hr(),
-        ]),
-    ])],
+        #html.Hr(),
+        #html.H1(children='Time Trace Experiment'),
+        #html.Br(),
+        #dbc.Row([
+        #dbc.Col(ControlsAFM.AFM_Cards3, md=4),
+        #dbc.Col(dcc.Graph(id="AFMGraph3"), md=8),
+        #], align="top",),
+        #html.Hr(),
+
+    ###### important for latex ######
+    axis_latex_script,
+    mathjax_script,
+
+    ],
     fluid=True,
 )
+
+
+
 
 ################################################################################################################################################################
 ################################################################################################################################################################
@@ -95,6 +147,7 @@ app.layout = dbc.Container(
 def update_figure(slider_Ef, slider_T):
      fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
      return dcc.Graph(figure=fig)
+
 
 # carriers figure
 @app.callback(
@@ -262,31 +315,31 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     return fig
 
 # Time trace experiment figure
-@app.callback(
-    Output('AFMGraph3', 'figure'),
-    [Input('AFMSlider_Vg', 'value'),
-     Input('AFMSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_springconst', 'value'),
-     Input('AFMSlider_tipradius', 'value'),
-     Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
-    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
-    return fig
+#@app.callback(
+#    Output('AFMGraph3', 'figure'),
+#    [Input('AFMSlider_Vg', 'value'),
+#     Input('AFMSlider_zins', 'value'),
+#     Input('SurfaceSlider_bandgap', 'value'),
+#     Input('SurfaceSlider_epsilonsem', 'value'),
+#     Input('SurfaceSlider_WFmet', 'value'),
+#     Input('SurfaceSlider_EAsem', 'value'),
+#     Input('SurfaceSlider_donor', 'value'),
+#     Input('SurfaceSlider_acceptor', 'value'),
+#     Input('SurfaceSlider_emass', 'value'),
+#     Input('SurfaceSlider_hmass', 'value'),
+#     Input('SurfaceSlider_T', 'value'),
+#     Input('AFMSlider_amplitude', 'value'),
+#     Input('AFMSlider_resfreq', 'value'),
+#     Input('AFMSlider_springconst', 'value'),
+#     Input('AFMSlider_tipradius', 'value'),
+#     Input('AFMSlider_Qfactor', 'value'),
+#     Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
+#     Input('AFMtoggle_sampletype', 'value'),
+#     Input('AFMSlider_hop', 'value'),
+#     Input('AFMSlider_lag', 'value')])
+#def update_figure(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+#    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
+#    return fig
 
 # AFM readouts
 @app.callback(
