@@ -15,5 +15,4 @@ Change pixels to 'em', or some better way to improve accessibility across
 different monitors.
 Fix appearance
 
-
 Calculate fm-AFM oscillations in parallel.
