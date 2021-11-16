@@ -1,0 +1,20 @@
+## Electrical Gating
+
+Everything we have done so far has been in equilibrium. Now we have all the background we need to get out of equilibrium by applying a gate voltage to our semiconductor. Now let's think about how our three main classes of materials --~metals, insulators, and semiconductors~-- respond to an electric field. In a metal, carriers are completely free (i.e. we take metals as perfect conductors), so in the presence of an electric field, charge reorganizes, until the electric field is null everywhere. Consequently ($\because \vec{E}=-\nabla V$) all of the bands of a metal are always flat. Insulators are the opposite case: they experience no charge reorganization. But the charge that accumulates on either side of the insulator establishes an electric field in the familiar capacitor configuration $V=\frac{Q}{C}$, where $C$ is inversely proportional to the thickness of the insulator. Therefore, the bands of an insulator are always linear but only constant (flat) in the case where $Q=0$. Semiconductors are the final case. Applying a bias changes the population of the surface states, and therefore causes charge to transfer between the surface states and the bulk states in the depletion region. *Wherever there is a space charge distribution, the bands bend.* So, applying a bias to a semiconductor simply changes its (surface dipole and) degree of band bending.
+
+| Material &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      | Charge density ($\rho$) &nbsp; &nbsp; &nbsp; &nbsp; | Field ($\vec{E}$) &nbsp; &nbsp; &nbsp; &nbsp; | Potential ($V$) &nbsp; &nbsp; &nbsp; &nbsp; | Band shape ($E$) &nbsp; &nbsp; &nbsp; &nbsp; |
+| ---------------- | ---------------- | ---------------- | ---------------- | ---------------- |
+|Metal                   | 0             | 0             | constant      | Flat|
+|Insulator               | 0             | constant      | $\propto z$   | Linear|
+|Semiconductor bulk      | 0             | constant      | $\propto z$   | Linear|
+|Semiconductor surface   | constant      | $\propto z$   | $\propto z^2$ | Quadratic|
+
+<br />
+
+### The MIS Capacitor
+
+We have seen that that there is huge variety in the types of contacts that can be made, and therefore their conduction properties will all be very different. Yeesh. I'm going to jump straight to the picture that is most applicable to my nc-AFM configuration: the metal-insulator-semiconductor (MIS) capacitor. The MIS capacitor is really made up of two contacts: a semiconductor-insulator contact and a metal-insulator contact. We haven't talked at all about the metal-insulator contact so let's give that its moment.
+
+At first I was a little perplexed by the metal-insulator contact. The band is flat because carriers are completely free, as we've established. For a metal, this will always be the case. But if we inject charge / apply a bias, I was puzzled as to why we don't have a potential step (even with zero thickness) at the metal surface due to the charge? And how do we reconcile the fact that metallic electrons are free with the fact that they localize at a surface? The answer is that in addition to an infinite density of states, metals have an infinite density of surface states. So injected charge localizes there, and the potential step they introduce is infinitesimally small.
+
+When we apply a bias across the MIS capacitor, we establish an electric field, and therefore the charge density, electric field, and potential everywhere also vary according to the table above. Band bending as a function of bias is continuous, but there are some critical regimes that are worth naming: zero bias, flatband, accumulation, depletion, and inversion. In the accumulation regime, the bands bend upward, so there is an accumulation of holes at the surface. In the depletion regime, the bands bend downward so there is an accumulation of electrons at the surface. The inversion scenario is an extreme case in which the bands bend so far downward that the conduction band crosses the fermi level, creating an additional negatively charged layer at the surface.
