@@ -40,6 +40,11 @@ rec {
     '';
   };
 
+  app-bin = writeShellScriptBin "server" ''
+    export PYTHONPATH="${app}:$PYTHONPATH"
+    exec ${python-env}/bin/gunicorn app:server -w4
+  '';
+
   python-env = pkgs.python3.buildEnv.override {
     extraLibs = [
       dash
