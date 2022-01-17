@@ -54,7 +54,7 @@ rec {
   };
 
   app-bin = writeShellScriptBin "server" ''
-    export PYTHONPATH="${app}:$PYTHONPATH"
+    cd ${app}
     exec ${python-env}/bin/gunicorn app:server -w4
   '';
 
