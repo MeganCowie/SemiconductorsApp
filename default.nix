@@ -29,6 +29,19 @@ let
 
       doCheck = true;
   };
+
+  dash-defer-js-import = buildPythonPackage rec {
+      pname = "dash_defer_js_import";
+      version = "0.0.2";
+
+      propagatedBuildInputs = [dash];
+      src = fetchPypi {
+        inherit pname version;
+        sha256 = "0jhyvwhp1i0dnivzhvwmsqwi9zbc2d4hgpymshxfsdb5sj9yygs0";
+      };
+
+      doCheck = false;
+  };
 in
 rec {
   app = pkgs.stdenv.mkDerivation {
@@ -41,7 +54,7 @@ rec {
   };
 
   app-bin = writeShellScriptBin "server" ''
-    export PYTHONPATH="${app}:$PYTHONPATH"
+    cd ${app}
     exec ${python-env}/bin/gunicorn app:server -w4
   '';
 
@@ -50,6 +63,7 @@ rec {
       dash
       dash_bootstrap_components
       dash_daq
+      dash-defer-js-import
 
       joblib
       scipy
