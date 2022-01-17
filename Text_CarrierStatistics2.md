@@ -1,13 +1,3 @@
-## Carrier Statistics
-
-Let's start by looking at the center of an infinitely large crystalline semiconductor. Below follows the standard derivation of semiconductor carrier density in such a sample. From first principles, we take the electron (n) and hole (p) densities as:
-
-$$n = \int_{E_C}^{\infty} g_c(E) f_F(E) dE$$
-
-$$p = \int_{-\infty}^{E_V} g_v(E) \left(1-f_F(E)\right) dE$$
-
-where $f_{F}(E)=\left( 1+exp\left(\frac{E-E_f}{k_BT}\right)\right)^{-1}$ is the Fermi-dirac distribution, where the Fermi level $E_f$ is defined by $f_F(E_f)=1/2$. Spin degeneracy of the conduction and valence levels is accounted for by the density of states $g_c(E)$ and $g_v(E)$. $f(E)$ is the probability of finding an electron in a state with energy $E$ and $(1-f(E))$ is the probability of finding a hole in a state with energy $E$. Of course, in setting the limits of these integrals we have assumed zero temperature, but if the band gap is much greater than thermal smearing ($\sim25$meV), we take this approximation is valid even at room temperature. A typical band gap is on the order of 1~eV, so this is a standard approximation.
-
 At relevant energetic scales, we find that the Fermi-Dirac distribution (quantum) approaches the Maxwell-Boltzmann distribution (classical), given by $f_M(E)=exp\left(\frac{E_f-E}{k_BT}\right)$. Therefore, the integrals above are rewritten as:
 
 $$n = \int_{E_C}^{\infty} g_c(E) f_M(E) dE$$
@@ -71,8 +61,6 @@ And furthermore, if $n_D^+=n_A^-=0$, $n=p$ so we recover the intrinsic case:
 
 $$E_f-E_i=0$$
 
-which is redundant to write, but which is also presented in this form for clarity and to show that the equations above are true for extrinsic as well as intrinsic semiconductors.
-
-Note that these results assume low dopant concentrations, such that the interaction between dopants is negligible. At higher densities, the impurity levels may form a band, and all of the energetics derived above, including the Fermi level, intrinsic level, etc., would change in value.
+which is redundant to write, but which is also presented in this form for clarity and to show that the equations above are true for extrinsic as well as intrinsic semiconductors. Note that these results assume low dopant concentrations, such that the interaction between dopants is negligible. At higher densities, the impurity levels may form a band, and all of the energetics derived above, including the Fermi level, intrinsic level, etc., would change in value.
 
 It's important to keep in mind we are not charging the system - that is, we are still net charge-neutral, presuming our dopant atoms are neutral. The entire consequence of the extrinsic $g(E)$ states is to change the respective *populations* of electrons and holes in the conduction and valence bands. In addition, we are still operating in the nearly free electron approximation. If we introduce too many dopants, our system will no longer be approximately crystalline, and the nearly free approximation becomes invalid. Alternatively, if the dopants are very different in size from the intrinsic atoms, or if they otherwise dramatically disrupt the lattice, the nearly free approximation suffers.

@@ -47,6 +47,59 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
     return fig
 
 
+
+
+
+def fig_carrierintegrals(slider_Ef, slider_T):
+
+    # input (slider) parameters
+    Ef, T = slider_Ef, slider_T
+
+    E = np.arange(5000)/1000
+    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
+    min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x = E[np.where(E<=Ef)], y = fc[np.where(E<=Ef)],
+        name = "reference", mode='lines',
+        line_color=color_fc, showlegend=False,
+        ))
+    fig.add_trace(go.Scatter(
+        x=E[np.where(E<=Ef)], y=E[np.where(E<=Ef)]/E[np.where(E<=Ef)],
+        name = "holes", mode= 'none',
+        fill='tonexty', fillcolor=color_p,
+        ))
+    fig.add_trace(go.Scatter(
+        x=E[np.where(E>=Ef)], y=fc[np.where(E>=Ef)],
+        name = "electrons", mode= 'none',
+        fill='tozeroy', fillcolor=color_n,
+        ))
+    fig.add_trace(go.Scatter(
+        x = E, y = fc,
+        name = "Fermi Dirac", mode='lines',
+        line_color=color_fc
+        ))
+    fig.add_trace(go.Scatter(
+        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
+        name = "Ef", mode='lines',
+        line_color=color_Ef
+        ))
+    fig.add_trace(go.Scatter(
+        x=[Ef-0.1,Ef+0.1], y=[0.8,0.2],
+        mode="text",showlegend=False,
+        text=["1-f(E)", "f(E)"],textfont_size=14,
+    ))
+
+    fig.update_layout(xaxis_title='Energy (eV)', yaxis_title='f(E)',
+                      xaxis=dict(range=[min_x,max_x]), yaxis=dict(range=[min_y,max_y]),
+                      transition_duration=500, margin=dict(t=0))
+    return fig
+
+
+
+
+
 def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
 
     # input (slider) parameters

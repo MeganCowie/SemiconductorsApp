@@ -2,6 +2,7 @@ import dash
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import pandas as pd
 
 import Physics_Semiconductors
 import Physics_SurfacepotForce
@@ -329,7 +330,7 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         lag = slider_lag/10**9*frequency #rad
         steps = 50
 
-        Vg_array = np.arange(100)/20-3 #eV
+        Vg_array = np.arange(100)/10-5 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
         Vs_biasarray0, F_biasarray0, Vs_zinsarray0, F_zinsarray0= Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
@@ -408,13 +409,13 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
             ), row=2, col=2)
 
         # Saving results
-        # save_bias_biasarray = pd.DataFrame({"Vg_biasarray": [str(x) for x in Vg_array]})
-        # save_Vs_biasarray = pd.DataFrame({"Vs_biasarray": [str(x) for x in Vs_biasarray]})
-        # save_F_biasarray = pd.DataFrame({"F_biasarray": [str(x) for x in F_biasarray]})
-        # ave_df_biasarray = pd.DataFrame({"df_biasarray": [str(x) for x in df_biasarray]})
-        # save_dg_biasarray = pd.DataFrame({"dg_biasarray": [str(x) for x in dg_biasarray]})
-        # save_biasarrays = pd.concat([save_bias_biasarray,save_Vs_biasarray,save_F_biasarray,save_df_biasarray,save_dg_biasarray], axis=1, join="inner")
-        # save_biasarrays.to_csv('Xsave_BiasSweep_biasarrays.csv',index=False)
+        save_bias_biasarray = pd.DataFrame({"Vg_biasarray": [str(x) for x in Vg_array]})
+        save_Vs_biasarray = pd.DataFrame({"Vs_biasarray": [str(x) for x in Vs_biasarray]})
+        save_F_biasarray = pd.DataFrame({"F_biasarray": [str(x) for x in F_biasarray]})
+        save_df_biasarray = pd.DataFrame({"df_biasarray": [str(x) for x in df_biasarray]})
+        save_dg_biasarray = pd.DataFrame({"dg_biasarray": [str(x) for x in dg_biasarray]})
+        save_biasarrays = pd.concat([save_bias_biasarray,save_Vs_biasarray,save_F_biasarray,save_df_biasarray,save_dg_biasarray], axis=1, join="inner")
+        save_biasarrays.to_csv('Xsave_BiasSweep_biasarrays.csv',index=False)
 
 
     ############################################################################

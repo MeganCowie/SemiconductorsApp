@@ -52,7 +52,8 @@ app.index_string = '''
 
 Distributions_text = open("Text_Distributions.md", "r").read()
 ElectronicStructure_text = open("Text_ElectronicStructure.md", "r").read()
-CarrierStatistics_text = open("Text_CarrierStatistics.md", "r").read()
+CarrierStatistics1_text = open("Text_CarrierStatistics1.md", "r").read()
+CarrierStatistics2_text = open("Text_CarrierStatistics2.md", "r").read()
 ElectricalGating_text = open("Text_ElectricalGating.md", "r").read()
 
 axis_latex_script = dji.Import(src="https://cdn.jsdelivr.net/gh/yueyericardo/simuc@master/apps/dash/resources/redraw.js")
@@ -80,10 +81,18 @@ app.layout = dbc.Container(
             dbc.Col(ControlsBulk.Distributions, md=4),
             dbc.Col(html.Div(id="DistributionsGraph"), md=8),
         ], align="top",),
-        html.Hr(),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
+        ], align="top",),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(ControlsBulk.CarrierIntegrals, md=4),
+            dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=8),
+        ], align="top",),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
         ], align="top",),
         html.Br(),
         dbc.Row([
@@ -148,6 +157,14 @@ def update_figure(slider_Ef, slider_T):
      fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
      return dcc.Graph(figure=fig)
 
+# probability distributions figure
+@app.callback(
+    Output('CarrierIntegralsGraph', 'children'),
+    [Input('CarrierIntegralsSlider_Ef', 'value'),
+     Input('CarrierIntegralsSlider_T', 'value')])
+def update_figure(slider_Ef, slider_T):
+     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T)
+     return dcc.Graph(figure=fig)
 
 # carriers figure
 @app.callback(

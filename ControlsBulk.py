@@ -28,6 +28,29 @@ Distributions = dbc.Card([
     ]),
 ], body=True,)
 
+# CarrierIntegrals controls
+CarrierIntegrals = dbc.Card([
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Fermi Energy (eV)", id="CarrierIntegralsText_Eflabel"), md=8),
+            dbc.Col(html.Div(id='CarrierIntegralsText_Ef', style = {'text-align': 'right'}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='CarrierIntegralsSlider_Ef', min=0, max=1, step=0.00001, value=0.5,), md=12),
+        ]),
+    ]),
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Temperature (K)", id="CarrierIntegralsText_Tlabel"), md=8),
+            dbc.Col(html.Div(id='CarrierIntegralsText_T', style = {'text-align': 'right'}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='CarrierIntegralsSlider_T', min=0, max=1000, step=1, value=300,), md=12),
+        ]),
+    ]),
+], body=True,)
+
+
 # Carrier controls
 Bulk_Card1 = dbc.Card([
     dbc.Row([

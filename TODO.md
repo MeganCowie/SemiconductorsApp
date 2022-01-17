@@ -16,3 +16,7 @@ different monitors.
 Fix appearance
 
 Calculate fm-AFM oscillations in parallel.
+
+
+Add toggles for n-type and p-type
+Add toggles for existing analyses parameters
