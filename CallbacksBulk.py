@@ -72,24 +72,9 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Scatter(
-        x=E[np.where(E<=Ef)], y=fvgv[np.where(E<=Ef)],
-        name = "p", mode= 'none',
-        fill='tozeroy', fillcolor=color_p,
-        ),secondary_y=True)
-    fig.add_trace(go.Scatter(
-        x=E[np.where(E>=Ef)], y=fcgc[np.where(E>=Ef)],
-        name = "n", mode= 'none',
-        fill='tozeroy', fillcolor=color_n,
-        ))
-    fig.add_trace(go.Scatter(
-        x = E, y = gv,
-        name = "g<sub>v</sub>(E)", mode='lines',
-        line_color=color_Ev
-        ),secondary_y=True)
-    fig.add_trace(go.Scatter(
-        x = E, y = gc,
-        name = "g<sub>c</sub>(E)", mode='lines',
-        line_color=color_Ec
+        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
+        name = "Ef", mode='lines',
+        line_color=color_Ef
         ))
     fig.add_trace(go.Scatter(
         x = E, y = fc,
@@ -97,10 +82,25 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
         line_color=color_fc
         ))
     fig.add_trace(go.Scatter(
-        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
-        name = "Ef", mode='lines',
-        line_color=color_Ef
+        x = E, y = gc,
+        name = "g<sub>c</sub>(E)", mode='lines',
+        line_color=color_Ec
         ))
+    fig.add_trace(go.Scatter(
+        x = E, y = gv,
+        name = "g<sub>v</sub>(E)", mode='lines',
+        line_color=color_Ev
+        ),secondary_y=True)
+    fig.add_trace(go.Scatter(
+        x=E[np.where(E>=Ef)], y=fcgc[np.where(E>=Ef)],
+        name = "n", mode= 'none',
+        fill='tozeroy', fillcolor=color_n,
+        ))
+    fig.add_trace(go.Scatter(
+        x=E[np.where(E<=Ef)], y=fvgv[np.where(E<=Ef)],
+        name = "p", mode= 'none',
+        fill='tozeroy', fillcolor=color_p,
+        ),secondary_y=True)
     fig.update_layout(xaxis_title='Energy (eV)',
                       xaxis=dict(range=[min_x,max_x]),
                       yaxis=dict(range=[min_y,max_y],title='f(E)'),
