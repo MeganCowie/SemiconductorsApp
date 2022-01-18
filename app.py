@@ -80,6 +80,7 @@ app.layout = dbc.Container(
         dbc.Row([
             dbc.Col(ControlsBulk.Distributions, md=4),
             dbc.Col(html.Div(id="DistributionsGraph"), md=8),
+
         ], align="top",),
         html.Br(),
         dbc.Row([
@@ -99,7 +100,6 @@ app.layout = dbc.Container(
             dbc.Col(ControlsBulk.Bulk_Cards, md=4),
             dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
         ], align="top",),
-
         html.Hr(),
         html.Br(),
         dbc.Row([
@@ -157,13 +157,15 @@ def update_figure(slider_Ef, slider_T):
      fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
      return dcc.Graph(figure=fig)
 
-# probability distributions figure
+# carrier integrals figure
 @app.callback(
     Output('CarrierIntegralsGraph', 'children'),
     [Input('CarrierIntegralsSlider_Ef', 'value'),
-     Input('CarrierIntegralsSlider_T', 'value')])
-def update_figure(slider_Ef, slider_T):
-     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T)
+     Input('CarrierIntegralsSlider_T', 'value'),
+     Input('CarrierIntegralsSlider_gc', 'value'),
+     Input('CarrierIntegralsSlider_gv', 'value')])
+def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
+     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
      return dcc.Graph(figure=fig)
 
 # carriers figure
@@ -178,6 +180,7 @@ def update_figure(slider_Ef, slider_T):
 def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
     fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
     return fig
+
 
 # probability distributions readouts
 @app.callback(

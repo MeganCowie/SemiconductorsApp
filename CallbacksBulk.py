@@ -50,34 +50,50 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
 
 
 
-def fig_carrierintegrals(slider_Ef, slider_T):
+def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
 
     # input (slider) parameters
     Ef, T = slider_Ef, slider_T
 
-    E = np.arange(5000)/1000
+    E = np.arange(5000)/5000+0.000000001
     fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
-    min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
+    min_x, max_x, min_y, max_y = 0, 1, 0, 1
 
-    fig = go.Figure()
+    gc_E=E-Ef-0.03
+    gv_E=-E+Ef-0.03
+    gc_E[gc_E<0] = 0
+    gv_E[gv_E<0] = 0
+
+    gc = slider_gc*(gc_E)**(1/2)
+    gv = slider_gv*(gv_E)**(1/2)
+
+    fcgc=fc*gc
+    fvgv=(1-fc)*gv
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Scatter(
-        x = E[np.where(E<=Ef)], y = fc[np.where(E<=Ef)],
-        name = "reference", mode='lines',
-        line_color=color_fc, showlegend=False,
-        ))
+        x=E[np.where(E<=Ef)], y=fvgv[np.where(E<=Ef)],
+        name = "p", mode= 'none',
+        fill='tozeroy', fillcolor=color_p,
+        ),secondary_y=True)
     fig.add_trace(go.Scatter(
-        x=E[np.where(E<=Ef)], y=E[np.where(E<=Ef)]/E[np.where(E<=Ef)],
-        name = "holes", mode= 'none',
-        fill='tonexty', fillcolor=color_p,
-        ))
-    fig.add_trace(go.Scatter(
-        x=E[np.where(E>=Ef)], y=fc[np.where(E>=Ef)],
-        name = "electrons", mode= 'none',
+        x=E[np.where(E>=Ef)], y=fcgc[np.where(E>=Ef)],
+        name = "n", mode= 'none',
         fill='tozeroy', fillcolor=color_n,
         ))
     fig.add_trace(go.Scatter(
+        x = E, y = gv,
+        name = "g<sub>v</sub>(E)", mode='lines',
+        line_color=color_Ev
+        ),secondary_y=True)
+    fig.add_trace(go.Scatter(
+        x = E, y = gc,
+        name = "g<sub>c</sub>(E)", mode='lines',
+        line_color=color_Ec
+        ))
+    fig.add_trace(go.Scatter(
         x = E, y = fc,
-        name = "Fermi Dirac", mode='lines',
+        name = "f<sub>f</sub>(E)", mode='lines',
         line_color=color_fc
         ))
     fig.add_trace(go.Scatter(
@@ -85,14 +101,10 @@ def fig_carrierintegrals(slider_Ef, slider_T):
         name = "Ef", mode='lines',
         line_color=color_Ef
         ))
-    fig.add_trace(go.Scatter(
-        x=[Ef-0.1,Ef+0.1], y=[0.8,0.2],
-        mode="text",showlegend=False,
-        text=["1-f(E)", "f(E)"],textfont_size=14,
-    ))
-
-    fig.update_layout(xaxis_title='Energy (eV)', yaxis_title='f(E)',
-                      xaxis=dict(range=[min_x,max_x]), yaxis=dict(range=[min_y,max_y]),
+    fig.update_layout(xaxis_title='Energy (eV)',
+                      xaxis=dict(range=[min_x,max_x]),
+                      yaxis=dict(range=[min_y,max_y],title='f(E)'),
+                      yaxis2=dict(range=[max_y,min_y],title='1-f(E)',side='right'),
                       transition_duration=500, margin=dict(t=0))
     return fig
 

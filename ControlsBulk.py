@@ -48,6 +48,24 @@ CarrierIntegrals = dbc.Card([
             dbc.Col(dcc.Slider(id='CarrierIntegralsSlider_T', min=0, max=1000, step=1, value=300,), md=12),
         ]),
     ]),
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Density of States: Conduction Band", id="CarrierIntegralsText_gclabel"), md=8),
+            dbc.Col(html.Div(id='CarrierIntegralsText_gc', style = {'text-align': 'right'}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='CarrierIntegralsSlider_gc', min=0, max=5, step=0.1, value=2,), md=12),
+        ]),
+    ]),
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Density of States: Valence Band", id="CarrierIntegralsText_gvlabel"), md=8),
+            dbc.Col(html.Div(id='CarrierIntegralsText_gv', style = {'text-align': 'right'}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='CarrierIntegralsSlider_gv', min=0, max=5, step=0.1, value=2,), md=12),
+        ]),
+    ]),
 ], body=True,)
 
 
