@@ -184,6 +184,22 @@ def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, 
 ################################################################################
 # FUNCTIONALITY
 
+def togglefunctions(toggle):
+    if toggle == True: #p-type
+        stylen = {'color': '#7f7f7f', 'fontSize': 15, 'text-align': 'right'}
+        stylep = {'color': '#57c5f7', 'fontSize': 15, 'text-align': 'right'}
+        disabledn = True
+        disabledp = False
+        valuen = 0
+        valuep = 18.8
+    elif toggle == False: #n-type
+        stylen = {'color': '#57c5f7', 'fontSize': 15, 'text-align': 'right'}
+        stylep = {'color': '#7f7f7f', 'fontSize': 15, 'text-align': 'right'}
+        disabledn = False
+        disabledp = True
+        valuen = 18.8
+        valuep = 0
+    return stylen, stylep, disabledn, disabledp, valuen, valuep
 
 
 

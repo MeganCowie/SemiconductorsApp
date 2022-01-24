@@ -66,45 +66,45 @@ mathjax_script = dji.Import(src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/
 
 app.layout = dbc.Container(
     [
-        html.Hr(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.Distributions, md=4),
-            dbc.Col(html.Div(id="DistributionsGraph"), md=8),
-
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.CarrierIntegrals, md=4),
-            dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=8),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.Bulk_Cards, md=4),
-            dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
-        ], align="top",),
-        html.Hr(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
+        #html.Hr(),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
+        #], align="top",),
+        #html.Br(),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
+        #], align="top",),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(ControlsBulk.Distributions, md=4),
+        #    dbc.Col(html.Div(id="DistributionsGraph"), md=8),
+        #
+        #], align="top",),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
+        #], align="top",),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(ControlsBulk.CarrierIntegrals, md=4),
+        #    dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=8),
+        #], align="top",),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
+        #], align="top",),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(ControlsBulk.Bulk_Cards, md=4),
+        #    dbc.Col(dcc.Graph(id="BulkGraph"), md=8),
+        #], align="top",),
+        #html.Hr(),
+        #html.Br(),
+        #dbc.Row([
+        #    dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
+        #], align="top",),
         dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
             dbc.Col(dcc.Graph(id="SurfaceGraph"), md=9),
@@ -149,79 +149,79 @@ app.layout = dbc.Container(
 # BULK
 
 # probability distributions figure
-@app.callback(
-    Output('DistributionsGraph', 'children'),
-    [Input('DistributionsSlider_Ef', 'value'),
-     Input('DistributionsSlider_T', 'value')])
-def update_figure(slider_Ef, slider_T):
-     fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
-     return dcc.Graph(figure=fig)
+#@app.callback(
+#    Output('DistributionsGraph', 'children'),
+#    [Input('DistributionsSlider_Ef', 'value'),
+#     Input('DistributionsSlider_T', 'value')])
+#def update_figure(slider_Ef, slider_T):
+#     fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
+#     return dcc.Graph(figure=fig)
 
 # carrier integrals figure
-@app.callback(
-    Output('CarrierIntegralsGraph', 'children'),
-    [Input('CarrierIntegralsSlider_Ef', 'value'),
-     Input('CarrierIntegralsSlider_T', 'value'),
-     Input('CarrierIntegralsSlider_gc', 'value'),
-     Input('CarrierIntegralsSlider_gv', 'value')])
-def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
-     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
-     return dcc.Graph(figure=fig)
+#@app.callback(
+#    Output('CarrierIntegralsGraph', 'children'),
+#    [Input('CarrierIntegralsSlider_Ef', 'value'),
+#     Input('CarrierIntegralsSlider_T', 'value'),
+#     Input('CarrierIntegralsSlider_gc', 'value'),
+#     Input('CarrierIntegralsSlider_gv', 'value')])
+#def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
+#     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
+#     return dcc.Graph(figure=fig)
 
 # carriers figure
-@app.callback(
-    Output('BulkGraph', 'figure'),
-    [Input('BulkSlider_donor', 'value'),
-     Input('BulkSlider_acceptor', 'value'),
-     Input('BulkSlider_T', 'value'),
-     Input('BulkSlider_emass', 'value'),
-     Input('BulkSlider_hmass', 'value'),
-     Input('BulkToggle_type', 'value')])
-def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
-    fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
-    return fig
+#@app.callback(
+#    Output('BulkGraph', 'figure'),
+#    [Input('BulkSlider_donor', 'value'),
+#     Input('BulkSlider_acceptor', 'value'),
+#     Input('BulkSlider_T', 'value'),
+#     Input('BulkSlider_emass', 'value'),
+#     Input('BulkSlider_hmass', 'value'),
+#     Input('BulkToggle_type', 'value')])
+#def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
+#    fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
+#    return fig
 
 
-# probability distributions readouts
-@app.callback(
-    [Output('DistributionsText_Ef', 'children'),
-     Output('DistributionsText_T', 'children')],
-    [Input('DistributionsSlider_Ef', 'value'),
-     Input('DistributionsSlider_T', 'value')])
-def update_output(slider_Ef, slider_T):
-    readout_Ef, readout_T = CallbacksBulk.readouts_probabilitydistributions(slider_Ef, slider_T)
-    return readout_Ef, readout_T
+## probability distributions readouts
+#@app.callback(
+#    [Output('DistributionsText_Ef', 'children'),
+#     Output('DistributionsText_T', 'children')],
+#    [Input('DistributionsSlider_Ef', 'value'),
+#     Input('DistributionsSlider_T', 'value')])
+#def update_output(slider_Ef, slider_T):
+#    readout_Ef, readout_T = CallbacksBulk.readouts_probabilitydistributions(slider_Ef, slider_T)
+#    return readout_Ef, readout_T
 
 # carriers readouts
-@app.callback(
-    [Output('BulkText_donor', 'children'),
-     Output('BulkText_acceptor', 'children'),
-     Output('BulkText_T', 'children'),
-     Output('BulkText_emass', 'children'),
-     Output('BulkText_hmass', 'children')],
-    [Input('BulkSlider_donor', 'value'),
-     Input('BulkSlider_acceptor', 'value'),
-     Input('BulkSlider_T', 'value'),
-     Input('BulkSlider_emass', 'value'),
-     Input('BulkSlider_hmass', 'value')])
-def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
-    readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = CallbacksBulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
-    return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass
+#@app.callback(
+#    [Output('BulkText_donor', 'children'),
+#     Output('BulkText_acceptor', 'children'),
+#     Output('BulkText_T', 'children'),
+#     Output('BulkText_emass', 'children'),
+#     Output('BulkText_hmass', 'children')],
+#    [Input('BulkSlider_donor', 'value'),
+#     Input('BulkSlider_acceptor', 'value'),
+#     Input('BulkSlider_T', 'value'),
+#     Input('BulkSlider_emass', 'value'),
+#     Input('BulkSlider_hmass', 'value')])
+#def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
+#    readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = CallbacksBulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
+#    return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass
 
 # toggle functionality
-@app.callback(
-    [Output('BulkText_typen', 'style'),
-     Output('BulkText_typep', 'style'),
-     Output('BulkSlider_donor', 'disabled'),
-     Output('BulkSlider_acceptor', 'disabled'),
-     Output('BulkSlider_donor', 'value'),
-     Output('BulkSlider_acceptor', 'value'),
-     Output('BulkText_typen', 'children'),
-     Output('BulkText_typep', 'children')],
-    [Input('BulkToggle_type', 'value')])
-def update_output(toggle):
-    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksBulk.togglefunctions(toggle)
-    return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
+#@app.callback(
+#    [Output('BulkText_typen', 'style'),
+#     Output('BulkText_typep', 'style'),
+#     Output('BulkSlider_donor', 'disabled'),
+#     Output('BulkSlider_acceptor', 'disabled'),
+#     Output('BulkSlider_donor', 'value'),
+#     Output('BulkSlider_acceptor', 'value'),
+#     Output('BulkText_typen', 'children'),
+#     Output('BulkText_typep', 'children')],
+#    [Input('BulkToggle_type', 'value')])
+#def update_output(toggle):
+#    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksBulk.togglefunctions(toggle)
+#    return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
 
 
 
@@ -276,7 +276,20 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
     return readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T
 
-
+# toggle functionality
+@app.callback(
+    [Output('SurfaceText_typen', 'style'),
+     Output('SurfaceText_typep', 'style'),
+     Output('SurfaceSlider_donor', 'disabled'),
+     Output('SurfaceSlider_acceptor', 'disabled'),
+     Output('SurfaceSlider_donor', 'value'),
+     Output('SurfaceSlider_acceptor', 'value'),
+     Output('SurfaceText_typen', 'children'),
+     Output('SurfaceText_typep', 'children')],
+    [Input('SurfaceToggle_type', 'value')])
+def update_output(toggle):
+    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksSurface.togglefunctions(toggle)
+    return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
 
 ################################################################################################################################################################
 ################################################################################################################################################################

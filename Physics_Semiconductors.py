@@ -121,5 +121,5 @@ def Coxp(eox,epsilon_o,tox): # C / (V*cm**2)
 
 # Debye length
 def LD(epsilon_sem, Nd, Na, T):
-    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(Na)*e)) #m
+    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(Nd+Na)*e)) #m
     return LD

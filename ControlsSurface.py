@@ -1,9 +1,18 @@
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+import dash_daq as daq
 
 ################################################################################
 ################################################################################
+
+Surface_Card0 = dbc.Card([
+    dbc.Row([
+        dbc.Col(html.Div(id='SurfaceText_typen'),  md=3),
+        dbc.Col(daq.ToggleSwitch(id='SurfaceToggle_type', value=True), md=6),
+        dbc.Col(html.Div(id='SurfaceText_typep'),  md=3),
+    ]),
+], style={"width": "325px"}, body=True),
 
 Surface_Card1 = dbc.Card([
     dbc.FormGroup([
@@ -101,10 +110,10 @@ dbc.Row([
     dbc.FormGroup([
         dbc.Row([
             dbc.Col(dbc.Label("Donors (cm-3)", id="SurfaceText_donorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='SurfaceText_donor',style={'fontSize': 10, 'text-align': 'right'}), md=4),
+            dbc.Col(html.Div(id='SurfaceText_donor',style={'fontSize': 10, 'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='SurfaceSlider_donor', min=1, max=26, step=0.5, value=0, disabled=True)), #disabled for now because the code is hard-written for p-type
+            dbc.Col(dcc.Slider(id='SurfaceSlider_donor', min=17, max=20, step=0.1, value=0, disabled=True)),
         ]),
     ]),
     dbc.FormGroup([
@@ -135,7 +144,22 @@ Surface_Card3 = dbc.Card([
             dbc.Col(html.Div(id='SurfaceText_ni', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=8),
         ], justify="between"),
     ]),
+], style={"width": "325px"}),
+
+Surface_Card4 = dbc.Card([
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Presets", id="SurfaceText_Presets", style = {'text-align': 'right', "margin-left": "10px", "margin-top": "10px"}), md=8),
+        ], justify="between"),
+        dbc.Row([dbc.Col(dcc.RadioItems(id="SurfaceButtons_presets", options=[
+            {'label': '   MoSe2', 'value': 1},
+            {'label': '   Silicon', 'value': 2},
+            {'label': '   Pentacene', 'value': 3},
+            {'label': '   Other', 'value': 4}
+            ],value=1,labelStyle={"width": '50%','display': 'inline-block'},
+            ), style={"margin-left": "10px", "margin-top": "0px"},width="auto")
+        ], justify="center"),]),
 ], style={"width": "325px"})
 
 
-Surface_Cards = [dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3)]
+Surface_Cards = [dbc.Col(Surface_Card0), dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3), dbc.Col(Surface_Card4)]

@@ -43,11 +43,14 @@ def VsF(guess,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 
         C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
         u = Vs/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/(N_D**2+N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
-        Qs = np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
-
-        expression = Vg_variable+CPD_metsem-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
-
+        if Na ==0: #n-type
+            f = (np.exp(u)-u-1+(n_i**2/(N_D**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+            Qs = -np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
+            expression = Vg_variable+CPD_metsem+Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
+        elif Nd ==0: #p-type
+            f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+            Qs = np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
+            expression = Vg_variable+CPD_metsem-Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
         return expression
 
     def F_eqn(Vs_variable):
