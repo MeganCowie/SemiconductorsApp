@@ -7,12 +7,20 @@ import dash_daq as daq
 ################################################################################
 
 Surface_Card0 = dbc.Card([
-    dbc.Row([
-        dbc.Col(html.Div(id='SurfaceText_typen'),  md=3),
-        dbc.Col(daq.ToggleSwitch(id='SurfaceToggle_type', value=True), md=6),
-        dbc.Col(html.Div(id='SurfaceText_typep'),  md=3),
-    ]),
-], style={"width": "325px"}, body=True),
+    dbc.FormGroup([
+        dbc.Row([
+            dbc.Col(dbc.Label("Presets", id="SurfaceText_Presets", style = {'text-align': 'right', "margin-left": "10px", "margin-top": "10px"}), md=8),
+        ], justify="between"),
+        dbc.Row([dbc.Col(dcc.RadioItems(id="SurfaceButtons_presets", options=[
+            {'label': '   MoSe2', 'value': 1},
+            {'label': '   Silicon', 'value': 2},
+            {'label': '   Pentacene', 'value': 3},
+            {'label': '   Other', 'value': 4}
+            ],value=1,labelStyle={"width": '50%','display': 'inline-block'},
+            ), style={"margin-left": "50px", "margin-top": "0px"},width="auto")
+        ], justify="center"),]),
+], style={"width": "325px"})
+
 
 Surface_Card1 = dbc.Card([
     dbc.FormGroup([
@@ -34,6 +42,13 @@ Surface_Card1 = dbc.Card([
 ], style={"width": "325px"})
 
 Surface_Card2 = dbc.Card([
+dbc.FormGroup([
+    dbc.Row([
+        dbc.Col(html.Div(id='SurfaceText_typen'),  md=3),
+        dbc.Col(daq.ToggleSwitch(id='SurfaceToggle_type', value=True), md=6),
+        dbc.Col(html.Div(id='SurfaceText_typep'),  md=3),
+    ]),
+], style={"margin-top":"20px","margin-bottom":"20px","margin-left":"10px","margin-right":"20px"}),
 dbc.Row([
     dbc.Col([
         dbc.FormGroup([
@@ -106,7 +121,6 @@ dbc.Row([
         ]),
     ], md=6)
 ]),
-
     dbc.FormGroup([
         dbc.Row([
             dbc.Col(dbc.Label("Donors (cm-3)", id="SurfaceText_donorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
@@ -140,26 +154,19 @@ dbc.Row([
 Surface_Card3 = dbc.Card([
     dbc.FormGroup([
         dbc.Row([
-            dbc.Col(dbc.Label("ni (cm-3)", id="SurfaceText_nilabel", style={"margin-left": "10px", "margin-top": "20px"}), md=4),
-            dbc.Col(html.Div(id='SurfaceText_ni', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=8),
+            dbc.Col(dbc.Label("Readouts", id="SurfaceText_Readouts", style = {'text-align': 'right', "margin-left": "10px", "margin-top": "10px"}), md=8),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dbc.Label("Intrinsic Density (cm-3)", id="SurfaceText_nilabel", style={"margin-left": "18px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_ni', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dbc.Label("Depletion Width (nm)", id="SurfaceText_zDlabel", style={"margin-left": "18px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_zD', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
     ]),
 ], style={"width": "325px"}),
 
-Surface_Card4 = dbc.Card([
-    dbc.FormGroup([
-        dbc.Row([
-            dbc.Col(dbc.Label("Presets", id="SurfaceText_Presets", style = {'text-align': 'right', "margin-left": "10px", "margin-top": "10px"}), md=8),
-        ], justify="between"),
-        dbc.Row([dbc.Col(dcc.RadioItems(id="SurfaceButtons_presets", options=[
-            {'label': '   MoSe2', 'value': 1},
-            {'label': '   Silicon', 'value': 2},
-            {'label': '   Pentacene', 'value': 3},
-            {'label': '   Other', 'value': 4}
-            ],value=1,labelStyle={"width": '50%','display': 'inline-block'},
-            ), style={"margin-left": "10px", "margin-top": "0px"},width="auto")
-        ], justify="center"),]),
-], style={"width": "325px"})
 
 
-Surface_Cards = [dbc.Col(Surface_Card0), dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3), dbc.Col(Surface_Card4)]
+Surface_Cards = [dbc.Col(Surface_Card0), dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3)]

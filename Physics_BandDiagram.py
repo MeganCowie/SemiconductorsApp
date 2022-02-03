@@ -104,4 +104,11 @@ def BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,m
     Q_array = np.hstack((Qmet,Qins,Qsem))
 
 
-    return Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni
+
+    ##############################################################
+    # Calculate the depletion width
+    # (This is not required to draw the band diagram, but it is a useful result.)
+
+    zD = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs, T)
+
+    return Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni, zD

@@ -15,18 +15,18 @@ import Physics_BandDiagram
 def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T):
 
     # input (slider) parameters
-    Vg = slider_Vg
-    zins = slider_zins*1e-7 # cm
-    bandgap = slider_bandgap
-    epsilon_sem = slider_epsilonsem
+    Vg = slider_Vg #eV
+    zins = slider_zins*1e-7 #cm
+    bandgap = slider_bandgap #eV
+    epsilon_sem = slider_epsilonsem #dimensionless
     WFmet = slider_WFmet #eV
     EAsem = slider_EAsem #eV
-    Nd = round((10**slider_donor*10**8)/(1000**3))
-    Na = round((10**slider_acceptor*10**8)/(1000**3))
-    mn = slider_emass*Physics_Semiconductors.me # kg
-    mp = slider_hmass*Physics_Semiconductors.me # kg
-    T = slider_T # K
-    sampletype = False
+    Nd = round((10**slider_donor*10**8)/(1000**3)) #/cm^3
+    Na = round((10**slider_acceptor*10**8)/(1000**3)) #/cm^3
+    mn = slider_emass*Physics_Semiconductors.me #kg
+    mp = slider_hmass*Physics_Semiconductors.me #kg
+    T = slider_T #K
+    sampletype = False #False=semiconducting; True=metallic
 
     Vg_array = np.arange(200)/10-10 #eV
     zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
@@ -35,7 +35,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     Vs, F = Physics_SurfacepotForce.VsF(1,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni, zD = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
 
     #########################################################
@@ -156,7 +156,8 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
     fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
 
-    return fig, format(ni, ".1E")
+
+    return fig, format(ni, ".1E"), format(zD*10**9, ".0f")
 
 
 

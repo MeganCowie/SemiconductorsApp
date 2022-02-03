@@ -121,5 +121,10 @@ def Coxp(eox,epsilon_o,tox): # C / (V*cm**2)
 
 # Debye length
 def LD(epsilon_sem, Nd, Na, T):
-    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(Nd+Na)*e)) #m
+    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(Nd+Na)*e)) #cm
     return LD
+
+# Depletion Width (pg. 435 eq. 10.5)
+def zD(epsilon_sem, Nd, Na, Vs, T):
+    zD = np.sqrt(2*epsilon_sem*epsilon_o*abs(Vs)/((Na+Nd)*e))/100 #m
+    return zD

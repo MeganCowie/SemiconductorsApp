@@ -233,7 +233,8 @@ app.layout = dbc.Container(
 # surface figure
 @app.callback(
     [Output('SurfaceGraph', 'figure'),
-     Output('SurfaceText_ni', 'children')],
+     Output('SurfaceText_ni', 'children'),
+     Output('SurfaceText_zD', 'children')],
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
      Input('SurfaceSlider_bandgap', 'value'),
@@ -246,8 +247,8 @@ app.layout = dbc.Container(
      Input('SurfaceSlider_hmass', 'value'),
      Input('SurfaceSlider_T', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T):
-    fig, ni = CallbacksSurface.fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
-    return fig, ni
+    fig, ni, zD = CallbacksSurface.fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
+    return fig, ni, zD
 
 # surface readouts
 @app.callback(
@@ -344,7 +345,6 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
         button_presets = 4
     else:
         button_presets = button_presets
-
 
     toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
 
