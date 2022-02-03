@@ -14,6 +14,7 @@ import ControlsAFM
 import CallbacksBulk
 import CallbacksSurface
 import CallbacksAFM
+import PresetsSurface
 
 ###### important for latex ######
 import dash_defer_js_import as dji
@@ -276,20 +277,78 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
     return readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T
 
-# toggle functionality
+
+# surface presets
 @app.callback(
-    [Output('SurfaceText_typen', 'style'),
+    [Output('SurfaceToggle_type', 'value'),
+     Output('SurfaceSlider_Vg', 'value'),
+     Output('SurfaceSlider_zins', 'value'),
+     Output('SurfaceSlider_bandgap', 'value'),
+     Output('SurfaceSlider_epsilonsem', 'value'),
+     Output('SurfaceSlider_WFmet', 'value'),
+     Output('SurfaceSlider_EAsem', 'value'),
+     Output('SurfaceSlider_donor', 'value'),
+     Output('SurfaceSlider_acceptor', 'value'),
+     Output('SurfaceSlider_emass', 'value'),
+     Output('SurfaceSlider_hmass', 'value'),
+     Output('SurfaceSlider_T', 'value'),
+     Output('SurfaceButtons_presets', 'value'),
+     Output('SurfaceText_typen', 'style'),
      Output('SurfaceText_typep', 'style'),
      Output('SurfaceSlider_donor', 'disabled'),
      Output('SurfaceSlider_acceptor', 'disabled'),
-     Output('SurfaceSlider_donor', 'value'),
-     Output('SurfaceSlider_acceptor', 'value'),
      Output('SurfaceText_typen', 'children'),
      Output('SurfaceText_typep', 'children')],
-    [Input('SurfaceToggle_type', 'value')])
-def update_output(toggle):
-    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksSurface.togglefunctions(toggle)
-    return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
+    [Input('SurfaceButtons_presets', 'value'),
+     Input('SurfaceSlider_Vg', 'value'),
+     Input('SurfaceSlider_zins', 'value'),
+     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_epsilonsem', 'value'),
+     Input('SurfaceSlider_WFmet', 'value'),
+     Input('SurfaceSlider_EAsem', 'value'),
+     Input('SurfaceSlider_donor', 'value'),
+     Input('SurfaceSlider_acceptor', 'value'),
+     Input('SurfaceSlider_emass', 'value'),
+     Input('SurfaceSlider_hmass', 'value'),
+     Input('SurfaceSlider_T', 'value'),
+     Input('SurfaceToggle_type', 'value')])
+def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, toggle_type):
+
+    # Somehow writing this as an or statement doesn't work, so for now it looks like this.
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if 'SurfaceToggle_type' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_Vg' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_zins' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_bandgap' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_epsilonsem' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_WFmet' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_EAsem' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_donor' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_acceptor' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_emass' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_hmass' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_Vg' in changed_id:
+        button_presets = 4
+    elif 'SurfaceSlider_T' in changed_id:
+        button_presets = 4
+    else:
+        button_presets = button_presets
+
+
+    toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T)
+
+    return toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
 
 ################################################################################################################################################################
 ################################################################################################################################################################
