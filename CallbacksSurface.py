@@ -136,7 +136,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=3)
 
-    fig.update_layout(transition_duration=300, height=800,margin=dict(t=0), showlegend=False)
+    fig.update_layout(transition_duration=300, height=900, margin=dict(t=0), showlegend=False)
 
     fig.update_xaxes(title_text="", row=1, col=1)
     fig.update_xaxes(title_text="", row=3, col=1)
@@ -151,13 +151,14 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_yaxes(title_text="Potential (V)", row=3, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Electric Field", row=4, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Charge", row=5, col=1, title_standoff = 5)
-    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
-    fig.update_yaxes(title_text="Force (N/nm^2)", range=[-3*10**-12,0],row=3, col=2, title_standoff = 5)#, range=[min(F_biasarray), max(F_biasarray)])
-    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, range=[min(np.append(Vs_biasarray, Vs_zinsarray)), max(np.append(Vs_biasarray, Vs_zinsarray))])
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray), max(F_biasarray)])
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, range=[Vs_biasarray[70], Vs_biasarray[120]])
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(np.append(F_biasarray[70], F_biasarray[120])),0.001*10**-12])
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5)
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(np.append(F_biasarray[70], F_biasarray[120])),0.001*10**-12])
 
+    LD=Physics_Semiconductors.LD(epsilon_sem, Nd*(100)**3, Na*(100)**3, T)
 
-    return fig, format(ni, ".1E"), format(zD*10**9, ".0f")
+    return fig, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zD*10**9, ".1f")
 
 
 

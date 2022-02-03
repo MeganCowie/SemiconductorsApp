@@ -11,7 +11,7 @@ AFM_Card1 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_Calculate", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
-],style={"width": "400px"})
+])
 
 AFM_Card2 = dbc.Card([
     dbc.FormGroup([
@@ -44,7 +44,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(dcc.Slider(id='AFMSlider_resfreq', min=200000, max=400000, step=10000, value=330000), md=12),
         ]),
     ]),
-],style={"width": "400px"})
+])
 
 
 AFM_Card3 = dbc.Card([
@@ -72,7 +72,7 @@ AFM_Card3 = dbc.Card([
         dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False, style={ "margin-bottom": "20px"}), md=4),
         dbc.Col(html.Div(id='AFMText_metallic'),  md=4),
     ], style={'padding': 5}),
-],style={"width": "400px"}),
+]),
 
 AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2), dbc.Col(AFM_Card3)]
 
@@ -85,7 +85,7 @@ AFM_Card1 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_CalculateBiasExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
-],style={"width": "400px"})
+])
 
 
 AFM_Card2 = dbc.Card([
@@ -112,7 +112,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(dcc.Slider(id='AFMSlider_tipradius', min=1, max=25, step=1, value=10,), md=12),
         ]),
     ]),
-],style={"width": "400px"})
+])
 
 AFM_Cards2 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2)]
 
@@ -124,7 +124,7 @@ AFM_Card1 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_CalculateTimeExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
-],style={"width": "400px"})
+])
 
 
 AFM_Cards3 = [dbc.Col(AFM_Card1)]

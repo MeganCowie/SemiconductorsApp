@@ -80,7 +80,7 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap
         Vs_variable = Vs_AFMarray[zins_AFMindex]
 
         if sampletype == False: # semiconductor band diagram
-            Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs_variable,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni, zD = Physics_BandDiagram.BandDiagram(Vs_variable,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
             Ec_AFMarray.append(Ec)
             Ev_AFMarray.append(Ev)
             Ei_AFMarray.append(Ei)
