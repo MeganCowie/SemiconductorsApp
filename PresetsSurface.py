@@ -36,14 +36,14 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     elif button_presets == 3: #Pentacene
         toggle_type = False
         slider_Vg = -1.4
-        slider_zins = 4
+        slider_zins = 6
         slider_bandgap = 2.2
         slider_epsilonsem = 11.8
         slider_WFmet = 4.1
-        slider_EAsem = 4.0
+        slider_EAsem = 2.9
         slider_emass = 1
         slider_hmass = 1
-        slider_donor = 18.92
+        slider_donor = 17.9
         slider_acceptor = 0
         slider_T = 300
         stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}

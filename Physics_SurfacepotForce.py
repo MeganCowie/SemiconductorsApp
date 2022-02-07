@@ -79,6 +79,8 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
 
     Vs_biasarray = []
     F_biasarray = []
+    zD_biasarray = []
+
     Vs_soln = 1
     for Vg_index in range(len(Vg_array)):
         guess = Vs_soln
@@ -107,11 +109,15 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
         #if np.remainder(Vg_array[Vg_index]*10,2)==0:
         #    print([Vg_array[Vg_index], guess, attempt])
 
+        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T)
+
         Vs_biasarray = np.append(Vs_biasarray, Vs_soln)
         F_biasarray = np.append(F_biasarray, F_soln)
+        zD_biasarray = np.append(zD_biasarray, zD_soln)
 
     Vs_zinsarray = []
     F_zinsarray = []
+    zD_zinsarray = []
     Vs_soln = -10
     for zins_index in range(len(zins_array)):
         guess = Vs_soln
@@ -120,7 +126,12 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFm
             Vs_soln, F_soln = VsF(guess+0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         else:
             Vs_soln, F_soln = VsF(guess-0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T)
+
         Vs_zinsarray = np.append(Vs_zinsarray, Vs_soln)
         F_zinsarray = np.append(F_zinsarray, F_soln)
+        zD_zinsarray = np.append(zD_zinsarray, zD_soln)
 
-    return Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray
+
+    return Vs_biasarray, F_biasarray, zD_biasarray, Vs_zinsarray, F_zinsarray, zD_zinsarray

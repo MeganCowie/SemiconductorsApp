@@ -33,7 +33,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
 
 
     Vs, F = Physics_SurfacepotForce.VsF(1,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_biasarray, F_biasarray, zD_biasarray, Vs_zinsarray, F_zinsarray, zD_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni, zD = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
@@ -43,7 +43,12 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig = make_subplots(
         rows=5, cols=3, shared_yaxes=False, shared_xaxes=True,
         column_widths=[0.2, 0.2, 0.2], row_heights=[0.5, 1, 0.5, 0.5, 0.5],
-        specs=[[{"rowspan":2}, {"rowspan":2}, {"rowspan":2}], [None, {}, None], [{}, {"rowspan":3}, {"rowspan": 3}], [{}, None, None], [{}, None, None]])
+        specs=[
+        [{"rowspan":2}, {"rowspan":2,"secondary_y": True}, {"rowspan":2,"secondary_y": True}],
+        [None, {}, None],
+        [{}, {"rowspan":3}, {"rowspan": 3}],
+        [{}, None, None],
+        [{}, None, None]])
     fig.add_trace(go.Scatter(
         x = zsem*1e7, y = Ev-psi,
         name = "Valence Band", mode='lines', showlegend=False,
@@ -99,12 +104,22 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         x = Vg_array, y = Vs_biasarray,
         name = "Contact Potential (bias)", mode='lines', showlegend=False,
         line_color=color_other
-        ), row=1, col=2)
+        ), row=1, col=2, secondary_y=False)
     fig.add_trace(go.Scatter(
         x = [Vg], y = [Vs],
         name = "This Contact Potential (bias)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
-        ), row=1, col=2)
+        ), row=1, col=2, secondary_y=False)
+    fig.add_trace(go.Scatter(
+        x = Vg_array, y = zD_biasarray*10**9,
+        name = "Depletion Width (bias)", mode='lines', showlegend=False,
+        line_color=color_ox
+        ), row=1, col=2, secondary_y=True)
+    fig.add_trace(go.Scatter(
+        x = [Vg], y = [zD*10**9],
+        name = "This Depletion Width (bias)", mode='markers', showlegend=False,
+        marker=dict(color=color_indicator,size=10),
+        ), row=1, col=2, secondary_y=True)
     fig.add_trace(go.Scatter(
         x = Vg_array, y = F_biasarray,
         name = "Force (bias)", mode='lines', showlegend=False,
@@ -119,12 +134,22 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         x = zins_array*1e7, y = Vs_zinsarray,
         name = "Contact Potential (zins)", mode='lines', showlegend=False,
         line_color=color_other
-        ), row=1, col=3)
+        ), row=1, col=3, secondary_y=False)
     fig.add_trace(go.Scatter(
         x = [zins*1e7], y = [Vs],
         name = "This Contact Potential (zins)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
-        ), row=1, col=3)
+        ), row=1, col=3, secondary_y=False)
+    fig.add_trace(go.Scatter(
+        x = zins_array*1e7, y = zD_zinsarray*10**9,
+        name = "Depletion Width (zins)", mode='lines', showlegend=False,
+        line_color=color_ox
+        ), row=1, col=3, secondary_y=True)
+    fig.add_trace(go.Scatter(
+        x = [zins*1e7], y = [zD*10**9],
+        name = "This Depletion Width (zins)", mode='markers', showlegend=False,
+        marker=dict(color=color_indicator,size=10),
+        ), row=1, col=3, secondary_y=True)
     fig.add_trace(go.Scatter(
         x = zins_array*1e7, y = F_zinsarray,
         name = "Force (zins)", mode='lines', showlegend=False,
@@ -136,6 +161,9 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=3)
 
+    biasrange_indexmin = np.where(Vg_array==-3)
+    biasrange_indexmax = np.where(Vg_array==+3)
+
     fig.update_layout(transition_duration=300, height=900, margin=dict(t=0), showlegend=False)
 
     fig.update_xaxes(title_text="", row=1, col=1)
@@ -143,22 +171,26 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_xaxes(title_text="", row=4, col=1)
     fig.update_xaxes(title_text="z (nm)", row=5, col=1)
     fig.update_xaxes(title_text="", row=1, col=2)
-    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[-3,2],row=3,col=2)#range=[min(Vg_array), max(Vg_array)], row=3, col=2)
+    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[Vg_array[biasrange_indexmin][0], Vg_array[biasrange_indexmax][0]],row=3,col=2)
     fig.update_xaxes(title_text="", row=1, col=3)
     fig.update_xaxes(title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=3, col=3)
 
     fig.update_yaxes(title_text="Energy (eV)", row=1, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Potential (V)", row=3, col=1, title_standoff = 5)
-    fig.update_yaxes(title_text="Electric Field", row=4, col=1, title_standoff = 5)
-    fig.update_yaxes(title_text="Charge", row=5, col=1, title_standoff = 5)
-    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, range=[Vs_biasarray[70], Vs_biasarray[120]])
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(np.append(F_biasarray[70], F_biasarray[120])),0.001*10**-12])
-    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5)
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(np.append(F_biasarray[70], F_biasarray[120])),0.001*10**-12])
+    fig.update_yaxes(title_text="Electric Field (eV/nm)", row=4, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Charge (eV/nm^2)", row=5, col=1, title_standoff = 5)
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, secondary_y=False, side='left')
+    fig.update_yaxes(title_text="Depletion Width (nm)", row=1, col=2, title_standoff = 5, secondary_y=True, side='right')
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin][0], F_biasarray[biasrange_indexmax][0]), max(F_biasarray)])
+    fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, secondary_y=False, side='left')
+    fig.update_yaxes(title_text="Depletion Width (nm)", row=1, col=3, title_standoff = 5, secondary_y=True, side='right')
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin][0], F_biasarray[biasrange_indexmax][0]), max(F_biasarray)])
 
     LD=Physics_Semiconductors.LD(epsilon_sem, Nd*(100)**3, Na*(100)**3, T)
 
-    return fig, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zD*10**9, ".1f")
+    zD = Vg_array[biasrange_indexmin][0]
+
+    return fig, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zD, ".1f") #format(zD*10**9, ".1f")
 
 
 
