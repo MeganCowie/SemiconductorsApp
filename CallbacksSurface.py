@@ -161,8 +161,19 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=3)
 
-    biasrange_indexmin = np.where(Vg_array==-3)
-    biasrange_indexmax = np.where(Vg_array==+3)
+
+    # Automated axis scaling
+    biasmin = -3
+    biasmax = +3
+    if biasmin<Vg and Vg>biasmax:
+        biasrange_indexmin = find_nearest(Vg_array,biasmin)
+        biasrange_indexmax = find_nearest(Vg_array,Vg+1)
+    elif biasmin>Vg and Vg<biasmax:
+        biasrange_indexmin = find_nearest(Vg_array,Vg-1)
+        biasrange_indexmax = find_nearest(Vg_array,biasmax)
+    else:
+        biasrange_indexmin = find_nearest(Vg_array,biasmin)
+        biasrange_indexmax = find_nearest(Vg_array,biasmax)
 
     fig.update_layout(transition_duration=300, height=900, margin=dict(t=0), showlegend=False)
 
@@ -171,7 +182,7 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_xaxes(title_text="", row=4, col=1)
     fig.update_xaxes(title_text="z (nm)", row=5, col=1)
     fig.update_xaxes(title_text="", row=1, col=2)
-    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[Vg_array[biasrange_indexmin][0], Vg_array[biasrange_indexmax][0]],row=3,col=2)
+    fig.update_xaxes(title_text= "Gate Bias (eV)", range=[Vg_array[biasrange_indexmin], Vg_array[biasrange_indexmax]],row=3,col=2)
     fig.update_xaxes(title_text="", row=1, col=3)
     fig.update_xaxes(title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=3, col=3)
 
@@ -181,14 +192,14 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     fig.update_yaxes(title_text="Charge (eV/nm^2)", row=5, col=1, title_standoff = 5)
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=2, title_standoff = 5, secondary_y=False, side='left')
     fig.update_yaxes(title_text="Depletion Width (nm)", row=1, col=2, title_standoff = 5, secondary_y=True, side='right')
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin][0], F_biasarray[biasrange_indexmax][0]), max(F_biasarray)])
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=2, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin], F_biasarray[biasrange_indexmax]), max(F_biasarray)])
     fig.update_yaxes(title_text="Contact Potential (eV)", row=1, col=3, title_standoff = 5, secondary_y=False, side='left')
     fig.update_yaxes(title_text="Depletion Width (nm)", row=1, col=3, title_standoff = 5, secondary_y=True, side='right')
-    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin][0], F_biasarray[biasrange_indexmax][0]), max(F_biasarray)])
+    fig.update_yaxes(title_text="Force (N/nm^2)", row=3, col=3, title_standoff = 5, range=[min(F_biasarray[biasrange_indexmin], F_biasarray[biasrange_indexmax]), max(F_biasarray)])
 
     LD=Physics_Semiconductors.LD(epsilon_sem, Nd*(100)**3, Na*(100)**3, T)
 
-    zD = Vg_array[biasrange_indexmin][0]
+    #zD = Vg_array[biasrange_indexmax][0]
 
     return fig, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zD, ".1f") #format(zD*10**9, ".1f")
 
@@ -218,7 +229,10 @@ def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, 
 ################################################################################
 # FUNCTIONALITY
 
-
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
 
 ################################################################################
 ################################################################################
