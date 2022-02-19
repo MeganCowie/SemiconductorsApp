@@ -29,9 +29,9 @@ epsilon_o = Physics_Semiconductors.epsilon_o
 ################################################################################
 # Calculate band bending
 
-def BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    Ec, Ev = Physics_Semiconductors.EcEv(T, bandgap)
+    Ec, Ev = Physics_Semiconductors.EcEv(T, Eg)
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
     Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
     no,po = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
@@ -61,21 +61,20 @@ def BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,m
 ################################################################################
 # Create arrays needed to draw the band diagram
 
-def BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
-    Ec,Ev = Physics_Semiconductors.EcEv(T,bandgap)
-    Eg = Physics_Semiconductors.Eg(Ec,Ev)
+    Ec,Ev = Physics_Semiconductors.EcEv(T,Eg)
     ni = Physics_Semiconductors.ni(NC,NV,Eg,T)
     Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
     Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    zsem, psi = BandBending(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    zsem, psi = BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, Ec, Ef)
 
-
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 433)
     Vins = Vg - Vs - CPD_metsem # potential drop across insulator
-    offtop = 1 # arbitraty offsets to draw vacuum gap as "wide gap" semiconductor
-    offbot = 10
+    offtop = 2 # arbitraty offsets to draw vacuum gap as "wide gap" semiconductor
+    offbot = 8
     Insulatorx = [0, 0, -zins*1e7, -zins*1e7, 0]
     Insulatory = [Ec-Vs+EAsem-offbot, Ec-Vs+EAsem-offtop, Vg+WFmet-offtop, Vg+WFmet-offbot,  Ec-Vs+EAsem-offbot]
 
@@ -84,7 +83,6 @@ def BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,m
 
     Gatex = np.array([-zins*1e7-20, -zins*1e7])
     Gatey = np.array([Vg, Vg])
-
 
     zmetarray = np.array([-zins*1e7-20, -zins*1e7,-zins*1e7])
     zinsarray = np.array([-zins*1e7, 0])
@@ -104,11 +102,4 @@ def BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,m
     Q_array = np.hstack((Qmet,Qins,Qsem))
 
 
-
-    ##############################################################
-    # Calculate the depletion width
-    # (This is not required to draw the band diagram, but it is a useful result.)
-
-    zD = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs, T)
-
-    return Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni, zD
+    return Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni

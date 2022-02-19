@@ -18,22 +18,29 @@ me = sp.value('electron mass') #kg
 e = sp.e #C
 epsilon_o = sp.value('vacuum electric permittivity')/100 #C/(V*cm)
 
+
 ################################################################################
 ################################################################################
-# probability distributions
+# solid state and extrinsic semiconductor definitions
 
 # Electron and hole Fermi-dirac distributions
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 38)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 71)
+    # Jonscher Solid Semiconductors (pg 12-13)
 def fcfv(E, Ef, T): # dimensionless
     fc = np.reciprocal(np.exp((E-Ef)/(kB*T))+1)
     fv = 1-np.reciprocal(np.exp((E-Ef)/(kB*T))+1)
     return fc, fv
 
 # Maxwell Boltzmann probability distribution
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 75)
 def MaxwellBoltzmann(E, Ef, T): #dimensionless
-    g = np.reciprocal(np.exp((E-Ef)/(kB*T)))
-    return g
+    fb = np.reciprocal(np.exp((E-Ef)/(kB*T)))
+    return fb
 
 # Density of states in the conduction and valence bands
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 36)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 69-70)
 def gcgv(E, Ec, Ev, mn, mp): # units?
     Earg=E-Ec
     Earg[Earg<0]=0
@@ -43,7 +50,11 @@ def gcgv(E, Ec, Ev, mn, mp): # units?
     gv = 1/(2*sp.pi**2)*((2*mp/e)/(hbar**2))**(3/2)*np.sqrt(Earg)
     return gc, gv
 
+
 # Number of electrons/holes in the conduction/valence band
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 43)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 86)
+    # Jonscher Solid Semiconductors (pg 29)
 def NeNh(E, fc, fv, gc, gv, Ec, Ev): #dimensionless
     Ne=fc*gc
     Ne[E<Ec]=0
@@ -51,73 +62,96 @@ def NeNh(E, fc, fv, gc, gv, Ec, Ev): #dimensionless
     Nh[E>Ev]=0
     return Ne, Nh
 
-################################################################################
-################################################################################
-# carrier & energy definitions
-
 # effective density of conduction and valence band states
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 44)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 89-91)
 def NCNV(T, mn, mp): # 1/cm**3
-    NC = 1/np.sqrt(2)*((mn*kB*T/e)/(sp.pi*(hbar**2)))**(3/2)*(100**3)
-    NV = 1/np.sqrt(2)*((mp*kB*T/e)/(sp.pi*(hbar**2)))**(3/2)*(100**3)
+    NC = 2*((2*sp.pi*mn*kB*T/e)/((2*sp.pi*hbar)**2))**(3/2)*(100**3)#1/np.sqrt(2)*((mn*kB*T/e)/(sp.pi*(hbar**2)))**(3/2)*(100**3)
+    NV = 2*((2*sp.pi*mp*kB*T/e)/((2*sp.pi*hbar)**2))**(3/2)*(100**3)#1/np.sqrt(2)*((mp*kB*T/e)/(sp.pi*(hbar**2)))**(3/2)*(100**3)
     return NC, NV
 
-# conduction and valence band absolute energies
-def EcEv(T, bandgap): # eV
-    Ec = 1.17 - 4.73e-4 * T ** 2 / (T + 636.0)
-    Ev = Ec-bandgap
-    return Ec, Ev
-
-# band gap energy
-def Eg(Ec, Ev): #eV
-    Eg = Ec-Ev
-    return Eg
-
-# intrinsic level
-def Ei(Ev, Ec, T, mn, mp): #eV
-    Ei = Ev+(Ec-Ev)/2 + (kB*T)/2*np.log(mp/mn)**(3/2)
-    #Ei = kB * T * np.log(ni / NC) + Ec
-    return Ei
-
-# intrinsic carrier density
-def ni(NC, NV, Eg, T): #1/cm**3
-    ni = np.sqrt(NC*NV)*np.exp(-Eg/(2*kB*T))
-    return ni
-
 # electron and hole concentrations
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 45)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 89-91)
+    # Jonscher Solid Semiconductors (pg 30-31)
 def nopo(NC, NV, Ec, Ev, Ef, T): #1/cm**3
     n_o = NC * np.exp((-Ec+Ef)/(kB*T))
     p_o = NV * np.exp((Ev-Ef)/(kB*T))
     return n_o, p_o
 
+# intrinsic carrier density
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 46)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 92)
+def ni(NC, NV, Eg, T): #1/cm**3
+    ni = np.sqrt(NC*NV)*np.exp(-Eg/(2*kB*T))
+    return ni
+
+# conduction and valence band absolute energies
+# The conduction band level does not impact the Vs or F, so set arbitrarily as 1
+    # Jonscher Solid Semiconductors (pg 30)
+def EcEv(T, Eg): # eV
+    Ec = 1 #silicon 1.17 - 4.73e-4 * T ** 2 / (T + 636.0)
+    Ev = Ec-Eg
+    return Ec, Ev
+
+# intrinsic level
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 52)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 94)
+    # Jonscher Solid Semiconductors (pg 31)
+def Ei(Ev, Ec, T, mn, mp): #eV
+    Ei = (Ec+Ev)/2+(3/4)*kB*T*np.log(mp/mn) #Ev+(Ec-Ev)/2 + (kB*T)/2*np.log(mp/mn)**(3/2)
+    return Ei
+
 # Fermi level
+    # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 49)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 115)
+    # Jonscher Solid Semiconductors (pg 33)
 def Ef(NC, NV, Ec, Ev, T, Nd, Na): #eV
-    def Ef_eqn(Ef):
-        no, po = nopo(NC, NV, Ec, Ev, Ef, T)
+    def Ef_eqn(Ef_soln):
+        no, po = nopo(NC, NV, Ec, Ev, Ef_soln, T)
         expression = po-no+Nd-Na
         return expression
     Ef = fsolve(Ef_eqn, 1)[0]
-    #Efn = Ei+kB*T*np.log((ND_ion+p)/ni)
-    #Efp = Ei-kB*T*np.log((NA_ion+n)/ni)
     return Ef
 
 
 ################################################################################
+################################################################################
+# MOS capacitor
 
 # Contact potential difference
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
+    # See pg. 225 in Sze
 def CPD_metsem(WFmet, EAsem, Ec, Ef):
     WFsem = EAsem + Ec - Ef
     CPD_metsem = WFmet - WFsem
     return CPD_metsem
 
-# flatband voltage
+# flatband voltage (assuming no trapped charges)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 434)
 def Vfb(CPD_metsem): # eV
     Vfb = CPD_metsem
     return Vfb
 
-# oxide capacitance per unit area
-def Coxp(eox,epsilon_o,tox): # C / (V*cm**2)
-    Coxp = eox * epsilon_o / tox
-    return Coxp
+# intgration constants
+def uf(N_A,N_D,n_i,T,Vs):
+    if N_A ==0: #n-type
+        u = Vs/(kB*T) #dimensionless
+        f = (np.exp(u)-u-1+(n_i**2/(N_D**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+    elif N_D ==0: #p-type
+        u = -1*Vs/(kB*T) #dimensionless
+        f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+    return u,f
+
+# Charge in the semiconductor
+def Qs(u,f,epsilon_sem,T,L_D):
+    Qs = -1*np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
+    return Qs
+
+# Force between MOS plates
+def F(f,epsilon_sem,T,L_D):
+    F = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/L_D*f)**2 #N/m**2
+    return F
 
 # Debye length
 def LD(epsilon_sem, N_D, N_A, T):
@@ -125,6 +159,10 @@ def LD(epsilon_sem, N_D, N_A, T):
     return LD
 
 # Depletion Width (pg. 435 eq. 10.5)
-def zD(epsilon_sem, Nd, Na, Vs, T):
-    zD = np.sqrt(2*epsilon_sem*epsilon_o*abs(Vs)/((Na+Nd)*e))/100 #m (Note units: Na and Nd are in cm^-3)
+    # ONLY VALID IN DEPLETION REGION!
+def zD(epsilon_sem, Nd, Na, Vs, T, Vg, CPD_metsem):
+    if Vg < CPD_metsem:
+        zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/((Na+Nd)*e))/100 #m (Note units: Na and Nd are in cm^-3)
+    else:
+        zD = 0
     return zD

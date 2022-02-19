@@ -32,6 +32,13 @@ Surface_Card1 = dbc.Card([
             dbc.Col(dcc.Slider(id='SurfaceSlider_Vg', min=-10, max=10, step=0.1, value=-1.4,), md=12),
         ]),
         dbc.Row([
+            dbc.Col(dbc.Label("Alpha", id="SurfaceText_alphalabel", style={"margin-left": "10px", "margin-top": "10px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_alpha', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dcc.Slider(id='SurfaceSlider_alpha', min=0, max=1, step=0.01, value=0,), md=12),
+        ]),
+        dbc.Row([
             dbc.Col(dbc.Label("Insulator Thickness (nm)", id="SurfaceText_zinslabel", style={"margin-left": "10px"}), md=8),
             dbc.Col(html.Div(id='SurfaceText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),

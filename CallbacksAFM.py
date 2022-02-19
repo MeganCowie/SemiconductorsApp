@@ -333,11 +333,11 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         Vg_array = np.arange(100)/10-5 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
-        Vs_biasarray0, F_biasarray0, Vs_zinsarray0, F_zinsarray0= Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray0, F_biasarray0, zD_biasarray0, Vs_zinsarray0, F_zinsarray0, zD_zinsarray0 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         df_biasarray0, dg_biasarray0 = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
-        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray1, F_biasarray1, zD_biasarray1, Vs_zinsarray1, F_zinsarray1, zD_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         df_biasarray1, dg_biasarray1 =  Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))

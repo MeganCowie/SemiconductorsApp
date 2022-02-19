@@ -1,11 +1,6 @@
 
 # To Do
 
-Check units for Efield and Charge
-
-converting between n-type to p-type is a mess: I need a toggle like the bulk
-situation which forces one or the other to zero.
-
 Add save buttons everywhere.
 Or at least organize saving better.
 
@@ -16,6 +11,5 @@ different monitors.
 Fix appearance
 
 Calculate fm-AFM oscillations in parallel.
-
 
 Add toggles for existing analyses parameters
