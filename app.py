@@ -107,12 +107,8 @@ app.layout = dbc.Container(
         #    dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
         #], align="top",),
         dbc.Row([
-            dbc.Col(dbc.Col(ControlsSurface.Surface_Card0), md=3),
-            dbc.Col(md=9),
-        ]),
-        dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
-            dbc.Col(dcc.Graph(id="SurfaceGraph"), md=9),
+            dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
         ], align="top",),
 
         html.Hr(),
@@ -133,10 +129,17 @@ app.layout = dbc.Container(
         #html.H1(children='Time Trace Experiment'),
         #html.Br(),
         #dbc.Row([
-            #dbc.Col(ControlsAFM.AFM_Cards3, md=4),
-            #dbc.Col(dcc.Graph(id="AFMGraph3"), md=8),
+            #dbc.Col(ControlsAFM.AFM_Cards3, md=3),
+            #dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
         #], align="top",),
-        #html.Hr(),
+        html.Hr(),
+        html.H1(children='Delay Sweep Experiment'),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(ControlsAFM.AFM_Cards4, md=3),
+            dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
+        ], align="top",),
+        html.Hr(),
 
     ###### important for latex ######
     axis_latex_script,
@@ -236,9 +239,11 @@ app.layout = dbc.Container(
 # surface figure
 @app.callback(
     [Output('SurfaceGraph', 'figure'),
+     Output('SurfaceGraphSupp', 'figure'),
+     Output('SurfaceText_regime', 'children'),
      Output('SurfaceText_ni', 'children'),
      Output('SurfaceText_LD', 'children'),
-     Output('SurfaceText_zD', 'children')],
+     Output('SurfaceText_zQ', 'children')],
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
      Input('SurfaceSlider_bandgap', 'value'),
@@ -252,8 +257,8 @@ app.layout = dbc.Container(
      Input('SurfaceSlider_T', 'value'),
      Input('SurfaceSlider_alpha', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha):
-    fig, ni, LD, zD = CallbacksSurface.fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
-    return fig, ni, LD, zD
+    fig, figsupp, regime, ni, LD, zQ = CallbacksSurface.fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
+    return fig, figsupp, regime, ni, LD, zQ
 
 # surface readouts
 @app.callback(
@@ -453,6 +458,33 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
 #def update_figure(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
 #    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
 #    return fig
+
+# Delay experiment figure
+@app.callback(
+    Output('AFMGraph4', 'figure'),
+    [Input('AFMSlider_Vg', 'value'),
+     Input('AFMSlider_zins', 'value'),
+     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_epsilonsem', 'value'),
+     Input('SurfaceSlider_WFmet', 'value'),
+     Input('SurfaceSlider_EAsem', 'value'),
+     Input('SurfaceSlider_donor', 'value'),
+     Input('SurfaceSlider_acceptor', 'value'),
+     Input('SurfaceSlider_emass', 'value'),
+     Input('SurfaceSlider_hmass', 'value'),
+     Input('SurfaceSlider_T', 'value'),
+     Input('AFMSlider_amplitude', 'value'),
+     Input('AFMSlider_resfreq', 'value'),
+     Input('AFMSlider_springconst', 'value'),
+     Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_Qfactor', 'value'),
+     Input('AFMbutton_CalculateDelayExp', 'n_clicks'),
+     Input('AFMtoggle_sampletype', 'value'),
+     Input('AFMSlider_hop', 'value'),
+     Input('AFMSlider_lag', 'value')])
+def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
+    fig = CallbacksAFM.fig_AFM4(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
+    return fig
 
 # AFM readouts
 @app.callback(

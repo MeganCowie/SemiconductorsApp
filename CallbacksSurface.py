@@ -28,29 +28,33 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
     T = slider_T #K
     sampletype = False #False=semiconducting; True=metallic
 
-    Vg_array = np.arange(200)/10-10 #eV
+    Vg_array = (np.arange(200)/10-10)*(1-slider_alpha) #eV
     zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
 
 
     Vs, F = Physics_SurfacepotForce.VsF(1,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    LD, zD, zD_biasarray, Cs_biasarray, Qs_biasarray, zD_zinsarray, Cs_zinsarray, Qs_zinsarray = Physics_SurfacepotForce.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Physics_SurfacepotForce.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+    Vg = slider_Vg #eV
+    Vg_array = (np.arange(200)/10-10) #eV
+
 
     #########################################################
     #########################################################
     fig = make_subplots(
-        rows=8, cols=3, shared_yaxes=False, shared_xaxes=True,
-        column_widths=[0.2, 0.2, 0.2], row_heights=[0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7,1.5],
+        rows=6, cols=3, shared_yaxes=False, shared_xaxes=True,
+        column_widths=[0.2, 0.2, 0.2], row_heights=[0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
+        vertical_spacing=0.03,
         specs=[
-        [{"rowspan":4}, {"rowspan":2}, {"rowspan":2}],
+        [{"rowspan":3}, {"rowspan":2}, {"rowspan":2}],
         [None, None, None],
         [None, {"rowspan":2}, {"rowspan":2}],
-        [None, None, None],
+        [{}, None, None],
         [{}, {}, {}],
-        [{}, {}, {}],
-        [{}, {}, {}],[{}, {}, {}]])
+        [{}, {}, {}]])
     fig.add_trace(go.Scatter(
         x = zsem*1e7, y = Ev-psi,
         name = "Valence Band", mode='lines', showlegend=False,
@@ -90,17 +94,17 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         x = Vacuumx, y = Vacuumy,
         name = "Potential", mode='lines', showlegend=False,
         line_color=color_met
-        ), row=5, col=1)
+        ), row=4, col=1)
     fig.add_trace(go.Scatter(
         x = z_array, y = E_array,
         name = "Electric Field", mode='lines', showlegend=False,
         line_color=color_met
-        ), row=6, col=1)
+        ), row=5, col=1)
     fig.add_trace(go.Scatter(
         x = z_array, y = Q_array,
         name = "Charge Density", mode='lines', showlegend=False,
         line_color=color_met
-        ), row=7, col=1)
+        ), row=6, col=1)
 
     fig.add_trace(go.Scatter(
         x = Vg_array, y = Vs_biasarray,
@@ -123,35 +127,25 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=2)
     fig.add_trace(go.Scatter(
-        x = Vg_array, y = zD_biasarray*10**9,
-        name = "Depletion Width (bias)", mode='lines', showlegend=False,
-        line_color=color_ox
+        x = Vg_array, y = zQ_biasarray*10**9,
+        name = "Charge Width (bias)", mode='lines', showlegend=False,
+        line_color=color_other
         ), row=5, col=2)
     fig.add_trace(go.Scatter(
-        x = [Vg], y = [zD*10**9],
-        name = "This Depletion Width (bias)", mode='markers', showlegend=False,
+        x = [Vg], y = [zQ*10**9],
+        name = "This Charge Width (bias)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=5, col=2)
     fig.add_trace(go.Scatter(
         x = Vg_array, y = Cs_biasarray,
         name = "C/Cox (bias)", mode='lines', showlegend=False,
-        line_color=color_ox
+        line_color=color_other
         ), row=6, col=2)
     #fig.add_trace(go.Scatter(
-    #    x = [Vg], y = [zD*10**9],
+    #    x = [Vg], y = [Cs],
     #    name = "This C/Cox (bias)", mode='markers', showlegend=False,
     #    marker=dict(color=color_indicator,size=10),
     #    ), row=6, col=2)
-    fig.add_trace(go.Scatter(
-        x = Vg_array, y = Qs_biasarray*10**9,
-        name = "Charge (bias)", mode='lines', showlegend=False,
-        line_color=color_ox
-        ), row=7, col=2)
-    #fig.add_trace(go.Scatter(
-    #    x = [Vg], y = [zD*10**9],
-    #    name = "This Charge (bias)", mode='markers', showlegend=False,
-    #    marker=dict(color=color_indicator,size=10),
-    #    ), row=7, col=2)
 
     fig.add_trace(go.Scatter(
         x = zins_array*1e7, y = Vs_zinsarray,
@@ -174,46 +168,29 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
         marker=dict(color=color_indicator,size=10),
         ), row=3, col=3)
     fig.add_trace(go.Scatter(
-        x = zins_array*1e7, y = zD_zinsarray*10**9,
+        x = zins_array*1e7, y = zQ_zinsarray*10**9,
         name = "Depletion Width (zins)", mode='lines', showlegend=False,
-        line_color=color_ox
+        line_color=color_other
         ), row=5, col=3)
     fig.add_trace(go.Scatter(
-        x = [zins*1e7], y = [zD*10**9],
+        x = [zins*1e7], y = [zQ*10**9],
         name = "This Depletion Width (zins)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=5, col=3)
     fig.add_trace(go.Scatter(
         x = zins_array*1e7, y = Cs_zinsarray,
         name = "C/Cox (zins)", mode='lines', showlegend=False,
-        line_color=color_ox
+        line_color=color_other
         ), row=6, col=3)
     #fig.add_trace(go.Scatter(
-    #    x = [zins*1e7], y = [zD*10**9],
+    #    x = [zins*1e7], y = [Cs],
     #    name = "This C/Cox (zins)", mode='markers', showlegend=False,
     #    marker=dict(color=color_indicator,size=10),
     #    ), row=6, col=3)
-    fig.add_trace(go.Scatter(
-        x = zins_array*1e7, y = Qs_zinsarray,
-        name = "Charge (zins)", mode='lines', showlegend=False,
-        line_color=color_ox
-        ), row=7, col=3)
-    #fig.add_trace(go.Scatter(
-    #    x = [zins*1e7], y = [zD*10**9],
-    #    name = "This Charge (zins)", mode='markers', showlegend=False,
-    #    marker=dict(color=color_indicator,size=10),
-    #    ), row=7, col=3)
-
-
-    fig.add_trace(go.Scatter(
-        x = Vs_biasarray, y = np.abs(Qs_biasarray),
-        name = "C/Cox (bias)", mode='lines', showlegend=False,
-        line_color=color_other
-        ), row=8, col=2)
 
     # Automated axis scaling
-    biasmin = -3
-    biasmax = +3
+    biasmin = -10#-3
+    biasmax = 10#+3
     if biasmin<Vg and Vg>biasmax:
         biasrange_indexmin = find_nearest(Vg_array,biasmin)
         biasrange_indexmax = find_nearest(Vg_array,Vg+1)
@@ -228,32 +205,67 @@ def fig_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slide
 
     fig.update_xaxes(title_standoff=5, title_text="", row=1, col=1)
     fig.update_xaxes(title_standoff=5, title_text="", row=3, col=1)
-    fig.update_xaxes(title_standoff=5, title_text="z (nm)", row=7, col=1)
+    fig.update_xaxes(title_standoff=5, title_text="z (nm)", row=6, col=1)
     fig.update_xaxes(title_standoff=5, title_text="", row=1, col=2)
     fig.update_xaxes(title_standoff=5, title_text="", row=3, col=2)
-    fig.update_xaxes(title_standoff=5, title_text= "Gate Bias (eV)", range=[Vg_array[biasrange_indexmin], Vg_array[biasrange_indexmax]],row=7,col=2)
+    fig.update_xaxes(title_standoff=5, title_text= "Gate Bias (eV)", range=[Vg_array[biasrange_indexmin], Vg_array[biasrange_indexmax]],row=6,col=2)
     fig.update_xaxes(title_standoff=5, title_text="", row=1, col=3)
     fig.update_xaxes(title_standoff=5, title_text="", row=3, col=3)
-    fig.update_xaxes(title_standoff=5, title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=7, col=3)
+    fig.update_xaxes(title_standoff=5, title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e7), max(zins_array*1e7)], row=6, col=3)
 
     fig.update_yaxes(title_standoff=5, title_text="E (eV)", row=1, col=1)
-    fig.update_yaxes(title_standoff=5, title_text="V (V)", row=5, col=1)
-    fig.update_yaxes(title_standoff=5, title_text="E (eV/nm)", row=6, col=1)
-    fig.update_yaxes(title_standoff=5, title_text="Q (eV/nm^2)", row=7, col=1)
+    fig.update_yaxes(title_standoff=5, title_text="V (V)", row=4, col=1)
+    fig.update_yaxes(title_standoff=5, title_text="E (eV/nm)", row=5, col=1)
+    fig.update_yaxes(title_standoff=5, title_text="Q (eV/nm^2)", row=6, col=1)
     fig.update_yaxes(title_standoff=5, title_text="Vs (eV)", row=1, col=2)
     fig.update_yaxes(title_standoff=5, title_text="F (N/nm^2)", row=3, col=2, range=[min(F_biasarray[biasrange_indexmin], F_biasarray[biasrange_indexmax]), max(F_biasarray)])
     fig.update_yaxes(title_standoff=5, title_text="zd (nm)", row=5, col=2)
     fig.update_yaxes(title_standoff=5, title_text="C/Cox", row=6, col=2)
-    fig.update_yaxes(title_standoff=5, title_text="Qs", row=7, col=2)
     fig.update_yaxes(title_standoff=5, title_text="Vs (eV)", row=1, col=3)
     fig.update_yaxes(title_standoff=5, title_text="F (N/nm^2)", row=3, col=3, range=[min(F_biasarray[biasrange_indexmin], F_biasarray[biasrange_indexmax]), max(F_biasarray)])
     fig.update_yaxes(title_standoff=5, title_text="zd (nm)", row=5, col=3)
     fig.update_yaxes(title_standoff=5, title_text="C/Cox", row=6, col=3)
-    fig.update_yaxes(title_standoff=5, title_text="Qs", row=7, col=3)
 
-    #zD = Vg_array[biasrange_indexmax][0]
 
-    return fig, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zD*10**9, ".1f")
+    #########################################################
+    #########################################################
+    figsupp = make_subplots(
+        rows=1, cols=2, shared_yaxes=False, shared_xaxes=False,
+        column_widths=[0.5,0.5], row_heights=[1.5],
+        specs=[
+        [{},{}]],
+        )
+    figsupp.add_trace(go.Scatter(
+        x = Vs_biasarray, y = np.abs(Qs_biasarray),
+        name = "Vs-Qs", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=1, col=1)
+    figsupp.add_trace(go.Scatter(
+        x = [Vs], y = [np.abs(Qs)],
+        name = "This Vs-Qs", mode='markers', showlegend=False,
+        marker=dict(color=color_indicator,size=10),
+        ), row=1, col=1)
+
+    figsupp.update_layout(transition_duration=300, height=300, margin=dict(t=0), showlegend=False)
+
+    figsupp.update_xaxes(title_standoff=5, title_text="Vs (eV)", row=1, col=1)
+    figsupp.update_yaxes(title_standoff=5, title_text="|Qs|", row=1, col=1)
+
+    #########################################################
+    #########################################################
+
+    if regime == 1:
+        regime = "accumulation"
+    elif regime == 2:
+        regime = "flatband"
+    elif regime == 3:
+        regime = "depletion"
+    elif regime == 4:
+        regime = "threshold"
+    elif regime == 5:
+        regime = "inversion"
+
+    return fig, figsupp, regime, format(ni, ".1E"), format(LD*10**9, ".1f"), format(zQ*10**9, ".1f")
 
 
 

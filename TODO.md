@@ -13,3 +13,6 @@ Fix appearance
 Calculate fm-AFM oscillations in parallel.
 
 Add toggles for existing analyses parameters
+
+
+AFM graphs do not incorporate alpha

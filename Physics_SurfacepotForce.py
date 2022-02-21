@@ -116,8 +116,10 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
     NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
     Ec,Ev = Physics_Semiconductors.EcEv(T,Eg)
     ni = Physics_Semiconductors.ni(NC,NV,Eg,T)
+    Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
     Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
     CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, Ec, Ef)
+
     n_i = ni*(100)**3 #m**-3
     N_D = Nd*(100)**3 #m**-3
     N_A = Na*(100)**3 #m**-3
@@ -125,8 +127,13 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
     C_l= epsilon_o*100/(zins/100) #C/Vm**2
 
     # Values
-    LD = Physics_Semiconductors.LD(epsilon_sem, N_D, N_A, T)
-    zD = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs, T, Vg, CPD_metsem)
+    regime = Physics_Semiconductors.MOS_regime(Na,Nd,Vs,Ei,Ef)
+    LD = Physics_Semiconductors.LD(epsilon_sem,N_D,N_A,T)
+    u,f=Physics_Semiconductors.uf(N_A,N_D,n_i,T,Vs)
+    zA = Physics_Semiconductors.zA(Nd,Na,LD,Vs,T)
+    zD = Physics_Semiconductors.zD(epsilon_sem,Nd,Na,Vs,T)
+    Qs = Physics_Semiconductors.Qs(u,f,epsilon_sem,T,L_D)
+    Cs = Physics_Semiconductors.Qs(u,f,epsilon_sem,T,L_D)
 
 
     # Bias array
@@ -135,9 +142,11 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
     Qs_biasarray = []
     for Vg_index in range(len(Vg_array)):
         Vs_soln = Vs_biasarray[Vg_index]
-        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T, Vg_array[Vg_index], CPD_metsem)
+        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T)
         u_soln,f_soln=Physics_Semiconductors.uf(N_A,N_D,n_i,T,Vs_soln)
         Qs_soln = Physics_Semiconductors.Qs(u_soln,f_soln,epsilon_sem,T,L_D)
+
+
         if N_A ==0: #n-type
             Cd_soln = (epsilon_sem*epsilon_o*100)/(np.sqrt(2)*LD)*(1-np.exp(-u_soln)+(n_i**2/(N_D**2)*(np.exp(u_soln)-1)))/f_soln
         elif N_D ==0: #p-type
@@ -157,7 +166,7 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
     Qs_zinsarray = []
     for zins_index in range(len(zins_array)):
         Vs_soln = Vs_zinsarray[zins_index]
-        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T, Vg, CPD_metsem)
+        zD_soln = Physics_Semiconductors.zD(epsilon_sem, Nd, Na, Vs_soln, T)
         u_soln,f_soln=Physics_Semiconductors.uf(N_A,N_D,n_i,T,Vs_soln)
         Qs_soln = Physics_Semiconductors.Qs(u_soln,f_soln,epsilon_sem,T,L_D)
         Cs_soln = Qs_soln/Vs_soln/C_l
@@ -166,4 +175,10 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
         Cs_zinsarray = np.append(Cs_zinsarray, Cs_soln)
         Qs_zinsarray = np.append(Qs_zinsarray, Qs_soln)
 
-    return LD, zD, zD_biasarray, Cs_biasarray, Qs_biasarray, zD_zinsarray, Cs_zinsarray, Qs_zinsarray
+
+    zQ_biasarray = zD_biasarray
+    zQ_zinsarray = zD_zinsarray
+    zQ = zD
+    Cs = zD
+
+    return regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray

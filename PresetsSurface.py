@@ -41,14 +41,14 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_zins = 6
         slider_bandgap = 2.2
         slider_epsilonsem = 11.8
-        slider_WFmet = 4.1
+        slider_WFmet = 3.4
         slider_EAsem = 2.9
         slider_emass = 1
         slider_hmass = 1
-        slider_donor = 17.9
+        slider_donor = 17.4
         slider_acceptor = 0
         slider_T = 300
-        slider_alpha = 0.85
+        slider_alpha = 0.8
         stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
         stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
         disabledn = False

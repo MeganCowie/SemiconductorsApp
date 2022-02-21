@@ -20,14 +20,14 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_Vg', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Vg', min=-10, max=10, step=0.1, value=-1.4), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_Vg', min=-10, max=10, step=0.1, value=-5), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Insulator Thickness (nm)", id="AFMText_zinslabel", style={"margin-left": "10px"}), md=8),
             dbc.Col(html.Div(id='AFMText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=0.1, value=5.2), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=0.1, value=7), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px"}), md=8),
@@ -128,3 +128,16 @@ AFM_Card1 = dbc.Card([
 
 
 AFM_Cards3 = [dbc.Col(AFM_Card1)]
+
+################################################################################
+################################################################################
+# Delay sweep experiment cards
+
+AFM_Card1 = dbc.Card([
+    dbc.Row([
+        dbc.Button("Calculate", id="AFMbutton_CalculateDelayExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
+    ], style={'padding': 10}, justify="center"),
+])
+
+
+AFM_Cards4 = [dbc.Col(AFM_Card1)]

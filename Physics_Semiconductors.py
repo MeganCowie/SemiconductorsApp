@@ -117,7 +117,35 @@ def Ef(NC, NV, Ec, Ev, T, Nd, Na): #eV
 
 ################################################################################
 ################################################################################
-# MOS capacitor
+# MOS capacitor (not illuminated)
+
+# Identify MOS capacitor regime (accumulation, depletion, inversion)
+def MOS_regime(Na,Nd,Vs,Ei,Ef):
+    Vb = Ei-Ef
+    if Na ==0: #n-type
+        if Vs > 0:
+            regime = 1 #accumulation
+        elif Vs == 0:
+            regime = 2 #flatband
+        elif Vs > Vb:# & Vs > 0:
+            regime = 3 #depletion
+        elif Vs == Vb:
+            regime = 4 #threshold
+        elif Vs < Vb:
+            regime = 5 #inversion
+    elif Nd ==0: #p-type
+        if Vs < 0:
+            regime = 1 #accumulation
+        elif Vs == 0:
+            regime = 2 #flatband
+        elif Vs < Vb:# & Vs > 0:
+            regime = 3 #depletion
+        elif Vs == Vb:
+            regime = 4 #threshold
+        elif Vs > Vb:
+            regime = 5 #inversion
+    return regime
+
 
 # Contact potential difference
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
@@ -158,11 +186,33 @@ def LD(epsilon_sem, N_D, N_A, T):
     LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(N_D+N_A)*e)) #m (Note units: N_A and N_D are in m^-3)
     return LD
 
-# Depletion Width (pg. 435 eq. 10.5)
-    # ONLY VALID IN DEPLETION REGION!
-def zD(epsilon_sem, Nd, Na, Vs, T, Vg, CPD_metsem):
-    if Vg < CPD_metsem:
-        zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/((Na+Nd)*e))/100 #m (Note units: Na and Nd are in cm^-3)
-    else:
-        zD = 0
+# Accumulation layer width
+    # ? Chapter  pg 173
+def zA(Nd,Na,LD,Vs,T):
+    if Na ==0: #n-type
+        zA = np.sqrt(2)*LD*np.arccos(np.exp(-Vs/(2*kB*T))) #m
+    elif Nd ==0: #p-type
+        zA = np.sqrt(2)*LD*np.arccos(np.exp(Vs/(2*kB*T))) #m
+    return zA
+
+# Depletion layer width (pg. 435 eq. 10.5)
+    # ? Chapter  pg 173
+def zD(epsilon_sem, Nd, Na, Vs, T):
+    if Na ==0: #n-type
+        zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/(Nd*e))/100 #m (Note units: Na and Nd are in cm^-3)
+    elif Nd ==0: #p-type
+        zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/(Na*e))/100 #m (Note units: Na and Nd are in cm^-3)
     return zD
+
+# Inversion layer width
+    # ? Chapter  pg 180
+def zI():
+    if Na ==0: #n-type
+        zI = np.sqrt(4*epsilon_sem*epsilon_o*Vs/(Nd*e))/100 #m (Note units: Na and Nd are in cm^-3)
+    elif Nd ==0: #p-type
+        zI = np.sqrt(4*epsilon_sem*epsilon_o*Vs/(Na*e))/100 #m (Note units: Na and Nd are in cm^-3)
+    return zI
+
+################################################################################
+################################################################################
+# MOS capacitor (illuminated)

@@ -25,15 +25,18 @@ Surface_Card0 = dbc.Card([
 Surface_Card1 = dbc.Card([
     dbc.FormGroup([
         dbc.Row([
-            dbc.Col(dbc.Label("Gate Bias (eV)", id="SurfaceText_Vglabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-            dbc.Col(html.Div(id='SurfaceText_Vg', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+            dbc.Col(html.Div(id='SurfaceText_regime', style = {'text-align': 'center', 'color': '#57c5f7', 'fontSize': 18, "margin-right": "10px", "margin-top": "20px","margin-bottom": "10px"}), md=12),
+        ], justify="between"),
+        dbc.Row([
+            dbc.Col(dbc.Label("Gate Bias (eV)", id="SurfaceText_Vglabel", style={"margin-left": "10px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_Vg', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
             dbc.Col(dcc.Slider(id='SurfaceSlider_Vg', min=-10, max=10, step=0.1, value=-1.4,), md=12),
         ]),
         dbc.Row([
-            dbc.Col(dbc.Label("Alpha", id="SurfaceText_alphalabel", style={"margin-left": "10px", "margin-top": "10px"}), md=8),
-            dbc.Col(html.Div(id='SurfaceText_alpha', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+            dbc.Col(dbc.Label("Alpha", id="SurfaceText_alphalabel", style={"margin-left": "10px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_alpha', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
             dbc.Col(dcc.Slider(id='SurfaceSlider_alpha', min=0, max=1, step=0.01, value=0,), md=12),
@@ -148,12 +151,12 @@ Surface_Card3 = dbc.Card([
             dbc.Col(html.Div(id='SurfaceText_LD', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dbc.Label("Depletion Width (nm)", id="SurfaceText_zDlabel", style={"margin-left": "18px"}), md=8),
-            dbc.Col(html.Div(id='SurfaceText_zD', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+            dbc.Col(dbc.Label("Spacecharge Width (nm)", id="SurfaceText_zQlabel", style={"margin-left": "18px"}), md=8),
+            dbc.Col(html.Div(id='SurfaceText_zQ', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
     ]),
 ]),
 
 
 
-Surface_Cards = [dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3)]
+Surface_Cards = [dbc.Col(Surface_Card0), dbc.Col(Surface_Card1), dbc.Col(Surface_Card2), dbc.Col(Surface_Card3)]
