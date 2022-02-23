@@ -7,12 +7,10 @@
 ################################################################################
 
 import numpy as np
-import scipy.constants as sp
 from scipy.integrate import quad
 from scipy.integrate import trapz
 
 import Physics_Semiconductors
-
 
 ################################################################################
 ################################################################################
@@ -24,18 +22,16 @@ me = Physics_Semiconductors.me
 e = Physics_Semiconductors.e
 epsilon_o = Physics_Semiconductors.epsilon_o
 
-
 ################################################################################
 ################################################################################
 # Calculate band bending
 
 def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    Ec, Ev = Physics_Semiconductors.EcEv(T, Eg)
-    NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
-    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    no,po = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
-
+    Ec, Ev = Physics_Semiconductors.Func_EcEv(T, Eg)
+    NC,NV = Physics_Semiconductors.Func_NCNV(T,mn,mp)
+    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    no,po = Physics_Semiconductors.Func_nopo(NC, NV, Ec, Ev, Ef, T)
 
     def zsem_eqn(psi_variable):
           f = psi_variable*(Na-Nd) + (kB*T)*po*(np.exp(-psi_variable/(kB*T))-1) + (kB*T)*no*(np.exp(psi_variable/(kB*T))-1)
@@ -47,7 +43,7 @@ def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
         zsem = np.linspace(0, 150, 101)
         psi = 0 * zsem
     else:
-        psi = np.linspace(Vs, Vs * 0.0001, 2001)
+        psi = np.linspace(Vs, Vs * 0.01, 501)
         #psi = np.linspace(Vs, Vs * 0.01, 1001)
         zsem = np.array([])
         for value in psi:
@@ -63,13 +59,13 @@ def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 
 def BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    NC,NV = Physics_Semiconductors.NCNV(T,mn,mp)
-    Ec,Ev = Physics_Semiconductors.EcEv(T,Eg)
-    ni = Physics_Semiconductors.ni(NC,NV,Eg,T)
-    Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
-    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    NC,NV = Physics_Semiconductors.Func_NCNV(T,mn,mp)
+    Ec,Ev = Physics_Semiconductors.Func_EcEv(T,Eg)
+    ni = Physics_Semiconductors.Func_ni(NC,NV,Eg,T)
+    Ei = Physics_Semiconductors.Func_Ei(Ev, Ec, T, mn, mp)
+    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
     zsem, psi = BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    CPD_metsem = Physics_Semiconductors.CPD_metsem(WFmet, EAsem, Ec, Ef)
+    CPD_metsem = Physics_Semiconductors.Func_CPD(WFmet, EAsem, Ec, Ef)
 
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 433)
     Vins = Vg - Vs - CPD_metsem # potential drop across insulator

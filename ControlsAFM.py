@@ -11,27 +11,20 @@ AFM_Card1 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_Calculate", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
+    dbc.Row([
+        dbc.Col(dbc.Label("zins(t) Precision", id="AFMText_timestepslabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_timesteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_timesteps', min=5, max=50, step=1, value=10), md=12),
+    ]),
 ])
 
 AFM_Card2 = dbc.Card([
     dbc.FormGroup([
         dbc.Row([
-            dbc.Col(dbc.Label("Gate Bias (eV)", id="AFMText_Vglabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_Vg', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Vg', min=-10, max=10, step=0.1, value=-5), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Insulator Thickness (nm)", id="AFMText_zinslabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_zins', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_zins', min=1, max=25, step=0.1, value=7), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_amplitude', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+            dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+            dbc.Col(html.Div(id='AFMText_amplitude', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
         ], justify="between"),
         dbc.Row([
             dbc.Col(dcc.Slider(id='AFMSlider_amplitude', min=1, max=20, step=1, value=6), md=12),
@@ -137,6 +130,20 @@ AFM_Card1 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_CalculateDelayExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
+    dbc.Row([
+        dbc.Col(dbc.Label("Pulse Precision", id="AFMText_pulsetimestepslabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_pulsetimesteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_pulsetimesteps', min=100, max=10000, step=1, value=1000), md=12),
+    ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("Delay Precision", id="AFMText_delaystepslabel", style={"margin-left": "10px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_delaysteps', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_delaysteps', min=25, max=1000, step=1, value=25), md=12),
+    ]),
 ])
 
 

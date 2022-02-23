@@ -155,6 +155,20 @@ Surface_Card3 = dbc.Card([
             dbc.Col(html.Div(id='SurfaceText_zQ', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
     ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("Gate Bias Precision", id="SurfaceText_biasstepslabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='SurfaceText_biassteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='SurfaceSlider_biassteps', min=10, max=500, step=1, value=100), md=12),
+    ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("Insulator Thickness Precision", id="SurfaceText_zinsstepslabel", style={"margin-left": "10px"}), md=8),
+        dbc.Col(html.Div(id='SurfaceText_zinssteps', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='SurfaceSlider_zinssteps', min=10, max=500, step=1, value=100), md=12),
+    ]),
 ]),
 
 

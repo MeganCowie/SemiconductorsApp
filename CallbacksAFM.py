@@ -5,29 +5,28 @@ import numpy as np
 import pandas as pd
 
 import Physics_Semiconductors
-import Physics_SurfacepotForce
-import Physics_AFMoscillation
-import Physics_FreqshiftDissipation
+import Physics_ncAFM
 import Physics_Optics
 
+import Organization_BuildArrays
 
 ################################################################################
 ################################################################################
 # FIGURE: ncAFM oscillations
 
-def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_hop,slider_lag,calculatebutton,toggle_sampletype,toggle_RTN):
+def fig1_AFM(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_hop,slider_lag,calculatebutton,toggle_sampletype,toggle_RTN):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
         # input (slider) parameters
-        Vg = slider_Vg
+        Vg = slider_Vg #eV
         zins = slider_zins*1e-7 # cm
         bandgap = slider_bandgap
         epsilon_sem = slider_epsilonsem
         WFmet = slider_WFmet #eV
         EAsem = slider_EAsem #eV
-        Nd = round((10**slider_donor*10**8)/(1000**3))
-        Na = round((10**slider_acceptor*10**8)/(1000**3))
+        Nd = round((10**slider_donor*10**8)/(1000**3)) #/cm^3
+        Na = round((10**slider_acceptor*10**8)/(1000**3)) #/cm^3
         mn = slider_emass*Physics_Semiconductors.me # kg
         mp = slider_hmass*Physics_Semiconductors.me # kg
         T = slider_T # K
@@ -37,26 +36,30 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         frequency = slider_resfreq #Hz
         hop = slider_hop
         lag = slider_lag/10**9*frequency #radians
-        steps = 100
+        biassteps = slider_biassteps
+        zinssteps = slider_zinssteps
+        timesteps = slider_timesteps
+
 
         # Independent variable arrays
-        Vg_array = np.arange(200)/10-10 #eV
-        zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
-        time_AFMarray = Physics_AFMoscillation.time_AFMarray(steps)
-        zins_AFMarray = Physics_AFMoscillation.zins_AFMarray(time_AFMarray,amplitude,zins)
-        zinslag_AFMarray = Physics_AFMoscillation.zinslag_AFMarray(time_AFMarray,amplitude,zins, lag)
+        Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
+        zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
+        time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
+        zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
+        zinslag_AFMarray = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,zins, lag)
 
         # Dependent variable arrays calculations
-        Vs_AFMarray, F_AFMarray = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Physics_AFMoscillation.BandDiagram_AFMarray(Vs_AFMarray,zinslag_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarray, F_AFMarray = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Organization_BuildArrays.BandDiagram_AFMarray(Vs_AFMarray,zinslag_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        # Find traces for bottom and top of hop
-        RTN = False
-        Vs_AFMarray0, F_AFMarray0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
-        Vs_AFMarray1, F_AFMarray1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        # Find traces for top of hop
+        #Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
+        #Vs_AFMarray1, F_AFMarray1 = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        #Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+        Vs_AFMarray1, F_AFMarray1 = Vs_AFMarray, F_AFMarray
+        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray
 
         # Stack arrays at bottom and top of hop
         Vs_zinsarray = np.append(Vs_zinsarray, np.flipud(Vs_zinsarray1))
@@ -64,7 +67,7 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         zins_array = np.append(zins_array, np.flipud(zins_array))
 
         # Stack AFM arrays to display two periods (with half calculation time)
-        steps = steps*2
+        timesteps = timesteps*2
         time_AFMarray = np.append(time_AFMarray, time_AFMarray+2*np.pi)
         zins_AFMarray = np.append(zins_AFMarray, zins_AFMarray)
         zinslag_AFMarray = np.append(zinslag_AFMarray, zinslag_AFMarray)
@@ -83,14 +86,14 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         Gatex_AFMarray = np.vstack([Gatex_AFMarray, Gatex_AFMarray])
         Gatey_AFMarray = np.vstack([Gatey_AFMarray, Gatey_AFMarray])
 
-        Vs_AFMarray0 = np.append(Vs_AFMarray0, Vs_AFMarray0)
+        Vs_AFMarray0 = np.append(Vs_AFMarray, Vs_AFMarray)
         Vs_AFMarray1 = np.append(Vs_AFMarray1, Vs_AFMarray1)
-        F_AFMarray0 = np.append(F_AFMarray0, F_AFMarray0)
+        F_AFMarray0 = np.append(F_AFMarray, F_AFMarray)
         F_AFMarray1 = np.append(F_AFMarray1, F_AFMarray1)
 
         zins_AFMarray = np.append(zins_AFMarray, np.flipud(zins_AFMarray))
-        Vs_AFMarray = np.append(Vs_AFMarray, np.flipud(Vs_AFMarray0))
-        F_AFMarray = np.append(F_AFMarray, np.flipud(F_AFMarray0))
+        Vs_AFMarray = np.append(Vs_AFMarray, np.flipud(Vs_AFMarray))
+        F_AFMarray = np.append(F_AFMarray, np.flipud(F_AFMarray))
         time_AFMarray = np.append(time_AFMarray, np.flipud(time_AFMarray))
         zins_AFMarray = np.append(zins_AFMarray, np.flipud(zins_AFMarray))
         Vs_AFMarray = np.append(Vs_AFMarray, Vs_AFMarray1)
@@ -99,137 +102,100 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 
         #########################################################
         #########################################################
-        fig = make_subplots(
+        fig1 = make_subplots(
             rows=3, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.3, 0.7], row_heights=[1,1,1],
             specs=[[{}, {}], [{}, {}], [{}, {}]])
 
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = zsem_AFMarray[0]*1e7, x = Ev_AFMarray[0]-psi_AFMarray[0],
             name = "ValenceBand", mode='lines', showlegend=False,
             line_color=color_Ev
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = zsem_AFMarray[0]*1e7, x = Ei_AFMarray[0]-psi_AFMarray[0],
             name = "IntrinsicEnergy", mode='lines', showlegend=False,
             line_color=color_Ei
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = zsem_AFMarray[0]*1e7, x = Ec_AFMarray[0]-psi_AFMarray[0],
             name = "ConductionBand", mode='lines', showlegend=False,
             line_color=color_Ec
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = zsem_AFMarray[0]*1e7, x = 0*zsem_AFMarray[0]+Ef_AFMarray[0],
             name = "FermiEnergy", mode='lines', showlegend=False,
             line_color=color_Ef
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = Insulatorx_AFMarray[0], x = Insulatory_AFMarray[0],
             name = "Insulator", mode='lines', showlegend=False,
             line_color=color_ox
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = Gatex_AFMarray[0], x = Gatey_AFMarray[0],
             name = "GateFermiEnergy", mode='lines', showlegend=False,
             line_color=color_met
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             y = Vacuumx_AFMarray[0], x = Vacuumy_AFMarray[0],
             name = "VacuumEnergy", mode='lines', showlegend=False,
             line_color=color_vac
             ), row=1, col=1)
 
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = zins_array*1e7, y = Vs_zinsarray,
             name = "ContactPotential", mode='lines', showlegend=False,
             line_color=color_vac
             ), row=2, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = [zinslag_AFMarray[0]*1e7], y = [Vs_AFMarray[0]],
             name = "ContactPotential", mode='markers', marker_line_width=1, showlegend=False,
             marker=dict(color=color_indicator,size=10),
             ), row=2, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = zins_array*1e7, y = F_zinsarray,
             name = "Force", mode='lines', showlegend=False,
             line_color=color_vac
             ), row=3, col=1)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = [zinslag_AFMarray[0]*1e7], y = [F_AFMarray[0]],
             name = "Force", mode='markers', marker_line_width=1, showlegend=False,
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=1)
 
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = time_AFMarray, y = zins_AFMarray*1e7,
             name = "Position", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=2),
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = [time_AFMarray[0]], y = [zins_AFMarray[0]*1e7],
             name = "Position", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=1, col=2)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = time_AFMarray, y = Vs_AFMarray,
             name = "SurfacePotential", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2),
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = [time_AFMarray[0]], y = [Vs_AFMarray[0]],
             name = "SurfacePotential", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=2, col=2)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = time_AFMarray, y = F_AFMarray,
             name = "Force", mode='lines', showlegend=False,
             line_color=color_other
             ), row=3, col=2)
-        fig.add_trace(go.Scatter(
+        fig1.add_trace(go.Scatter(
             x = [time_AFMarray[0]], y = [F_AFMarray[0]],
             name = "Force", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
 
-        # Saving results
-        # save_zins_zinsarray = pd.DataFrame({"zins_zinsarray": [str(x) for x in zins_array*10**7]})
-        # save_Vs_zinsarray = pd.DataFrame({"Vs_zinsarray": [str(x) for x in Vs_zinsarray]})
-        # save_F_zinsarray = pd.DataFrame({"F_zinsarray": [str(x) for x in F_zinsarray]})
-        # save_zinsarrays = pd.concat([save_zins_zinsarray,save_Vs_zinsarray,save_F_zinsarray], axis=1, join="inner")
-        # save_zinsarrays.to_csv('Xsave_ncAFM_zinsarrays.csv',index=False)
-
-        # save_time_timearray = pd.DataFrame({"time_timearray": [str(x) for x in time_AFMarray]})
-        # save_zins_timearray = pd.DataFrame({"zins_timearray": [str(x) for x in zins_AFMarray*10**7]})
-        # save_Vs_timearray = pd.DataFrame({"Vs_timearray": [str(x) for x in Vs_AFMarray]})
-        # save_F_timearray = pd.DataFrame({"F_timearray": [str(x) for x in F_AFMarray]})
-        # save_timearrays = pd.concat([save_time_timearray,save_zins_timearray,save_Vs_timearray,save_F_timearray], axis=1, join="inner")
-        # save_timearrays.to_csv('Xsave_ncAFM_timearrays.csv',index=False)
-
-        # save_Ec_AFMarray = pd.DataFrame({"Ec_AFMarray": [str(x) for x in Ec_AFMarray]})
-        # save_Ev_AFMarray = pd.DataFrame({"Ev_AFMarray": [str(x) for x in Ev_AFMarray]})
-        # save_Ef_AFMarray = pd.DataFrame({"Ef_AFMarray": [str(x) for x in Ef_AFMarray]})
-        # save_Gatez1_AFMarray = pd.DataFrame({"Gatez1_AFMarray": [str(x) for x in Gatex_AFMarray[:,0]]})
-        # save_GateE1_AFMarray = pd.DataFrame({"GateE1_AFMarray": [str(x) for x in Gatey_AFMarray[:,0]]})
-        # save_Gatez2_AFMarray = pd.DataFrame({"Gatez2_AFMarray": [str(x) for x in Gatex_AFMarray[:,1]]})
-        # save_GateE2_AFMarray = pd.DataFrame({"GateE2_AFMarray": [str(x) for x in Gatey_AFMarray[:,1]]})
-        # save_Insulatorz1_AFMarray = pd.DataFrame({"Insulatorz1_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,0]]})
-        # save_InsulatorE1_AFMarray = pd.DataFrame({"InsulatorE1_AFMarray": [str(x) for x in Insulatory_AFMarray[:,0]]})
-        # save_Insulatorz2_AFMarray = pd.DataFrame({"Insulatorz2_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,1]]})
-        # save_InsulatorE2_AFMarray = pd.DataFrame({"InsulatorE2_AFMarray": [str(x) for x in Insulatory_AFMarray[:,1]]})
-        # save_Insulatorz3_AFMarray = pd.DataFrame({"Insulatorz3_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,2]]})
-        # save_InsulatorE3_AFMarray = pd.DataFrame({"InsulatorE3_AFMarray": [str(x) for x in Insulatory_AFMarray[:,2]]})
-        # save_Insulatorz4_AFMarray = pd.DataFrame({"Insulatorz4_AFMarray": [str(x) for x in Insulatorx_AFMarray[:,3]]})
-        # save_InsulatorE4_AFMarray = pd.DataFrame({"InsulatorE4_AFMarray": [str(x) for x in Insulatory_AFMarray[:,3]]})
-
-        # save_banddiagram = pd.concat([save_Ec_AFMarray,save_Ev_AFMarray,save_Ef_AFMarray,save_Gatez1_AFMarray,save_GateE1_AFMarray,save_Gatez2_AFMarray,save_GateE2_AFMarray,save_Insulatorz1_AFMarray,save_InsulatorE1_AFMarray,save_Insulatorz2_AFMarray,save_InsulatorE2_AFMarray,save_Insulatorz3_AFMarray,save_InsulatorE3_AFMarray,save_Insulatorz4_AFMarray,save_InsulatorE4_AFMarray], axis=1, join="inner")
-        # save_banddiagram.to_csv('Xsave_ncAFM_banddiagram.csv',index=False)
-        # pd.DataFrame(zsem_AFMarray*10**7).to_csv("Xsave_ncAFM_banddiagram_zsem.csv")
-        # pd.DataFrame(psi_AFMarray).to_csv("Xsave_ncAFM_banddiagram_psi.csv")
-
-
-
-        fig.frames=[
+        fig1.frames=[
             go.Frame(data=[
 
                 go.Scatter(y=zsem_AFMarray[step]*1e7, x=Ev_AFMarray[step]-psi_AFMarray[step],mode="lines", line_color=color_Ev),
@@ -252,7 +218,7 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
                 go.Scatter(x=time_AFMarray,y=F_AFMarray,mode="lines", line_color=color_other),
                 go.Scatter(x=[time_AFMarray[step]],y=[F_AFMarray[step]],mode="markers", marker=dict(color=color_indicator, size=10)),
                 ],traces=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
-                for step in range(steps)]
+                for step in range(timesteps)]
 
     ############################################################################
 
@@ -260,50 +226,51 @@ def fig_AFM1(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         zins = 0
         amplitude = 0
         F_biasarray = [0, 0]
+        timesteps = 1
 
-        fig = make_subplots(
+        fig1 = make_subplots(
             rows=3, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.3, 0.7], row_heights=[1,1,1],
             specs=[[{}, {}], [{}, {}], [{}, {}]])
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=3, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=3, col=2)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=3, col=1)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)
+        fig1.add_trace(go.Scatter(y=[], x=[]), row=3, col=2)
 
     ############################################################################
 
-    fig.update_layout(
+    fig1.update_layout(
     updatemenus=[
-        dict(visible = True, type="buttons", buttons=[dict(label="Play" , method="animate", args=[None, {"frame": {"duration": 100, "redraw": True},"fromcurrent": True, "transition": {"duration": 0}}])],x=0,y=1.1),
+        dict(visible = True, type="buttons", buttons=[dict(label="Play" , method="animate", args=[None, {"frame": {"duration": 10000/timesteps, "redraw": True},"fromcurrent": True, "transition": {"duration": 0}}])],x=0,y=1.1),
         dict(type="buttons", buttons=[dict(label="Pause", method="animate", args=[[None], {"frame": {"duration": 0, "redraw": False},"mode": "immediate","transition": {"duration": 0}}])],x=0.1,y=1.1)
         ])
 
-    fig.update_layout(transition_duration=300, height=800,margin=dict(t=0), showlegend=False)
+    fig1.update_layout(transition_duration=300, height=800,margin=dict(t=0), showlegend=False)
 
-    fig.update_yaxes(row=1, col=1, title_text= "Insulator Thickness (nm)", range=[-zins*1e7-10-amplitude, 20])
-    fig.update_yaxes(row=2, col=1, title_text= "Contact Potential (eV)")
-    fig.update_yaxes(row=3, col=1, title_text= "Force (N/nm^2)", range = [min(F_biasarray), max(F_biasarray)])
-    fig.update_yaxes(row=1, col=2)
-    fig.update_yaxes(row=2, col=2)
-    fig.update_yaxes(row=3, col=2)
+    fig1.update_yaxes(row=1, col=1, title_text= "Insulator Thickness (nm)", range=[-zins*1e7-10-amplitude, 20])
+    fig1.update_yaxes(row=2, col=1, title_text= "Contact Potential (eV)")
+    fig1.update_yaxes(row=3, col=1, title_text= "Force (N/nm^2)", range = [min(F_biasarray), max(F_biasarray)])
+    fig1.update_yaxes(row=1, col=2)
+    fig1.update_yaxes(row=2, col=2)
+    fig1.update_yaxes(row=3, col=2)
 
-    fig.update_xaxes(row=1, col=1, title_text= "Energy (eV)")
-    fig.update_xaxes(row=2, col=1, title_text= "Insulator Thickness (nm)")
-    fig.update_xaxes(row=3, col=1, title_text= "Insulator Thickness (nm)")
-    fig.update_xaxes(row=1, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
-    fig.update_xaxes(row=2, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
-    fig.update_xaxes(row=3, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
+    fig1.update_xaxes(row=1, col=1, title_text= "Energy (eV)")
+    fig1.update_xaxes(row=2, col=1, title_text= "Insulator Thickness (nm)")
+    fig1.update_xaxes(row=3, col=1, title_text= "Insulator Thickness (nm)")
+    fig1.update_xaxes(row=1, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
+    fig1.update_xaxes(row=2, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
+    fig1.update_xaxes(row=3, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
 
-    return fig
+    return fig1
 
 
 ################################################################################
 ################################################################################
 # FIGURE: Bias sweep experiment
 
-def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+def fig2_AFM(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
@@ -328,17 +295,26 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         tipradius = slider_tipradius #nm
         hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
-        steps = 50
 
-        Vg_array = np.arange(100)/10-5 #eV
-        zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
+        biassteps = slider_biassteps
+        zinssteps = slider_zinssteps
+        timesteps = slider_timesteps
 
-        Vs_biasarray0, F_biasarray0, Vs_zinsarray0, F_zinsarray0 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        df_biasarray0, dg_biasarray0 = Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
+        zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
 
-        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
-        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        df_biasarray1, dg_biasarray1 =  Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray0, F_biasarray0, df_biasarray0, dg_biasarray0 = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+        #Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
+        #Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        #df_biasarray1, dg_biasarray1 =  Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+        Vs_biasarray1 = Vs_biasarray0
+        F_biasarray1 = F_biasarray0
+        df_biasarray1 = df_biasarray0
+        dg_biasarray1 = dg_biasarray0
+
+        Vg_array = np.linspace(-10,10,biassteps) #eV
 
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
         Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
@@ -346,63 +322,29 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset
         dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
-        # Convert force per unit area to force
-        F_biasarray = F_biasarray*np.pi*tipradius**2
-        F_zinsarray = F_zinsarray0*np.pi*tipradius**2
-
-
-        #########################################################
-        # Load experimental data (for plotting / comparison only, no fitting in this code)
-
-        #Xdata315_df = pd.read_csv('XData_FreqShiftvBias-Sweep315.csv')
-        #Xdata315_dfx = Xdata315_df.Bias
-        #Xdata315_dfy = Xdata315_df.FreqShift
-
-        #Xdata315_dg = pd.read_csv('XData_ExcitationvBias-Sweep315.csv')
-        #Xdata315_dgx = Xdata315_dg.Bias
-        #Xdata315_dgy = Xdata315_dg.Excitation
-
-        ## Convert excitation data to energy units, Cockins eq. 2.15
-        #E_o = np.pi*springconst*(amplitude*10**-9)**2/Qfactor*(1/Physics_Semiconductors.e)*1000 #meV
-        #A_exc = Xdata315_dgy
-        #A_exco = 0.09
-        #E_ts = E_o*(A_exc-A_exco)/A_exc
-        #Xdata315_dgy = E_ts
-
-
 
         #########################################################
         #########################################################
-        fig = make_subplots(
+        fig2 = make_subplots(
             rows=2, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.5, 0.5], row_heights=[1,1],
             specs=[[{}, {}], [{}, {}]])
-        #fig.add_trace(go.Scatter(
-        #    x = Xdata315_dfx, y = Xdata315_dfy,
-        #    name = "FreqShift", mode='lines', showlegend=False,
-        #    line_color=color_Ei
-        #    ), row=1, col=2)
-        fig.add_trace(go.Scatter(
+        fig2.add_trace(go.Scatter(
             x = Vg_array, y = Vs_biasarray,
             name = "ContactPotential", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig2.add_trace(go.Scatter(
             x = Vg_array, y = F_biasarray,
             name = "Force", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=1)
-        fig.add_trace(go.Scatter(
+        fig2.add_trace(go.Scatter(
             x = Vg_array, y = df_biasarray,
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=2)
-        #fig.add_trace(go.Scatter(
-        #    x = Xdata315_dgx, y = Xdata315_dgy,
-        #    name = "Dissipation", mode='lines', showlegend=False,
-        #    line_color=color_Ei
-        #    ), row=2, col=2)
-        fig.add_trace(go.Scatter(
+        fig2.add_trace(go.Scatter(
             x = Vg_array, y = dg_biasarray,
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
@@ -421,36 +363,36 @@ def fig_AFM2(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
     ############################################################################
 
     else:
-        fig = make_subplots(
+        fig2 = make_subplots(
             rows=2, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.5, 0.5], row_heights=[1,1],
             specs=[[{}, {}], [{}, {}]])
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)
+        fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
+        fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
+        fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
+        fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)
 
     ############################################################################
 
-    fig.update_layout(transition_duration=300, height=600,margin=dict(t=0),showlegend=False)
+    fig2.update_layout(transition_duration=300, height=600,margin=dict(t=0),showlegend=False)
 
-    fig.update_yaxes(row=1, col=1, title_text= "Contact Potential (eV)")
-    fig.update_yaxes(row=2, col=1, title_text= "Force (N)")
-    fig.update_yaxes(row=1, col=2, title_text = "Frequency Shift (Hz)")
-    fig.update_yaxes(row=2, col=2, title_text = "Dissipation (meV / cycle)")
+    fig2.update_yaxes(row=1, col=1, title_text= "Contact Potential (eV)")
+    fig2.update_yaxes(row=2, col=1, title_text= "Force (N)")
+    fig2.update_yaxes(row=1, col=2, title_text = "Frequency Shift (Hz)")
+    fig2.update_yaxes(row=2, col=2, title_text = "Dissipation (meV / cycle)")
 
-    fig.update_xaxes(row=1, col=1,showticklabels=True)
-    fig.update_xaxes(row=2, col=1,title_text= "Gate Bias (V)")
-    fig.update_xaxes(row=1, col=2,showticklabels=True)
-    fig.update_xaxes(row=2, col=2,title_text= "Gate Bias (V)")
+    fig2.update_xaxes(row=1, col=1,showticklabels=True)
+    fig2.update_xaxes(row=2, col=1,title_text= "Gate Bias (V)")
+    fig2.update_xaxes(row=1, col=2,showticklabels=True)
+    fig2.update_xaxes(row=2, col=2,title_text= "Gate Bias (V)")
 
-    return fig
+    return fig2
 
 ################################################################################
 ################################################################################
 # FIGURE: Time trace experiment
 
-def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateTimeExp' in changed_id:
@@ -475,13 +417,13 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         tipradius = slider_tipradius #nm
         hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
-        steps = 50
+        timesteps = 50
 
         Vg_array = np.arange(200)/10-10 #eV
         zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
         time_array = np.arange(200)/10
 
-        df_AFMtimearray, dg_AFMtimearray = Physics_FreqshiftDissipation.dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_AFMtimearray, dg_AFMtimearray = Physics_FreqshiftDissipation.dfdg_timearray(time_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         #########################################################
         #########################################################
@@ -528,13 +470,13 @@ def fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
 ################################################################################
 # FIGURE: Delay sweep experiment
 
-def fig_AFM4(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+def fig4_AFM(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha, slider_timesteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateDelayExp' in changed_id:
 
         # input (slider) parameters
-        Vg = slider_Vg
+        Vg = slider_Vg*(1-slider_alpha)
         zins = slider_zins*1e-7 # cm
         bandgap = slider_bandgap
         epsilon_sem = slider_epsilonsem
@@ -553,62 +495,55 @@ def fig_AFM4(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
         tipradius = slider_tipradius #nm
         hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
-        steps = 50
+        timesteps = slider_timesteps
+        pulsetimesteps = slider_pulsetimesteps
+        delaysteps = slider_delaysteps
 
-        omega_pulse = 2
+        pulsetime_array = np.linspace(-5,5,pulsetimesteps)
+        delay_array = np.linspace(-5,5,delaysteps)
 
-        t_array = np.arange(500)/50-5 #eV
-        delay_array = np.arange(500)/50-5 #eV
-
-        intensity_delayarray = Physics_Optics.intensity_delayarray(t_array,delay_array)
-
-        #Vs_delayarray, F_delayarray = Physics_Optics.VsF_delayarrays(delay_array,intensity_delayarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_delayarray, F_delayarray, df_delayarray, dg_delayarray =  Physics_Optics.VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-        # Convert force per unit area to force
-        #F_delayarray = F_delayarray*np.pi*tipradius**2
-
-
+        intensity_delayarray = Physics_Optics.intensity_delayarray(pulsetime_array,delay_array)
+        Vs_delayarray, F_delayarray, df_delayarray, dg_delayarray =  Organization_BuildArrays.VsFdfdg_delayarrays(delay_array,intensity_delayarray,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         #########################################################
         #########################################################
-        fig = make_subplots(
+        fig4 = make_subplots(
             rows=6, cols=1, shared_yaxes=False, shared_xaxes=True,
             column_widths=[0.5], row_heights=[1,1,1,1,1,1],
             vertical_spacing=0.03,
             specs=[[{}], [{}], [{}], [{}], [{}], [{}]])
 
-        fig.add_trace(go.Scatter(
-            x = t_array, y = Physics_Optics.Epulse_array(t_array,0),
+        fig4.add_trace(go.Scatter(
+            x = pulsetime_array, y = Physics_Optics.Epulse_array(pulsetime_array,0),
             name = "Pulse1 2 delay", mode='lines', showlegend=False,
             line_color=color_Ec
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
-            x = t_array, y = Physics_Optics.Epulse_array(t_array,2),
+        fig4.add_trace(go.Scatter(
+            x = pulsetime_array, y = Physics_Optics.Epulse_array(pulsetime_array,2),
             name = "Pulse2 2 delay", mode='lines', showlegend=False,
             line_color=color_Ev
             ), row=1, col=1)
-        fig.add_trace(go.Scatter(
+        fig4.add_trace(go.Scatter(
             x = delay_array, y = intensity_delayarray,
             name = "Collinear Optical Autocorrelation Function", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=1)
-        fig.add_trace(go.Scatter(
+        fig4.add_trace(go.Scatter(
             x = delay_array, y = Vs_delayarray,
             name = "ContactPotential", mode='lines', showlegend=False,
             line_color=color_other
             ), row=3, col=1)
-        fig.add_trace(go.Scatter(
+        fig4.add_trace(go.Scatter(
             x = delay_array, y = F_delayarray,
             name = "Force", mode='lines', showlegend=False,
             line_color=color_other
             ), row=4, col=1)
-        fig.add_trace(go.Scatter(
+        fig4.add_trace(go.Scatter(
             x = delay_array, y = df_delayarray,
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
             ), row=5, col=1)
-        fig.add_trace(go.Scatter(
+        fig4.add_trace(go.Scatter(
             x = delay_array, y = dg_delayarray,
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
@@ -617,46 +552,45 @@ def fig_AFM4(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet
     ############################################################################
 
     else:
-        fig = make_subplots(
+        fig4 = make_subplots(
             rows=6, cols=1, shared_yaxes=False, shared_xaxes=True,
             column_widths=[0.5], row_heights=[1,1,1,1,1,1],
             vertical_spacing=0.03,
             specs=[[{}], [{}], [{}], [{}], [{}], [{}]])
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=3, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=4, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=5, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=6, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=3, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=4, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=5, col=1)
+        fig4.add_trace(go.Scatter(y=[], x=[]), row=6, col=1)
 
     ############################################################################
 
-    fig.update_layout(transition_duration=300, height=1400,margin=dict(t=0),showlegend=False)
+    fig4.update_layout(transition_duration=300, height=1400,margin=dict(t=0),showlegend=False)
 
-    fig.update_yaxes(row=1, col=1, title_text= "Pulse Examples")
-    fig.update_yaxes(row=2, col=1, title_text= "Illumination Intensity")
-    fig.update_yaxes(row=3, col=1, title_text= "Contact Potential (eV)")
-    fig.update_yaxes(row=4, col=1, title_text= "Force (N)")
-    fig.update_yaxes(row=5, col=1, title_text = "Frequency Shift (Hz)")
-    fig.update_yaxes(row=6, col=1, title_text = "Dissipation (meV / cycle)")
+    fig4.update_yaxes(row=1, col=1, title_text= "Pulse Examples")
+    fig4.update_yaxes(row=2, col=1, title_text= "Illumination Intensity")
+    fig4.update_yaxes(row=3, col=1, title_text= "Contact Potential (eV)")
+    fig4.update_yaxes(row=4, col=1, title_text= "Force (N)")
+    fig4.update_yaxes(row=5, col=1, title_text = "Frequency Shift (Hz)")
+    fig4.update_yaxes(row=6, col=1, title_text = "Dissipation (meV / cycle)")
 
-    fig.update_xaxes(row=1, col=1,showticklabels=True)
-    fig.update_xaxes(row=2, col=1,showticklabels=True)
-    fig.update_xaxes(row=3, col=1,showticklabels=True)
-    fig.update_xaxes(row=4, col=1,showticklabels=True)
-    fig.update_xaxes(row=5, col=1,showticklabels=True)
-    fig.update_xaxes(row=6, col=1,title_text= "Delay (arb)")
+    fig4.update_xaxes(row=1, col=1,showticklabels=True)
+    fig4.update_xaxes(row=2, col=1,showticklabels=True)
+    fig4.update_xaxes(row=3, col=1,showticklabels=True)
+    fig4.update_xaxes(row=4, col=1,showticklabels=True)
+    fig4.update_xaxes(row=5, col=1,showticklabels=True)
+    fig4.update_xaxes(row=6, col=1,title_text= "Delay (arb)")
 
-    return fig
+    return fig4
 
 
 ################################################################################
 ################################################################################
 # READOUTS
 
-def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius):
-    readout_Vg = '{0:.4g}'.format(slider_Vg)
-    readout_zins = '{0:.1f}'.format(slider_zins)
+def readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps):
+    readout_timesteps = '{0:.0f}'.format(slider_timesteps)
     readout_amplitude = '{0:.1f}'.format(slider_amplitude)
     readout_lag = '{0:.0f}'.format(slider_lag)
     readout_hop = '{0:.2f}'.format(slider_hop)
@@ -664,7 +598,9 @@ def readouts_AFM(slider_Vg, slider_zins, slider_amplitude, slider_hop, slider_la
     readout_springconst = '{0:.0f}'.format(slider_springconst)
     readout_Qfactor = '{0:.0f}'.format(slider_Qfactor)
     readout_tipradius = '{0:.0f}'.format(slider_tipradius)
-    return readout_Vg, readout_zins, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius
+    readout_pulsetimesteps = '{0:.0f}'.format(slider_pulsetimesteps)
+    readout_delaysteps = '{0:.0f}'.format(slider_delaysteps)
+    return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
 
 
 ################################################################################

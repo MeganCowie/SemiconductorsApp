@@ -16,8 +16,8 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
     Ef, T = slider_Ef, slider_T
 
     E = np.arange(5000)/1000
-    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
-    g = Physics_Semiconductors.MaxwellBoltzmann(E, Ef, T)
+    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
+    g = Physics_Semiconductors.Func_MaxwellBoltzmann(E, Ef, T)
     min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
 
     fig = go.Figure()
@@ -56,7 +56,7 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
     Ef, T = slider_Ef, slider_T
 
     E = np.arange(5000)/5000+0.000000001
-    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
+    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
     min_x, max_x, min_y, max_y = 0, 1, 0, 1
 
     gc_E=E-Ef-0.03
@@ -124,21 +124,21 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
 
     E = np.arange(5000)/1000
     Ec,Ev = 2,1
+    Eg = Ec-Ev
 
-    NC,NV = Physics_Semiconductors.NCNV(T, mn, mp)
+    NC,NV = Physics_Semiconductors.Func_NCNV(T, mn, mp)
     NC = NC/(100**3)
     NV = NV/(100**3)
 
-    Eg = Physics_Semiconductors.Eg(Ec, Ev)
-    Ei = Physics_Semiconductors.Ei(Ev, Ec, T, mn, mp)
-    Ef = Physics_Semiconductors.Ef(NC, NV, Ec, Ev, T, ND_ion, NA_ion)
+    Ei = Physics_Semiconductors.Func_Ei(Ev, Ec, T, mn, mp)
+    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, ND_ion, NA_ion)
 
-    gc, gv = Physics_Semiconductors.gcgv(E, Ec, Ev, mn, mp)
-    fc,fv = Physics_Semiconductors.fcfv(E, Ef, T)
+    gc, gv = Physics_Semiconductors.Func_gcgv(E, Ec, Ev, mn, mp)
+    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
 
-    ni = Physics_Semiconductors.ni(NC, NV, Eg, T)
-    n,p = Physics_Semiconductors.nopo(NC, NV, Ec, Ev, Ef, T)
-    Ne,Nh = Physics_Semiconductors.NeNh(E, fc, fv, gc, gv, Ec, Ev)
+    ni = Physics_Semiconductors.Func_ni(NC, NV, Eg, T)
+    n,p = Physics_Semiconductors.Func_nopo(NC, NV, Ec, Ev, Ef, T)
+    Ne,Nh = Physics_Semiconductors.Func_NeNh(E, fc, fv, gc, gv, Ec, Ev)
 
     min_x, max_x, min_y, max_y = 0, 1, 0, 3
 
