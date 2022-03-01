@@ -5,6 +5,7 @@ import numpy as np
 
 import Physics_Semiconductors
 import Physics_BandDiagram
+import Organization_IntermValues
 import Organization_BuildArrays
 
 
@@ -12,12 +13,12 @@ import Organization_BuildArrays
 ################################################################################
 # FIGURE
 
-def fig0_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
 
-    # input (slider) parameters
+    # Input values
     Vg = slider_Vg*(1-slider_alpha) #eV
     zins = slider_zins*1e-7 #cm
-    bandgap = slider_bandgap #eV
+    Eg = slider_Eg #eV
     epsilon_sem = slider_epsilonsem #dimensionless
     WFmet = slider_WFmet #eV
     EAsem = slider_EAsem #eV
@@ -30,19 +31,26 @@ def fig0_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slid
     biassteps = slider_biassteps
     zinssteps = slider_zinssteps
 
+    # Input arrays
     Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
     zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
 
+    Vs, F = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-    Vs, F = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     Vg = slider_Vg #eV
     Vg_array = np.linspace(-10,10,biassteps) #eV
 
+
+    # Account for alpha
+    Vg = slider_Vg #eV
+    Vg_array = np.linspace(-10,10,biassteps) #eV
+
+    zQ = 1
+    Qs = 1
 
     #########################################################
     #########################################################
@@ -191,8 +199,8 @@ def fig0_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slid
     #    ), row=6, col=3)
 
     # Automated axis scaling
-    biasmin = -10#-3
-    biasmax = 10#+3
+    biasmin = -3
+    biasmax = +3
     if biasmin<Vg and Vg>biasmax:
         biasrange_indexmin = find_nearest(Vg_array,biasmin)
         biasrange_indexmax = find_nearest(Vg_array,Vg+1)
@@ -276,10 +284,10 @@ def fig0_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slid
 ################################################################################
 # READOUTS
 
-def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+def readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
     readout_Vg = '{0:.4g}'.format(slider_Vg)
     readout_zins = '{0:.0f}'.format(slider_zins)
-    readout_bandgap = '{0:.1f}'.format(slider_bandgap)
+    readout_Eg = '{0:.1f}'.format(slider_Eg)
     readout_epsilonsem = '{0:.1f}'.format(slider_epsilonsem)
     readout_WFmet = '{0:.2f}'.format(slider_WFmet)
     readout_EAsem = '{0:.2f}'.format(slider_EAsem)
@@ -291,7 +299,7 @@ def readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, 
     readout_alpha = '{0:.4g}'.format(slider_alpha)
     readout_biassteps = '{0:.4g}'.format(slider_biassteps)
     readout_zinssteps = '{0:.4g}'.format(slider_zinssteps)
-    return readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
+    return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
 
 
 ################################################################################

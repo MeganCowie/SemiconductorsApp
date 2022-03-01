@@ -16,7 +16,7 @@ AFM_Card1 = dbc.Card([
         dbc.Col(html.Div(id='AFMText_timesteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_timesteps', min=5, max=50, step=1, value=10), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_timesteps', min=10, max=50, step=10, value=10), md=12),
     ]),
 ])
 
@@ -135,14 +135,14 @@ AFM_Card1 = dbc.Card([
         dbc.Col(html.Div(id='AFMText_pulsetimesteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_pulsetimesteps', min=100, max=10000, step=1, value=1000), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_pulsetimesteps', min=50, max=1000, step=50, value=100), md=12),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Delay Precision", id="AFMText_delaystepslabel", style={"margin-left": "10px"}), md=8),
         dbc.Col(html.Div(id='AFMText_delaysteps', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_delaysteps', min=25, max=1000, step=1, value=25), md=12),
+        dbc.Col(dcc.Slider(id='AFMSlider_delaysteps', min=50, max=1000, step=50, value=100), md=12),
     ]),
 ])
 

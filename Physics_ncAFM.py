@@ -29,13 +29,13 @@ def zinslag_AFMarray(time_AFMarray, amplitude, zins, lag):
     zinslag_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zinslag_AFMarray
 
-def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Vs_AFMarray = []
     F_AFMarray = []
 
     for zins_AFMindex in range(len(zins_AFMarray)):
         zins_variable = zins_AFMarray[zins_AFMindex]
-        Vs_soln, F_soln = Physics_Semiconductors.Func_VsF(guess+0.1,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_soln, F_soln = Physics_Semiconductors.Func_VsF(guess+0.1,sampletype,   Vg,zins_variable,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_AFMarray = np.append(Vs_AFMarray,Vs_soln)
         F_AFMarray = np.append(F_AFMarray,F_soln)
 

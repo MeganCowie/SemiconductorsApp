@@ -137,7 +137,7 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsi
 ################################################################################
 # Vs, F, df, and dg vs. Vg
 
-def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     # First list any functions that are constant as a function of x
     time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
@@ -146,7 +146,7 @@ def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor
 
     # Then list any functions that are not constant as a function of x
     def compute(Vg_variable):
-        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg_variable,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         df_soln, dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarraysoln,frequency,springconst,amplitude,Qfactor,tipradius)
         Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
         return [Vs_soln,F_soln,df_soln, dg_soln]
@@ -170,7 +170,7 @@ def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor
 ################################################################################
 # DELAY ARRAYS
 
-def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     # First list any functions that are constant as a function of x
     time_AFMarray = Physics_ncAFM.time_AFMarray(steps)
@@ -180,7 +180,7 @@ def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequen
     # Then list any functions that are not constant as a function of x
     def compute(intensity_variable):
         Na_soln,Nd_soln = Physics_Optics.NaNd_intensity(Na,Nd,intensity_variable)
-        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd_soln,Na_soln,mn,mp,T)
+        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd_soln,Na_soln,mn,mp,T)
         Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
         df_soln, dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarraysoln,frequency,springconst,amplitude,Qfactor,tipradius)
         return [Vs_soln, F_soln, df_soln, dg_soln]
@@ -224,7 +224,7 @@ def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequen
 ################################################################################
 # Physics over time -- NOT FINISHED YET and not needed for MoSe2 data.
 
-def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     time_AFMarray = Physics_ncAFM.time_AFMarray(steps)
     zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
@@ -244,7 +244,7 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
 
     Vs_AFMarray_Nd0 = []
     F_AFMarray_Nd0 = []
-    Vs_AFMarray_Nd0, F_AFMarray_Nd0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,0,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_AFMarray_Nd0, F_AFMarray_Nd0 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,0,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     df_Nd0 = df_prefactor*trapz(F_AFMarray_Nd0*tiparea*np.sin(time_AFMarray), time_AFMarray/frequency)
     dg_Nd0 = dg_prefactor*trapz(F_AFMarray_Nd0*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency)
 
@@ -252,7 +252,7 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
     Nd = round((10**(slider_donor+hop)*10**8)/(1000**3))
     Vs_AFMarray_Nd1 = []
     F_AFMarray_Nd1 = []
-    Vs_AFMarray_Nd1, F_AFMarray_Nd1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,0,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_AFMarray_Nd1, F_AFMarray_Nd1 = Physics_AFMoscillation.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,0,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     df_Nd1 = df_prefactor*trapz(F_AFMarray_Nd1*tiparea*np.sin(time_AFMarray), time_AFMarray/frequency)
     dg_Nd1 = dg_prefactor*trapz(F_AFMarray_Nd1*tiparea*np.cos(time_AFMarray), time_AFMarray/frequency)
 
@@ -279,7 +279,7 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
 
 
 
-def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     Ec_AFMarray = []
     Ev_AFMarray = []
@@ -299,7 +299,7 @@ def BandDiagram_AFMarray(Vs_AFMarray,zins_AFMarray,sampletype,   Vg,zins,bandgap
         Vs_variable = Vs_AFMarray[zins_AFMindex]
 
         if sampletype == False: # semiconductor band diagram
-            Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs_variable,sampletype,   Vg,zins_variable,bandgap,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs_variable,sampletype,   Vg,zins_variable,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
             Ec_AFMarray.append(Ec)
             Ev_AFMarray.append(Ev)
             Ei_AFMarray.append(Ei)

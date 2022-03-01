@@ -12,7 +12,7 @@ import ControlsBulk
 import ControlsSurface
 import ControlsAFM
 import CallbacksBulk
-import CallbacksSurfaceAFM
+import CallbacksSurface
 import CallbacksAFM
 import PresetsSurface
 
@@ -246,7 +246,7 @@ def update_output(toggle):
      Output('SurfaceText_zQ', 'children')],
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -258,15 +258,15 @@ def update_output(toggle):
      Input('SurfaceSlider_alpha', 'value'),
      Input('SurfaceSlider_biassteps', 'value'),
      Input('SurfaceSlider_zinssteps', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    fig0, fig0supp, regime, ni, LD, zQ = CallbacksSurfaceAFM.fig0_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+    fig0, fig0supp, regime, ni, LD, zQ = CallbacksSurface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
     return fig0, fig0supp, regime, ni, LD, zQ
 
 # surface readouts
 @app.callback(
     [Output('SurfaceText_Vg', 'children'),
      Output('SurfaceText_zins', 'children'),
-     Output('SurfaceText_bandgap', 'children'),
+     Output('SurfaceText_Eg', 'children'),
      Output('SurfaceText_epsilonsem', 'children'),
      Output('SurfaceText_WFmet', 'children'),
      Output('SurfaceText_EAsem', 'children'),
@@ -280,7 +280,7 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Output('SurfaceText_zinssteps', 'children')],
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -292,9 +292,9 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('SurfaceSlider_alpha', 'value'),
      Input('SurfaceSlider_biassteps', 'value'),
      Input('SurfaceSlider_zinssteps', 'value')])
-def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = CallbacksSurfaceAFM.readouts_surface(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
-    return readout_Vg, readout_zins, readout_bandgap, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
+def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+    readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+    return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
 
 
 # surface presets
@@ -302,7 +302,7 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     [Output('SurfaceToggle_type', 'value'),
      Output('SurfaceSlider_Vg', 'value'),
      Output('SurfaceSlider_zins', 'value'),
-     Output('SurfaceSlider_bandgap', 'value'),
+     Output('SurfaceSlider_Eg', 'value'),
      Output('SurfaceSlider_epsilonsem', 'value'),
      Output('SurfaceSlider_WFmet', 'value'),
      Output('SurfaceSlider_EAsem', 'value'),
@@ -322,7 +322,7 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     [Input('SurfaceButtons_presets', 'value'),
      Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -333,7 +333,7 @@ def update_output(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('SurfaceSlider_T', 'value'),
      Input('SurfaceSlider_alpha', 'value'),
      Input('SurfaceToggle_type', 'value')])
-def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, toggle_type):
+def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, toggle_type):
 
     button_presets_og = button_presets
 
@@ -345,7 +345,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
         button_presets = 4
     elif 'SurfaceSlider_zins' in changed_id:
         button_presets = 4
-    elif 'SurfaceSlider_bandgap' in changed_id:
+    elif 'SurfaceSlider_Eg' in changed_id:
         button_presets = 4
     elif 'SurfaceSlider_epsilonsem' in changed_id:
         button_presets = 4
@@ -368,7 +368,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
     else:
         button_presets = button_presets
 
-    toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
+    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'SurfaceSlider_Vg' in changed_id:
@@ -380,7 +380,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
     else:
         button_presets = button_presets
 
-    return toggle_type, slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
+    return toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
 
 ################################################################################################################################################################
 ################################################################################################################################################################
@@ -391,7 +391,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
     Output('AFMGraph1', 'figure'),
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -411,8 +411,8 @@ def presets(button_presets,slider_Vg, slider_zins, slider_bandgap, slider_epsilo
      Input('AFMbutton_Calculate', 'n_clicks'),
      Input('AFMtoggle_sampletype', 'value'),
      Input('AFMtoggle_RTN', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
-    fig1 = CallbacksAFM.fig1_AFM(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
+    fig1 = CallbacksAFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
     return fig1
 
 # Bias experiment figure
@@ -420,7 +420,7 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     Output('AFMGraph2', 'figure'),
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -442,8 +442,8 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('AFMtoggle_sampletype', 'value'),
      Input('AFMSlider_hop', 'value'),
      Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
-    fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
+    fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
     return fig2
 
 # Time trace experiment figure
@@ -451,7 +451,7 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
 #    Output('AFMGraph3', 'figure'),
 #    [Input('SurfaceSlider_Vg', 'value'),
 #     Input('SurfaceSlider_zins', 'value'),
-#     Input('SurfaceSlider_bandgap', 'value'),
+#     Input('SurfaceSlider_Eg', 'value'),
 #     Input('SurfaceSlider_epsilonsem', 'value'),
 #     Input('SurfaceSlider_WFmet', 'value'),
 #     Input('SurfaceSlider_EAsem', 'value'),
@@ -471,8 +471,8 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
 #     Input('AFMtoggle_sampletype', 'value'),
 #     Input('AFMSlider_hop', 'value'),
 #     Input('AFMSlider_lag', 'value')])
-#def update_figure(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
-#    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_bandgap,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
+#def update_figure(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+#    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
 #    return fig
 
 # Delay experiment figure
@@ -480,7 +480,7 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
     Output('AFMGraph4', 'figure'),
     [Input('SurfaceSlider_Vg', 'value'),
      Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_bandgap', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
      Input('SurfaceSlider_epsilonsem', 'value'),
      Input('SurfaceSlider_WFmet', 'value'),
      Input('SurfaceSlider_EAsem', 'value'),
@@ -502,8 +502,8 @@ def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, sli
      Input('AFMSlider_lag', 'value'),
      Input('AFMSlider_pulsetimesteps', 'value'),
      Input('AFMSlider_delaysteps', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
-    fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_bandgap, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
+    fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
     return fig4
 
 # AFM readouts
