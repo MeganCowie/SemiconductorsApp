@@ -319,7 +319,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
         Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
         F_biasarray = np.append(F_biasarray0, np.flipud(F_biasarray1))
-        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))-3.651 #Experimental offset
+        df_biasarray = np.append(df_biasarray0, np.flipud(df_biasarray1))
         dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
 

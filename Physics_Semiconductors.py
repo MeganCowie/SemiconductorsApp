@@ -27,21 +27,21 @@ epsilon_o = sp.value('vacuum electric permittivity')/100 #C/(V*cm)
     # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 38)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 71)
     # Jonscher Solid Semiconductors (pg 12-13)
-def Func_fcfv(E, Ef, T): # dimensionless
+def Func_fcfv(E,Ef,T): # dimensionless
     fc = np.reciprocal(np.exp((E-Ef)/(kB*T))+1)
     fv = 1-np.reciprocal(np.exp((E-Ef)/(kB*T))+1)
     return fc, fv
 
 # Maxwell Boltzmann probability distribution
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 75)
-def Func_MaxwellBoltzmann(E, Ef, T): #dimensionless
+def Func_MaxwellBoltzmann(E,Ef,T): #dimensionless
     fb = np.reciprocal(np.exp((E-Ef)/(kB*T)))
     return fb
 
 # Density of states in the conduction and valence bands
     # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 36)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 69-70)
-def Func_gcgv(E, Ec, Ev, mn, mp): # units?
+def Func_gcgv(E,Ec,Ev,mn,mp): # units?
     Earg=E-Ec
     Earg[Earg<0]=0
     gc = 1/(2*sp.pi**2)*((2*mn/e)/(hbar**2))**(3/2)*np.sqrt(Earg)
@@ -117,9 +117,91 @@ def Func_Ef(NC, NV, Ec, Ev, T, Nd, Na): #eV
 
 ################################################################################
 ################################################################################
-# S capacitor
+# MIS capacitor
 
-# Identify S capacitor regime (accumulation, depletion, inversion)
+# Contact potential difference
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
+    # See pg. 225 in Sze
+def Func_CPD(WFmet, EAsem, Ec, Ef):
+    WFsem = EAsem + Ec - Ef
+    CPD = WFmet - WFsem
+    return CPD
+
+# flatband voltage (assuming no trapped charges)
+    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 434)
+def Func_Vfb(CPD_metsem): # eV
+    Vfb = CPD_metsem
+    return Vfb
+
+# Debye length
+def Func_LD(epsilon_sem,N_D,N_A,T):
+    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(N_D+N_A)*e)) #m (Note units: N_A and N_D are in m^-3)
+    return LD
+
+# intgration constants
+def Func_uf(N_A,N_D,n_i,T,Vs):
+    if N_A ==0: #n-type
+        u = Vs/(kB*T) #dimensionless
+        f = (np.exp(u)-u-1+(n_i**2/(N_D**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+    elif N_D ==0: #p-type
+        u = -1*Vs/(kB*T) #dimensionless
+        f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
+    return u,f
+
+# Charge in the semiconductor
+def Func_Qs(u,f,epsilon_sem,T,LD):
+    Qs = -1*np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/LD*f #eV*C/Vm**2
+    return Qs
+
+# Force between S plates
+def Func_F(f,epsilon_sem,T,LD):
+    F = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/LD*f)**2 #N/m**2
+    return F
+
+
+
+# Surface potential and force
+# Surface potential and force expressions
+    # Sze Physics of Semiconductor Devices (pg. 201-202)
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
+
+def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+    NC,NV = Func_NCNV(T,mn,mp)
+    Ec,Ev = Func_EcEv(T,Eg)
+    ni = Func_ni(NC,NV,Eg,T)
+    Ef = Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    CPD_metsem = Func_CPD(WFmet, EAsem, Ec, Ef)
+
+    n_i = ni*(100)**3 #m**-3
+    N_D = Nd*(100)**3 #m**-3
+    N_A = Na*(100)**3 #m**-3
+    LD = Func_LD(epsilon_sem, N_D, N_A, T)
+
+    def Vs_eqn(Vs,Vg_variable,zins_variable):
+        C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
+        u,f= Func_uf(N_A,N_D,n_i,T,Vs)
+        Qs = Func_Qs(u,f,epsilon_sem,T,LD)
+        if Na ==0: #n-type
+            expression = Vg_variable+CPD_metsem+Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
+        elif Nd ==0: #p-type
+            expression = Vg_variable+CPD_metsem+Vs+Qs/(C_l) #eV
+        return expression
+
+    def F_eqn(Vs_variable):
+        u,f= Func_uf(N_A,N_D,n_i,T,Vs)
+        F_soln= Func_F(f,epsilon_sem,T,LD)
+        return F_soln
+
+    if sampletype==False: # semiconducting case
+        Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0]
+        F = -1*F_eqn(Vs)*(1e-9)**2 #N/nm**2 (I multiplied by -1, not done in Hudlet, to represent attractive force)
+    elif sampletype==True:# metallic case
+        Vs = -CPD_metsem
+        F = -0.5*(epsilon_o*100)*(Vg-Vs)**2/(zins/100)**2*(1e-9)**2 #U=0.5CV**2
+
+    return Vs, F
+
+# Identify MIS capacitor regime (accumulation, depletion, inversion)
 def Func_regime(Na,Nd,Vs,Ei,Ef):
     Vb = Ei-Ef
     if Na ==0: #n-type
@@ -145,91 +227,6 @@ def Func_regime(Na,Nd,Vs,Ei,Ef):
         elif Vs > Vb:
             regime = 5 #inversion
     return regime
-
-
-# Contact potential difference
-    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
-    # See pg. 225 in Sze
-def Func_CPD(WFmet, EAsem, Ec, Ef):
-    WFsem = EAsem + Ec - Ef
-    CPD = WFmet - WFsem
-    return CPD
-
-# flatband voltage (assuming no trapped charges)
-    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 434)
-def Func_Vfb(CPD_metsem): # eV
-    Vfb = CPD_metsem
-    return Vfb
-
-# intgration constants
-def Func_uf(N_A,N_D,n_i,T,Vs):
-    if N_A ==0: #n-type
-        u = Vs/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/(N_D**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
-    elif N_D ==0: #p-type
-        u = -1*Vs/(kB*T) #dimensionless
-        f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
-    return u,f
-
-# Charge in the semiconductor
-def Func_Qs(u,f,epsilon_sem,T,L_D):
-    Qs = -1*np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/L_D*f #eV*C/Vm**2
-    return Qs
-
-# Force between S plates
-def Func_F(f,epsilon_sem,T,L_D):
-    F = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/L_D*f)**2 #N/m**2
-    return F
-
-# Debye length
-def Func_LD(epsilon_sem, N_D, N_A, T):
-    LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(N_D+N_A)*e)) #m (Note units: N_A and N_D are in m^-3)
-    return LD
-
-
-# Surface potential and force
-# Surface potential and force expressions
-    # Sze Physics of Semiconductor Devices (pg. 201-202)
-    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-
-
-def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
-    NC,NV = Func_NCNV(T,mn,mp)
-    Ec,Ev = Func_EcEv(T,Eg)
-    ni = Func_ni(NC,NV,Eg,T)
-    Ef = Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
-    CPD_metsem = Func_CPD(WFmet, EAsem, Ec, Ef)
-
-    n_i = ni*(100)**3 #m**-3
-    N_D = Nd*(100)**3 #m**-3
-    N_A = Na*(100)**3 #m**-3
-    L_D = Func_LD(epsilon_sem, N_D, N_A, T)
-
-    def Vs_eqn(Vs,Vg_variable,zins_variable):
-        C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
-        u,f= Func_uf(N_A,N_D,n_i,T,Vs)
-        Qs = Func_Qs(u,f,epsilon_sem,T,L_D)
-        if Na ==0: #n-type
-            expression = Vg_variable+CPD_metsem+Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
-        elif Nd ==0: #p-type
-            expression = Vg_variable+CPD_metsem+Vs+Qs/(C_l) #eV
-        return expression
-
-    def F_eqn(Vs_variable):
-        u,f= Func_uf(N_A,N_D,n_i,T,Vs)
-        F_soln= Func_F(f,epsilon_sem,T,L_D)
-        return F_soln
-
-    if sampletype==False: # semiconducting case
-        Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0]
-        F = -1*F_eqn(Vs)*(1e-9)**2 #N/nm**2 (I multiplied by -1, not done in Hudlet, to represent attractive force)
-    elif sampletype==True:# metallic case
-        Vs = -CPD_metsem
-        F = -0.5*(epsilon_o*100)*(Vg-Vs)**2/(zins/100)**2*(1e-9)**2 #U=0.5CV**2
-
-    return Vs, F
-
-
 
 # Accumulation layer width
     # ? Chapter  pg 173
