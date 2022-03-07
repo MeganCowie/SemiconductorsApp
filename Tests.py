@@ -3,6 +3,8 @@
 # I need to test all of my functions here.
 # TThere's a lot of redundancy in how I listed all the test variables, but you
 # know what? It's for testing and I want it to be clear as anything.
+
+# Incorporate pytest
 ################################################################################
 ################################################################################
 
@@ -239,6 +241,8 @@ F = Physics_Semiconductors.Func_F(f,epsilon_sem,T,LD)
 assert np.round(F/1e22,5) == np.round(1.3566521239797213,5)
 del Vs,T,Eg,mn,mp,Nd,Na,NC,NV,ni,n_i,N_D,N_A,epsilon_sem,LD,u,f,F
 ################################################################################
+################################################################################
+################################################################################
 Vg = 5
 zins = 5*1e-7
 Eg = 1.5
@@ -274,6 +278,8 @@ Vs,F = Physics_Semiconductors.Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_se
 assert np.round(Vs,5) == np.round(0.2571116118436431,5)
 assert np.round(F/1e-12,5) == np.round(-1.9267080511760098,5)
 del Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,guess,sampletype,Vs,F
+################################################################################
+################################################################################
 ################################################################################
 Vs = 1 # To check the function, only (not true to code)
 Nd = round((10**20*10**8)/(1000**3))

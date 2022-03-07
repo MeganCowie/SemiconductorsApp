@@ -31,6 +31,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     biassteps = slider_biassteps
     zinssteps = slider_zinssteps
 
+
     # Input arrays
     Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
     zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
@@ -41,6 +42,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
 
     Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
+
     Vg = slider_Vg #eV
     Vg_array = np.linspace(-10,10,biassteps) #eV
 
@@ -48,9 +50,6 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     # Account for alpha
     Vg = slider_Vg #eV
     Vg_array = np.linspace(-10,10,biassteps) #eV
-
-    zQ = 1
-    Qs = 1
 
     #########################################################
     #########################################################

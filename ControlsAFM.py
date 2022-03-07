@@ -119,8 +119,164 @@ AFM_Card1 = dbc.Card([
     ], style={'padding': 10}, justify="center"),
 ])
 
+AFM_Card2 = dbc.Card([
+    dbc.Row([
+        dbc.Col(dbc.Label("Sigma", id="AFMText_sigmalabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_sigma', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_sigma', min=0, max=2, step=0.01, value=0.05), md=12),
+    ]),
+])
 
-AFM_Cards3 = [dbc.Col(AFM_Card1)]
+AFM_Card3 = dbc.Card([
+    dbc.Row([
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 1 mag", id="AFMText_RTS1maglabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS1mag',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS1mag', min=0, max=10, step=0.1, value=0,)),
+                ]),
+            ]),
+        ], md=6),
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 1 period", id="AFMText_RTS1perlabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS1per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS1per', min=1, max=500, step=1, value=1,)),
+                ]),
+            ]),
+        ], md=6)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 2 mag", id="AFMText_RTS2maglabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS2mag',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS2mag', min=0, max=10, step=0.1, value=0,)),
+                ]),
+            ]),
+        ], md=6),
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 2 period", id="AFMText_RTS2perlabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS2per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS2per', min=1, max=500, step=1, value=1,)),
+                ]),
+            ]),
+        ], md=6)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 3 mag", id="AFMText_RTS3maglabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS3mag',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS3mag', min=0, max=10, step=0.1, value=0,)),
+                ]),
+            ]),
+        ], md=6),
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 3 period", id="AFMText_RTS3perlabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS3per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS3per', min=1, max=500, step=1, value=1,)),
+                ]),
+            ]),
+        ], md=6)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 4 mag", id="AFMText_RTS4maglabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS4mag',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS4mag', min=0, max=10, step=0.1, value=0,)),
+                ]),
+            ]),
+        ], md=6),
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS 4 period", id="AFMText_RTS4perlabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS4per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS4per', min=1, max=500, step=1, value=1,)),
+                ]),
+            ]),
+        ], md=6)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS5 mag", id="AFMText_RTS5maglabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS5mag',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS5mag', min=0, max=10, step=0.1, value=0,)),
+                ]),
+            ]),
+        ], md=6),
+        dbc.Col([
+            dbc.FormGroup([
+                dbc.Row([
+                    dbc.Col(dbc.Label("RTS5 period", id="AFMText_RTS5perlabel", style={'fontSize': 14, "margin-left": "10px", "margin-right": "-10px", "margin-top": "20px"}), md=8),
+                    dbc.Col(html.Div(id='AFMText_RTS5per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
+                ], justify="between"),
+                dbc.Row([
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS5per', min=1, max=500, step=1, value=1,)),
+                ]),
+            ]),
+        ], md=6)
+    ]),
+])
+
+AFM_Card4 = dbc.Card([
+    dbc.Row([
+        dbc.Col(dbc.Label("1/f^0 y-intercept", id="AFMText_f0ylabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_f0y', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_f0y', min=-10, max=10, step=0.1, value=0), md=12),
+    ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("1/f^1 y-intercept", id="AFMText_f1ylabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_f1y', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_f1y', min=-10, max=10, step=0.1, value=0), md=12),
+    ]),
+    dbc.Row([
+        dbc.Col(dbc.Label("1/f^2 y-intercept", id="AFMText_f2ylabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
+        dbc.Col(html.Div(id='AFMText_f2y', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
+    ], justify="between"),
+    dbc.Row([
+        dbc.Col(dcc.Slider(id='AFMSlider_f2y', min=-10, max=10, step=0.1, value=0), md=12),
+    ]),
+])
+
+AFM_Cards3 = [dbc.Col(AFM_Card1),dbc.Col(AFM_Card2),dbc.Col(AFM_Card3),dbc.Col(AFM_Card4)]
 
 ################################################################################
 ################################################################################

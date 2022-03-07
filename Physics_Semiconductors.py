@@ -153,7 +153,7 @@ def Func_Qs(u,f,epsilon_sem,T,LD):
     Qs = -1*np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/LD*f #eV*C/Vm**2
     return Qs
 
-# Force between S plates
+# Force between MIS plates
 def Func_F(f,epsilon_sem,T,LD):
     F = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/LD*f)**2 #N/m**2
     return F
@@ -164,7 +164,6 @@ def Func_F(f,epsilon_sem,T,LD):
 # Surface potential and force expressions
     # Sze Physics of Semiconductor Devices (pg. 201-202)
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-
 def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     NC,NV = Func_NCNV(T,mn,mp)
     Ec,Ev = Func_EcEv(T,Eg)

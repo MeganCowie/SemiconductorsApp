@@ -19,12 +19,12 @@ def time_AFMarray(timesteps):
     time_AFMarray = np.linspace(0, 2*np.pi, timesteps)
     return time_AFMarray
 
-def zins_AFMarray(time_AFMarray, amplitude, zins):
+def zins_AFMarray(time_AFMarray,amplitude,zins):
     position_AFMarray = amplitude*np.sin(time_AFMarray)+amplitude #nm
     zins_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zins_AFMarray
 
-def zinslag_AFMarray(time_AFMarray, amplitude, zins, lag):
+def zinslag_AFMarray(time_AFMarray,amplitude,zins,lag):
     position_AFMarray = amplitude*np.sin(time_AFMarray-lag)+amplitude #nm
     zinslag_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zinslag_AFMarray

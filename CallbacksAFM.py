@@ -6,7 +6,9 @@ import pandas as pd
 
 import Physics_Semiconductors
 import Physics_ncAFM
+import Physics_Noise
 import Physics_Optics
+
 
 import Organization_BuildArrays
 
@@ -404,7 +406,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 ################################################################################
 # FIGURE: Time trace experiment
 
-def fig_AFM3(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+def fig3_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateTimeExp' in changed_id:
@@ -429,53 +431,158 @@ def fig_AFM3(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         tipradius = slider_tipradius #nm
         hop = slider_hop
         lag = slider_lag/10**9*frequency #rad
-        timesteps = 50
 
-        Vg_array = np.arange(200)/10-10 #eV
-        zins_array = (np.arange(200)/10+0.05)*1e-7 #cm
-        time_array = np.arange(200)/10
 
-        df_AFMtimearray, dg_AFMtimearray = Physics_FreqshiftDissipation.dfdg_timearray(time_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-        #########################################################
-        #########################################################
-        fig = make_subplots(
-            rows=2, cols=1, shared_yaxes=False, shared_xaxes=False,
-            column_widths=[1], row_heights=[0.5,0.5],
-            specs=[[{}],[{}]])
-
-        fig.add_trace(go.Scatter(
-            x = time_array, y = df_AFMtimearray,
-            name = "FrequencyShift", mode='lines', showlegend=False,
-            line_color=color_other
-            ), row=1, col=1)
-        fig.add_trace(go.Scatter(
-            x = time_array, y = dg_AFMtimearray,
-            name = "Dissipation", mode='lines', showlegend=False,
-            line_color=color_other
-            ), row=2, col=1)
-
-    ############################################################################
+        mu = 1 # signal (e.g. frequency shift)
 
     else:
-        fig = make_subplots(
-            rows=2, cols=1, shared_yaxes=False, shared_xaxes=False,
-            column_widths=[1], row_heights=[0.5,0.5],
-            specs=[[{}],[{}]])
-        fig.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
-        fig.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
+
+        mu = 1 # signal (e.g. frequency shift)
+
+    #########################################################
+    #########################################################
+
+    sigma = slider_sigma
+    RTS1mag = slider_RTS1mag
+    RTS1per = slider_RTS1per
+    RTS2mag = slider_RTS2mag
+    RTS2per = slider_RTS2per
+    RTS3mag = slider_RTS3mag
+    RTS3per = slider_RTS3per
+    RTS4mag = slider_RTS4mag
+    RTS4per = slider_RTS4per
+    RTS5mag = slider_RTS5mag
+    RTS5per = slider_RTS5per
+    f0y = 10**(-1*slider_f0y)
+    f1y = 10**(-1*slider_f1y)
+    f2y = 10**(-1*slider_f2y)
+
+    noise_Signalbins = np.linspace(mu-5*sigma,mu+5*sigma,100)
+    noise_Gaussianbins = np.linspace(mu-5*sigma,mu+5*sigma,100)
+    noise_TwoLevelbins = np.linspace(mu-5*sigma,mu+5*sigma+RTS1mag+RTS2mag+RTS3mag+RTS4mag+RTS5mag,100)
+
+    noise_timearray = Physics_Noise.Array_timearray()
+
+    noise_Signalarray = Physics_Noise.Array_Signalarray(noise_timearray,mu)
+    noise_SignalHistogram = Physics_Noise.Func_Histogram(noise_Signalarray,noise_Signalbins)
+    PSD_Signalfreqs,PSD_Signalps = Physics_Noise.Func_PSD(noise_Signalarray)
+
+    noise_Gaussianarray = Physics_Noise.Array_Gaussianarray(sigma,mu,noise_timearray)
+    noise_GaussianHistogram = Physics_Noise.Func_Histogram(noise_Gaussianarray,noise_Gaussianbins)
+    PSD_Gaussianfreqs,PSD_Gaussianps = Physics_Noise.Func_PSD(noise_Gaussianarray)
+
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS1mag,RTS1per,noise_Gaussianarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS2mag,RTS2per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS3mag,RTS3per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS4mag,RTS4per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS5mag,RTS5per,noise_TwoLevelarray)
+    noise_TwoLevelHistogram = Physics_Noise.Func_Histogram(noise_TwoLevelarray,noise_TwoLevelbins)
+    PSD_TwoLevelfreqs,PSD_TwoLevelps = Physics_Noise.Func_PSD(noise_TwoLevelarray)
+
+    # http://www.scholarpedia.org/article/1/f_noise#1.2Ff_noise_in_solids.2C_condensed_matter_and_electronic_devices
+
+    #########################################################
+    #########################################################
+    fig3 = make_subplots(
+        rows=3, cols=3, shared_yaxes=False, shared_xaxes=False,
+        column_widths=[0.8, 0.2, 0.4], row_heights=[0.7, 0.7, 0.7],
+        vertical_spacing=0.1, horizontal_spacing=0.05,
+        specs=[
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}]])
+
+    fig3.add_trace(go.Scatter(
+        x = noise_timearray, y = noise_Signalarray,
+        name = "TrueSignal TimeTrace", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=1, col=1)
+    fig3.add_trace(go.Scatter(
+        x = noise_SignalHistogram[0], y = noise_Signalbins,
+        name = "TrueSignal Distrubution", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=1, col=2)
+    fig3.add_trace(go.Scatter(
+        x = PSD_Signalfreqs, y = PSD_Signalps,
+        name = "TrueSignal PSD", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=1, col=3)
+
+
+    fig3.add_trace(go.Scatter(
+        x = noise_timearray, y = noise_Gaussianarray,
+        name = "WhiteNoise TimeTrace", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=2, col=1)
+    fig3.add_trace(go.Scatter(
+        x = noise_GaussianHistogram[0], y = noise_Gaussianbins,
+        name = "WhiteNoise Distrubution", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=2, col=2)
+    fig3.add_trace(go.Scatter(
+        x = PSD_Gaussianfreqs, y = PSD_Gaussianps,
+        name = "WhiteNoise PSD", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=2, col=3)
+
+    fig3.add_trace(go.Scatter(
+        x = noise_timearray, y = noise_TwoLevelarray,
+        name = "PinkNoise TimeTrace", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=3, col=1)
+    fig3.add_trace(go.Scatter(
+        x = noise_TwoLevelHistogram[0], y = noise_TwoLevelbins,
+        name = "PinkNoise Distrubution", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=3, col=2)
+    fig3.add_trace(go.Scatter(
+        x = PSD_TwoLevelfreqs, y = PSD_TwoLevelps,
+        name = "PinkNoise PSD", mode='lines', showlegend=False,
+        line_color=color_other
+        ), row=3, col=3)
+
+    fig3.add_trace(go.Scatter(
+        x = PSD_TwoLevelfreqs, y = 1/(f0y*PSD_TwoLevelfreqs**0),
+        name = "1/f^0 line", mode='lines', showlegend=False,
+        line_color=color_Ef
+        ), row=3, col=3)
+    fig3.add_trace(go.Scatter(
+        x = PSD_TwoLevelfreqs, y = 1/(f1y*PSD_TwoLevelfreqs**1),
+        name = "1/f^1 line", mode='lines', showlegend=False,
+        line_color=color_Ev
+        ), row=3, col=3)
+    fig3.add_trace(go.Scatter(
+        x = PSD_TwoLevelfreqs, y = 1/(f2y*PSD_TwoLevelfreqs**2),
+        name = "1/f^2 line", mode='lines', showlegend=False,
+        line_color=color_Ec
+        ), row=3, col=3)
 
     ############################################################################
+    ############################################################################
 
-    fig.update_layout(transition_duration=100, height=400,margin=dict(t=0),showlegend=False)
+    fig3.update_layout(transition_duration=100, height=800,margin=dict(t=0),showlegend=False)
 
-    fig.update_yaxes(row=1, col=1, title_text= "df (Hz)")
-    fig.update_yaxes(row=2, col=1, title_text = "dg", range=[0,20*10**-12])
+    fig3.update_yaxes(title_standoff=5,row=1, col=1, title_text= "Signal")
+    fig3.update_yaxes(title_standoff=5,row=2, col=1, title_text = "White noise")
+    fig3.update_yaxes(title_standoff=5,row=3, col=1, title_text = "Pink noise")
 
-    fig.update_xaxes(row=1, col=1, showticklabels=False, title_text= "Time")
-    fig.update_xaxes(row=2, col=1, showticklabels=False, title_text= "Time")
+    fig3.update_yaxes(title_standoff=5,row=1, col=3, title_text = "log(PSD)",type="log")
+    fig3.update_yaxes(title_standoff=5,row=2, col=3, title_text = "log(PSD)",type="log")
+    fig3.update_yaxes(title_standoff=5,row=3, col=3, title_text = "log(PSD)",type="log")
 
-    return fig
+
+
+    fig3.update_xaxes(title_standoff=5,row=1, col=1, showticklabels=True)
+    fig3.update_xaxes(title_standoff=5,row=2, col=1, showticklabels=True, title_text= "Time (s)")
+    fig3.update_xaxes(title_standoff=5,row=1, col=2, showticklabels=True)
+    fig3.update_xaxes(title_standoff=5,row=2, col=2, showticklabels=True, title_text= "Count")
+    fig3.update_xaxes(title_standoff=5,row=2, col=3, showticklabels=True, title_text= "Count")
+    fig3.update_xaxes(title_standoff=5,row=1, col=3, showticklabels=True, title_text= "log(freq)",type="log")
+    fig3.update_xaxes(title_standoff=5,row=2, col=3, showticklabels=True, title_text= "log(freq)",type="log")
+    fig3.update_xaxes(title_standoff=5,row=3, col=3, showticklabels=True, title_text= "log(freq)",type="log")
+
+
+    return fig3
 
 
 ################################################################################

@@ -67,45 +67,45 @@ mathjax_script = dji.Import(src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/
 
 app.layout = dbc.Container(
     [
-        html.Hr(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.Distributions, md=3),
-            dbc.Col(html.Div(id="DistributionsGraph"), md=9),
-
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.CarrierIntegrals, md=3),
-            dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=9),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsBulk.Bulk_Card, md=3),
-            dbc.Col(dcc.Graph(id="BulkGraph"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
+        # html.Hr(),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
+        # ], align="top",),
+        # html.Br(),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
+        # ], align="top",),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsBulk.Distributions, md=3),
+        #     dbc.Col(html.Div(id="DistributionsGraph"), md=9),
+        #
+        # ], align="top",),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
+        # ], align="top",),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsBulk.CarrierIntegrals, md=3),
+        #     dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=9),
+        # ], align="top",),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
+        # ], align="top",),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsBulk.Bulk_Card, md=3),
+        #     dbc.Col(dcc.Graph(id="BulkGraph"), md=9),
+        # ], align="top",),
+        # html.Hr(),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
+        # ], align="top",),
         dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
             dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
@@ -125,13 +125,13 @@ app.layout = dbc.Container(
             dbc.Col(ControlsAFM.AFM_Cards2, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph2"), md=9),
         ], align="top",),
-        #html.Hr(),
-        #html.H1(children='Time Trace Experiment'),
-        #html.Br(),
-        #dbc.Row([
-            #dbc.Col(ControlsAFM.AFM_Cards3, md=3),
-            #dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
-        #], align="top",),
+        html.Hr(),
+        html.H1(children='Time Trace Experiment'),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(ControlsAFM.AFM_Cards3, md=3),
+            dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
+        ], align="top",),
         html.Hr(),
         html.H1(children='Delay Sweep Experiment'),
         html.Br(),
@@ -152,84 +152,84 @@ app.layout = dbc.Container(
 
 
 
-################################################################################################################################################################
-################################################################################################################################################################
-# BULK
-
-# probability distributions figure
-@app.callback(
-    Output('DistributionsGraph', 'children'),
-    [Input('DistributionsSlider_Ef', 'value'),
-     Input('DistributionsSlider_T', 'value')])
-def update_figure(slider_Ef, slider_T):
-     fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
-     return dcc.Graph(figure=fig)
-
-# carrier integrals figure
-@app.callback(
-    Output('CarrierIntegralsGraph', 'children'),
-    [Input('CarrierIntegralsSlider_Ef', 'value'),
-     Input('CarrierIntegralsSlider_T', 'value'),
-     Input('CarrierIntegralsSlider_gc', 'value'),
-     Input('CarrierIntegralsSlider_gv', 'value')])
-def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
-     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
-     return dcc.Graph(figure=fig)
-
-# carriers figure
-@app.callback(
-    Output('BulkGraph', 'figure'),
-    [Input('BulkSlider_donor', 'value'),
-     Input('BulkSlider_acceptor', 'value'),
-     Input('BulkSlider_T', 'value'),
-     Input('BulkSlider_emass', 'value'),
-     Input('BulkSlider_hmass', 'value'),
-     Input('BulkToggle_type', 'value')])
-def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
-    fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
-    return fig
-
-# probability distributions readouts
-@app.callback(
-    [Output('DistributionsText_Ef', 'children'),
-     Output('DistributionsText_T', 'children')],
-    [Input('DistributionsSlider_Ef', 'value'),
-     Input('DistributionsSlider_T', 'value')])
-def update_output(slider_Ef, slider_T):
-    readout_Ef, readout_T = CallbacksBulk.readouts_probabilitydistributions(slider_Ef, slider_T)
-    return readout_Ef, readout_T
-
-# carriers readouts
-@app.callback(
-    [Output('BulkText_donor', 'children'),
-     Output('BulkText_acceptor', 'children'),
-     Output('BulkText_T', 'children'),
-     Output('BulkText_emass', 'children'),
-     Output('BulkText_hmass', 'children')],
-    [Input('BulkSlider_donor', 'value'),
-     Input('BulkSlider_acceptor', 'value'),
-     Input('BulkSlider_T', 'value'),
-     Input('BulkSlider_emass', 'value'),
-     Input('BulkSlider_hmass', 'value')])
-def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
-    readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = CallbacksBulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
-    return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass
-
-# toggle functionality
-@app.callback(
-    [Output('BulkText_typen', 'style'),
-     Output('BulkText_typep', 'style'),
-     Output('BulkSlider_donor', 'disabled'),
-     Output('BulkSlider_acceptor', 'disabled'),
-     Output('BulkSlider_donor', 'value'),
-     Output('BulkSlider_acceptor', 'value'),
-     Output('BulkText_typen', 'children'),
-     Output('BulkText_typep', 'children')],
-    [Input('BulkToggle_type', 'value')])
-def update_output(toggle):
-    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksBulk.togglefunctions(toggle)
-    return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
-
+# ################################################################################################################################################################
+# ################################################################################################################################################################
+# # BULK
+#
+# # probability distributions figure
+# @app.callback(
+#     Output('DistributionsGraph', 'children'),
+#     [Input('DistributionsSlider_Ef', 'value'),
+#      Input('DistributionsSlider_T', 'value')])
+# def update_figure(slider_Ef, slider_T):
+#      fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
+#      return dcc.Graph(figure=fig)
+#
+# # carrier integrals figure
+# @app.callback(
+#     Output('CarrierIntegralsGraph', 'children'),
+#     [Input('CarrierIntegralsSlider_Ef', 'value'),
+#      Input('CarrierIntegralsSlider_T', 'value'),
+#      Input('CarrierIntegralsSlider_gc', 'value'),
+#      Input('CarrierIntegralsSlider_gv', 'value')])
+# def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
+#      fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
+#      return dcc.Graph(figure=fig)
+#
+# # carriers figure
+# @app.callback(
+#     Output('BulkGraph', 'figure'),
+#     [Input('BulkSlider_donor', 'value'),
+#      Input('BulkSlider_acceptor', 'value'),
+#      Input('BulkSlider_T', 'value'),
+#      Input('BulkSlider_emass', 'value'),
+#      Input('BulkSlider_hmass', 'value'),
+#      Input('BulkToggle_type', 'value')])
+# def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
+#     fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
+#     return fig
+#
+# # probability distributions readouts
+# @app.callback(
+#     [Output('DistributionsText_Ef', 'children'),
+#      Output('DistributionsText_T', 'children')],
+#     [Input('DistributionsSlider_Ef', 'value'),
+#      Input('DistributionsSlider_T', 'value')])
+# def update_output(slider_Ef, slider_T):
+#     readout_Ef, readout_T = CallbacksBulk.readouts_probabilitydistributions(slider_Ef, slider_T)
+#     return readout_Ef, readout_T
+#
+# # carriers readouts
+# @app.callback(
+#     [Output('BulkText_donor', 'children'),
+#      Output('BulkText_acceptor', 'children'),
+#      Output('BulkText_T', 'children'),
+#      Output('BulkText_emass', 'children'),
+#      Output('BulkText_hmass', 'children')],
+#     [Input('BulkSlider_donor', 'value'),
+#      Input('BulkSlider_acceptor', 'value'),
+#      Input('BulkSlider_T', 'value'),
+#      Input('BulkSlider_emass', 'value'),
+#      Input('BulkSlider_hmass', 'value')])
+# def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
+#     readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = CallbacksBulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
+#     return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass
+#
+# # toggle functionality
+# @app.callback(
+#     [Output('BulkText_typen', 'style'),
+#      Output('BulkText_typep', 'style'),
+#      Output('BulkSlider_donor', 'disabled'),
+#      Output('BulkSlider_acceptor', 'disabled'),
+#      Output('BulkSlider_donor', 'value'),
+#      Output('BulkSlider_acceptor', 'value'),
+#      Output('BulkText_typen', 'children'),
+#      Output('BulkText_typep', 'children')],
+#     [Input('BulkToggle_type', 'value')])
+# def update_output(toggle):
+#     stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksBulk.togglefunctions(toggle)
+#     return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
+#
 
 
 ################################################################################################################################################################
@@ -447,33 +447,49 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
     return fig2
 
 # Time trace experiment figure
-#@app.callback(
-#    Output('AFMGraph3', 'figure'),
-#    [Input('SurfaceSlider_Vg', 'value'),
-#     Input('SurfaceSlider_zins', 'value'),
-#     Input('SurfaceSlider_Eg', 'value'),
-#     Input('SurfaceSlider_epsilonsem', 'value'),
-#     Input('SurfaceSlider_WFmet', 'value'),
-#     Input('SurfaceSlider_EAsem', 'value'),
-#     Input('SurfaceSlider_donor', 'value'),
-#     Input('SurfaceSlider_acceptor', 'value'),
-#     Input('SurfaceSlider_emass', 'value'),
-#     Input('SurfaceSlider_hmass', 'value'),
-#     Input('SurfaceSlider_T', 'value'),
-#     Input('SurfaceSlider_biassteps', 'value'),
-#     Input('SurfaceSlider_zinssteps', 'value'),
-#     Input('AFMSlider_amplitude', 'value'),
-#     Input('AFMSlider_resfreq', 'value'),
-#     Input('AFMSlider_springconst', 'value'),
-#     Input('AFMSlider_tipradius', 'value'),
-#     Input('AFMSlider_Qfactor', 'value'),
-#     Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
-#     Input('AFMtoggle_sampletype', 'value'),
-#     Input('AFMSlider_hop', 'value'),
-#     Input('AFMSlider_lag', 'value')])
-#def update_figure(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
-#    fig = CallbacksAFM.fig_AFM3(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps, slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag)
-#    return fig
+@app.callback(
+    Output('AFMGraph3', 'figure'),
+    [Input('SurfaceSlider_Vg', 'value'),
+     Input('SurfaceSlider_zins', 'value'),
+     Input('SurfaceSlider_Eg', 'value'),
+     Input('SurfaceSlider_epsilonsem', 'value'),
+     Input('SurfaceSlider_WFmet', 'value'),
+     Input('SurfaceSlider_EAsem', 'value'),
+     Input('SurfaceSlider_donor', 'value'),
+     Input('SurfaceSlider_acceptor', 'value'),
+     Input('SurfaceSlider_emass', 'value'),
+     Input('SurfaceSlider_hmass', 'value'),
+     Input('SurfaceSlider_T', 'value'),
+     Input('SurfaceSlider_alpha', 'value'),
+     Input('SurfaceSlider_biassteps', 'value'),
+     Input('SurfaceSlider_zinssteps', 'value'),
+     Input('AFMSlider_timesteps', 'value'),
+     Input('AFMSlider_amplitude', 'value'),
+     Input('AFMSlider_resfreq', 'value'),
+     Input('AFMSlider_springconst', 'value'),
+     Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_Qfactor', 'value'),
+     Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
+     Input('AFMtoggle_sampletype', 'value'),
+     Input('AFMSlider_hop', 'value'),
+     Input('AFMSlider_lag', 'value'),
+     Input('AFMSlider_sigma', 'value'),
+     Input('AFMSlider_RTS1mag', 'value'),
+     Input('AFMSlider_RTS1per', 'value'),
+     Input('AFMSlider_RTS2mag', 'value'),
+     Input('AFMSlider_RTS2per', 'value'),
+     Input('AFMSlider_RTS3mag', 'value'),
+     Input('AFMSlider_RTS3per', 'value'),
+     Input('AFMSlider_RTS4mag', 'value'),
+     Input('AFMSlider_RTS4per', 'value'),
+     Input('AFMSlider_RTS5mag', 'value'),
+     Input('AFMSlider_RTS5per', 'value'),
+     Input('AFMSlider_f0y', 'value'),
+     Input('AFMSlider_f1y', 'value'),
+     Input('AFMSlider_f2y', 'value'),])
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
+    fig3 = CallbacksAFM.fig3_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y)
+    return fig3
 
 # Delay experiment figure
 @app.callback(

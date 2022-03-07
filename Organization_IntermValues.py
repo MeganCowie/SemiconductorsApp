@@ -14,4 +14,4 @@ def Surface_values(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype):
     return NC,NV,ni,Ec,Ev,Ei,Ef,CPD,LD,Cins
 
 
-#Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T
+#Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype
