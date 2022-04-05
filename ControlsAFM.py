@@ -149,7 +149,7 @@ AFM_Card3 = dbc.Card([
                     dbc.Col(html.Div(id='AFMText_RTS1per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
                 ], justify="between"),
                 dbc.Row([
-                    dbc.Col(dcc.Slider(id='AFMSlider_RTS1per', min=1, max=500, step=1, value=1,)),
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS1per', min=0, max=1, step=0.01, value=0,)),
                 ]),
             ]),
         ], md=6)
@@ -173,7 +173,7 @@ AFM_Card3 = dbc.Card([
                     dbc.Col(html.Div(id='AFMText_RTS2per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
                 ], justify="between"),
                 dbc.Row([
-                    dbc.Col(dcc.Slider(id='AFMSlider_RTS2per', min=1, max=500, step=1, value=1,)),
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS2per', min=0, max=1, step=0.01, value=0,)),
                 ]),
             ]),
         ], md=6)
@@ -197,7 +197,7 @@ AFM_Card3 = dbc.Card([
                     dbc.Col(html.Div(id='AFMText_RTS3per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
                 ], justify="between"),
                 dbc.Row([
-                    dbc.Col(dcc.Slider(id='AFMSlider_RTS3per', min=1, max=500, step=1, value=1,)),
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS3per', min=0, max=1, step=0.01, value=0,)),
                 ]),
             ]),
         ], md=6)
@@ -221,7 +221,7 @@ AFM_Card3 = dbc.Card([
                     dbc.Col(html.Div(id='AFMText_RTS4per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
                 ], justify="between"),
                 dbc.Row([
-                    dbc.Col(dcc.Slider(id='AFMSlider_RTS4per', min=1, max=500, step=1, value=1,)),
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS4per', min=0, max=1, step=0.01, value=0,)),
                 ]),
             ]),
         ], md=6)
@@ -245,7 +245,7 @@ AFM_Card3 = dbc.Card([
                     dbc.Col(html.Div(id='AFMText_RTS5per',style={'fontSize': 14, 'text-align': 'right', "margin-top": "20px"}), md=4),
                 ], justify="between"),
                 dbc.Row([
-                    dbc.Col(dcc.Slider(id='AFMSlider_RTS5per', min=1, max=500, step=1, value=1,)),
+                    dbc.Col(dcc.Slider(id='AFMSlider_RTS5per', min=0, max=1, step=0.01, value=0,)),
                 ]),
             ]),
         ], md=6)

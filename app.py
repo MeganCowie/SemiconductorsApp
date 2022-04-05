@@ -106,40 +106,40 @@ app.layout = dbc.Container(
         # dbc.Row([
         #     dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
         # ], align="top",),
-        dbc.Row([
-            dbc.Col(ControlsSurface.Surface_Cards, md=3),
-            dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
-        ], align="top",),
-
-        html.Hr(),
-        html.H1(children='fm-AFM Oscillations'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards1, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph1"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.H1(children='Bias Sweep Experiment'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards2, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph2"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.H1(children='Time Trace Experiment'),
-        html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsSurface.Surface_Cards, md=3),
+        #     dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
+        # ], align="top",),
+        #
+        # html.Hr(),
+        # html.H1(children='fm-AFM Oscillations'),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsAFM.AFM_Cards1, md=3),
+        #     dbc.Col(dcc.Graph(id="AFMGraph1"), md=9),
+        # ], align="top",),
+        # html.Hr(),
+        # html.H1(children='Bias Sweep Experiment'),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsAFM.AFM_Cards2, md=3),
+        #     dbc.Col(dcc.Graph(id="AFMGraph2"), md=9),
+        # ], align="top",),
+        # html.Hr(),
+        # html.H1(children='Time Trace Experiment'),
+        # html.Br(),
         dbc.Row([
             dbc.Col(ControlsAFM.AFM_Cards3, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
         ], align="top",),
-        html.Hr(),
-        html.H1(children='Delay Sweep Experiment'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards4, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
-        ], align="top",),
-        html.Hr(),
+        # html.Hr(),
+        # html.H1(children='Delay Sweep Experiment'),
+        # html.Br(),
+        # dbc.Row([
+        #     dbc.Col(ControlsAFM.AFM_Cards4, md=3),
+        #     dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
+        # ], align="top",),
+        # html.Hr(),
 
     ###### important for latex ######
     axis_latex_script,
@@ -236,243 +236,220 @@ app.layout = dbc.Container(
 ################################################################################################################################################################
 # SURFACE PHYSICS
 
-# surface figure
-@app.callback(
-    [Output('SurfaceGraph', 'figure'),
-     Output('SurfaceGraphSupp', 'figure'),
-     Output('SurfaceText_regime', 'children'),
-     Output('SurfaceText_ni', 'children'),
-     Output('SurfaceText_LD', 'children'),
-     Output('SurfaceText_zQ', 'children')],
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceSlider_biassteps', 'value'),
-     Input('SurfaceSlider_zinssteps', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    fig0, fig0supp, regime, ni, LD, zQ = CallbacksSurface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
-    return fig0, fig0supp, regime, ni, LD, zQ
-
-# surface readouts
-@app.callback(
-    [Output('SurfaceText_Vg', 'children'),
-     Output('SurfaceText_zins', 'children'),
-     Output('SurfaceText_Eg', 'children'),
-     Output('SurfaceText_epsilonsem', 'children'),
-     Output('SurfaceText_WFmet', 'children'),
-     Output('SurfaceText_EAsem', 'children'),
-     Output('SurfaceText_donor', 'children'),
-     Output('SurfaceText_acceptor', 'children'),
-     Output('SurfaceText_emass', 'children'),
-     Output('SurfaceText_hmass', 'children'),
-     Output('SurfaceText_T', 'children'),
-     Output('SurfaceText_alpha', 'children'),
-     Output('SurfaceText_biassteps', 'children'),
-     Output('SurfaceText_zinssteps', 'children')],
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceSlider_biassteps', 'value'),
-     Input('SurfaceSlider_zinssteps', 'value')])
-def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
-    return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
-
-
-# surface presets
-@app.callback(
-    [Output('SurfaceToggle_type', 'value'),
-     Output('SurfaceSlider_Vg', 'value'),
-     Output('SurfaceSlider_zins', 'value'),
-     Output('SurfaceSlider_Eg', 'value'),
-     Output('SurfaceSlider_epsilonsem', 'value'),
-     Output('SurfaceSlider_WFmet', 'value'),
-     Output('SurfaceSlider_EAsem', 'value'),
-     Output('SurfaceSlider_donor', 'value'),
-     Output('SurfaceSlider_acceptor', 'value'),
-     Output('SurfaceSlider_emass', 'value'),
-     Output('SurfaceSlider_hmass', 'value'),
-     Output('SurfaceSlider_T', 'value'),
-     Output('SurfaceSlider_alpha', 'value'),
-     Output('SurfaceButtons_presets', 'value'),
-     Output('SurfaceText_typen', 'style'),
-     Output('SurfaceText_typep', 'style'),
-     Output('SurfaceSlider_donor', 'disabled'),
-     Output('SurfaceSlider_acceptor', 'disabled'),
-     Output('SurfaceText_typen', 'children'),
-     Output('SurfaceText_typep', 'children')],
-    [Input('SurfaceButtons_presets', 'value'),
-     Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceToggle_type', 'value')])
-def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, toggle_type):
-
-    button_presets_og = button_presets
-
-    # Somehow writing this as an or statement doesn't work, so for now it looks like this.
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    if 'SurfaceToggle_type' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_Vg' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_zins' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_Eg' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_epsilonsem' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_WFmet' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_EAsem' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_donor' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_acceptor' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_emass' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_hmass' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_T' in changed_id:
-        button_presets = 4
-    elif 'SurfaceSlider_alpha' in changed_id:
-        button_presets = 4
-    else:
-        button_presets = button_presets
-
-    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
-
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    if 'SurfaceSlider_Vg' in changed_id:
-        button_presets = button_presets_og
-    elif 'SurfaceSlider_zins' in changed_id:
-        button_presets = button_presets_og
-    elif 'SurfaceSlider_T' in changed_id:
-        button_presets = button_presets_og
-    else:
-        button_presets = button_presets
-
-    return toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
-
-################################################################################################################################################################
-################################################################################################################################################################
-# AFM
-
-# ncAFM oscillations figure
-@app.callback(
-    Output('AFMGraph1', 'figure'),
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceSlider_biassteps', 'value'),
-     Input('SurfaceSlider_zinssteps', 'value'),
-     Input('AFMSlider_timesteps', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value'),
-     Input('AFMbutton_Calculate', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMtoggle_RTN', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
-    fig1 = CallbacksAFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
-    return fig1
-
-# Bias experiment figure
-@app.callback(
-    Output('AFMGraph2', 'figure'),
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceSlider_biassteps', 'value'),
-     Input('SurfaceSlider_zinssteps', 'value'),
-     Input('AFMSlider_timesteps', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_springconst', 'value'),
-     Input('AFMSlider_tipradius', 'value'),
-     Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
-    fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
-    return fig2
+# # surface figure
+# @app.callback(
+#     [Output('SurfaceGraph', 'figure'),
+#      Output('SurfaceGraphSupp', 'figure'),
+#      Output('SurfaceText_regime', 'children'),
+#      Output('SurfaceText_ni', 'children'),
+#      Output('SurfaceText_LD', 'children'),
+#      Output('SurfaceText_zQ', 'children')],
+#     [Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('SurfaceSlider_biassteps', 'value'),
+#      Input('SurfaceSlider_zinssteps', 'value')])
+# def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+#     fig0, fig0supp, regime, ni, LD, zQ = CallbacksSurface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+#     return fig0, fig0supp, regime, ni, LD, zQ
+#
+# # surface readouts
+# @app.callback(
+#     [Output('SurfaceText_Vg', 'children'),
+#      Output('SurfaceText_zins', 'children'),
+#      Output('SurfaceText_Eg', 'children'),
+#      Output('SurfaceText_epsilonsem', 'children'),
+#      Output('SurfaceText_WFmet', 'children'),
+#      Output('SurfaceText_EAsem', 'children'),
+#      Output('SurfaceText_donor', 'children'),
+#      Output('SurfaceText_acceptor', 'children'),
+#      Output('SurfaceText_emass', 'children'),
+#      Output('SurfaceText_hmass', 'children'),
+#      Output('SurfaceText_T', 'children'),
+#      Output('SurfaceText_alpha', 'children'),
+#      Output('SurfaceText_biassteps', 'children'),
+#      Output('SurfaceText_zinssteps', 'children')],
+#     [Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('SurfaceSlider_biassteps', 'value'),
+#      Input('SurfaceSlider_zinssteps', 'value')])
+# def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
+#     readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+#     return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
+#
+#
+# # surface presets
+# @app.callback(
+#     [Output('SurfaceToggle_type', 'value'),
+#      Output('SurfaceSlider_Vg', 'value'),
+#      Output('SurfaceSlider_zins', 'value'),
+#      Output('SurfaceSlider_Eg', 'value'),
+#      Output('SurfaceSlider_epsilonsem', 'value'),
+#      Output('SurfaceSlider_WFmet', 'value'),
+#      Output('SurfaceSlider_EAsem', 'value'),
+#      Output('SurfaceSlider_donor', 'value'),
+#      Output('SurfaceSlider_acceptor', 'value'),
+#      Output('SurfaceSlider_emass', 'value'),
+#      Output('SurfaceSlider_hmass', 'value'),
+#      Output('SurfaceSlider_T', 'value'),
+#      Output('SurfaceSlider_alpha', 'value'),
+#      Output('SurfaceButtons_presets', 'value'),
+#      Output('SurfaceText_typen', 'style'),
+#      Output('SurfaceText_typep', 'style'),
+#      Output('SurfaceSlider_donor', 'disabled'),
+#      Output('SurfaceSlider_acceptor', 'disabled'),
+#      Output('SurfaceText_typen', 'children'),
+#      Output('SurfaceText_typep', 'children')],
+#     [Input('SurfaceButtons_presets', 'value'),
+#      Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('SurfaceToggle_type', 'value')])
+# def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, toggle_type):
+#
+#     button_presets_og = button_presets
+#
+#     # Somehow writing this as an or statement doesn't work, so for now it looks like this.
+#     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+#     if 'SurfaceToggle_type' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_Vg' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_zins' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_Eg' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_epsilonsem' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_WFmet' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_EAsem' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_donor' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_acceptor' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_emass' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_hmass' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_T' in changed_id:
+#         button_presets = 4
+#     elif 'SurfaceSlider_alpha' in changed_id:
+#         button_presets = 4
+#     else:
+#         button_presets = button_presets
+#
+#     toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
+#
+#     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+#     if 'SurfaceSlider_Vg' in changed_id:
+#         button_presets = button_presets_og
+#     elif 'SurfaceSlider_zins' in changed_id:
+#         button_presets = button_presets_og
+#     elif 'SurfaceSlider_T' in changed_id:
+#         button_presets = button_presets_og
+#     else:
+#         button_presets = button_presets
+#
+#     return toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
+#
+# ################################################################################################################################################################
+# ################################################################################################################################################################
+# # AFM
+#
+# # ncAFM oscillations figure
+# @app.callback(
+#     Output('AFMGraph1', 'figure'),
+#     [Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('SurfaceSlider_biassteps', 'value'),
+#      Input('SurfaceSlider_zinssteps', 'value'),
+#      Input('AFMSlider_timesteps', 'value'),
+#      Input('AFMSlider_amplitude', 'value'),
+#      Input('AFMSlider_resfreq', 'value'),
+#      Input('AFMSlider_hop', 'value'),
+#      Input('AFMSlider_lag', 'value'),
+#      Input('AFMbutton_Calculate', 'n_clicks'),
+#      Input('AFMtoggle_sampletype', 'value'),
+#      Input('AFMtoggle_RTN', 'value')])
+# def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
+#     fig1 = CallbacksAFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
+#     return fig1
+#
+# # Bias experiment figure
+# @app.callback(
+#     Output('AFMGraph2', 'figure'),
+#     [Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('SurfaceSlider_biassteps', 'value'),
+#      Input('SurfaceSlider_zinssteps', 'value'),
+#      Input('AFMSlider_timesteps', 'value'),
+#      Input('AFMSlider_amplitude', 'value'),
+#      Input('AFMSlider_resfreq', 'value'),
+#      Input('AFMSlider_springconst', 'value'),
+#      Input('AFMSlider_tipradius', 'value'),
+#      Input('AFMSlider_Qfactor', 'value'),
+#      Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
+#      Input('AFMtoggle_sampletype', 'value'),
+#      Input('AFMSlider_hop', 'value'),
+#      Input('AFMSlider_lag', 'value')])
+# def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
+#     fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
+#     return fig2
 
 # Time trace experiment figure
 @app.callback(
     Output('AFMGraph3', 'figure'),
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('SurfaceSlider_biassteps', 'value'),
-     Input('SurfaceSlider_zinssteps', 'value'),
-     Input('AFMSlider_timesteps', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_springconst', 'value'),
-     Input('AFMSlider_tipradius', 'value'),
-     Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value'),
+    [Input('AFMbutton_CalculateTimeExp', 'n_clicks'),
      Input('AFMSlider_sigma', 'value'),
      Input('AFMSlider_RTS1mag', 'value'),
      Input('AFMSlider_RTS1per', 'value'),
@@ -487,77 +464,77 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_f0y', 'value'),
      Input('AFMSlider_f1y', 'value'),
      Input('AFMSlider_f2y', 'value'),])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
-    fig3 = CallbacksAFM.fig3_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y)
+def update_figure(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
+    fig3 = CallbacksAFM.fig3_AFM(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y)
     return fig3
 
-# Delay experiment figure
-@app.callback(
-    Output('AFMGraph4', 'figure'),
-    [Input('SurfaceSlider_Vg', 'value'),
-     Input('SurfaceSlider_zins', 'value'),
-     Input('SurfaceSlider_Eg', 'value'),
-     Input('SurfaceSlider_epsilonsem', 'value'),
-     Input('SurfaceSlider_WFmet', 'value'),
-     Input('SurfaceSlider_EAsem', 'value'),
-     Input('SurfaceSlider_donor', 'value'),
-     Input('SurfaceSlider_acceptor', 'value'),
-     Input('SurfaceSlider_emass', 'value'),
-     Input('SurfaceSlider_hmass', 'value'),
-     Input('SurfaceSlider_T', 'value'),
-     Input('SurfaceSlider_alpha', 'value'),
-     Input('AFMSlider_timesteps', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_springconst', 'value'),
-     Input('AFMSlider_tipradius', 'value'),
-     Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateDelayExp', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value'),
-     Input('AFMSlider_pulsetimesteps', 'value'),
-     Input('AFMSlider_delaysteps', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
-    fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
-    return fig4
-
-# AFM readouts
-@app.callback(
-    [Output('AFMText_timesteps', 'children'),
-     Output('AFMText_amplitude', 'children'),
-     Output('AFMText_hop', 'children'),
-     Output('AFMText_lag', 'children'),
-     Output('AFMText_resfreq', 'children'),
-     Output('AFMText_springconst', 'children'),
-     Output('AFMText_Qfactor', 'children'),
-     Output('AFMText_tipradius', 'children'),
-     Output('AFMText_delaysteps', 'children'),
-     Output('AFMText_pulsetimesteps', 'children')],
-    [Input('AFMSlider_timesteps', 'value'),
-     Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_hop', 'value'),
-     Input('AFMSlider_lag', 'value'),
-     Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_springconst', 'value'),
-     Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMSlider_tipradius', 'value'),
-     Input('AFMSlider_pulsetimesteps', 'value'),
-     Input('AFMSlider_delaysteps', 'value')])
-def update_output(slider_timesteps,slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
-    readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = CallbacksAFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
-    return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
-
-# toggle functionality
-@app.callback(
-    [Output('AFMText_semiconducting', 'style'),
-     Output('AFMText_metallic', 'style'),
-     Output('AFMText_semiconducting', 'children'),
-     Output('AFMText_metallic', 'children')],
-    [Input('AFMtoggle_sampletype', 'value')])
-def update_output(toggle):
-    style_s, style_m = CallbacksAFM.togglefunctions(toggle)
-    return style_s, style_m, 'Semiconducting', 'Metallic'
+# # Delay experiment figure
+# @app.callback(
+#     Output('AFMGraph4', 'figure'),
+#     [Input('SurfaceSlider_Vg', 'value'),
+#      Input('SurfaceSlider_zins', 'value'),
+#      Input('SurfaceSlider_Eg', 'value'),
+#      Input('SurfaceSlider_epsilonsem', 'value'),
+#      Input('SurfaceSlider_WFmet', 'value'),
+#      Input('SurfaceSlider_EAsem', 'value'),
+#      Input('SurfaceSlider_donor', 'value'),
+#      Input('SurfaceSlider_acceptor', 'value'),
+#      Input('SurfaceSlider_emass', 'value'),
+#      Input('SurfaceSlider_hmass', 'value'),
+#      Input('SurfaceSlider_T', 'value'),
+#      Input('SurfaceSlider_alpha', 'value'),
+#      Input('AFMSlider_timesteps', 'value'),
+#      Input('AFMSlider_amplitude', 'value'),
+#      Input('AFMSlider_resfreq', 'value'),
+#      Input('AFMSlider_springconst', 'value'),
+#      Input('AFMSlider_tipradius', 'value'),
+#      Input('AFMSlider_Qfactor', 'value'),
+#      Input('AFMbutton_CalculateDelayExp', 'n_clicks'),
+#      Input('AFMtoggle_sampletype', 'value'),
+#      Input('AFMSlider_hop', 'value'),
+#      Input('AFMSlider_lag', 'value'),
+#      Input('AFMSlider_pulsetimesteps', 'value'),
+#      Input('AFMSlider_delaysteps', 'value')])
+# def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
+#     fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
+#     return fig4
+#
+# # AFM readouts
+# @app.callback(
+#     [Output('AFMText_timesteps', 'children'),
+#      Output('AFMText_amplitude', 'children'),
+#      Output('AFMText_hop', 'children'),
+#      Output('AFMText_lag', 'children'),
+#      Output('AFMText_resfreq', 'children'),
+#      Output('AFMText_springconst', 'children'),
+#      Output('AFMText_Qfactor', 'children'),
+#      Output('AFMText_tipradius', 'children'),
+#      Output('AFMText_delaysteps', 'children'),
+#      Output('AFMText_pulsetimesteps', 'children')],
+#     [Input('AFMSlider_timesteps', 'value'),
+#      Input('AFMSlider_amplitude', 'value'),
+#      Input('AFMSlider_hop', 'value'),
+#      Input('AFMSlider_lag', 'value'),
+#      Input('AFMSlider_resfreq', 'value'),
+#      Input('AFMSlider_springconst', 'value'),
+#      Input('AFMSlider_Qfactor', 'value'),
+#      Input('AFMSlider_tipradius', 'value'),
+#      Input('AFMSlider_pulsetimesteps', 'value'),
+#      Input('AFMSlider_delaysteps', 'value')])
+# def update_output(slider_timesteps,slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
+#     readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = CallbacksAFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
+#     return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
+#
+# # toggle functionality
+# @app.callback(
+#     [Output('AFMText_semiconducting', 'style'),
+#      Output('AFMText_metallic', 'style'),
+#      Output('AFMText_semiconducting', 'children'),
+#      Output('AFMText_metallic', 'children')],
+#     [Input('AFMtoggle_sampletype', 'value')])
+# def update_output(toggle):
+#     style_s, style_m = CallbacksAFM.togglefunctions(toggle)
+#     return style_s, style_m, 'Semiconducting', 'Metallic'
 
 #@app.callback(
 #    [Output('AFMText_RTNoff', 'style'),

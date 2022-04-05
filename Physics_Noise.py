@@ -11,7 +11,7 @@ import Physics_Semiconductors
 
 def Array_timearray():
     timeperpoint = 0.020 #s
-    totalpoints = 25000
+    totalpoints = 10000
     noise_timearray = np.linspace(0, timeperpoint*totalpoints, totalpoints)
     return noise_timearray
 
@@ -30,6 +30,33 @@ def Func_PSD(array):
         PSD_ps = np.round(PSD_ps)
 
     return PSD_freqs,PSD_ps
+
+def Func_AllanDev(array):
+
+    timeperpoint = 0.02 # time per point (s)
+    tau_array = np.linspace(0.1, 10, 100) # averaging time (s)
+
+    tau_finalarray = []
+    Allan_squared_array = []
+    for index_tau in range(len(tau_array)):
+        tau_soln = tau_array[index_tau]
+        numpoints = tau_soln/timeperpoint # number of points in time interval tau
+        n = len(array)/numpoints # number of intervals in my array
+
+        if n%1==0:
+            n = int(n)
+            Allan_squared_bins = []
+            for n_index in range(n-1):
+                avg_bin1 = np.sum(array[n_index+1:n+n_index+1])/tau_soln
+                avg_bin2 = np.sum(array[n_index:n+n_index])/tau_soln
+                avg_diff = avg_bin1-avg_bin2
+                Allan_squared_bin = (1/2)*(avg_diff)**2
+                Allan_squared_bins = np.append(Allan_squared_bins,Allan_squared_bin)
+
+            tau_finalarray = np.append(tau_finalarray,tau_soln)
+            Allan_squared_array = np.append(Allan_squared_array,np.average(Allan_squared_bins))
+
+    return tau_finalarray, Allan_squared_array
 
 ################################################################################
 ################################################################################
@@ -69,21 +96,22 @@ def Array_Gaussianarray(sigma,mu,x_array):
     #noise_Gaussianarray = Func_Gaussian(sigma,mu,x_array)
     return noise_Gaussianarray
 
-def Array_TwoLevelarray(hopmag,hopfreq,x_array):
-    # every hopfreq, give it a chance to flip
-    hopchance_array = np.zeros(len(x_array))
-    hopchance_array[::hopfreq] = 1
-    flip_array = hopchance_array*np.random.randint(2,size=len(x_array))
+def Array_TwoLevelarray(hopmag,hopper,x_array):
 
-    # if we flip, it hops up from x_array by hopmag
+    hopper = hopper**(1/20)
+
+    hopchance_array = np.random.uniform(low=0,high=1,size=len(x_array))
+
     flip = 1
     noise_TwoLevelarray = []
-    for flip_index in range(len(flip_array)):
-       if flip_array[flip_index] == 1:
+    for flip_index in range(len(hopchance_array)):
+       if hopchance_array[flip_index] > hopper:
            flip = flip*-1
        if flip == 1:
-           noise_TwoLevelarray = np.append(noise_TwoLevelarray,x_array[flip_index])
+           hopmag_soln =0
        else:
-           noise_TwoLevelarray = np.append(noise_TwoLevelarray,x_array[flip_index]+hopmag)
+           hopmag_soln = hopmag
+
+       noise_TwoLevelarray = np.append(noise_TwoLevelarray,x_array[flip_index]+hopmag_soln)
 
     return noise_TwoLevelarray
