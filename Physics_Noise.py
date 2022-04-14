@@ -11,7 +11,7 @@ import Physics_Semiconductors
 
 def Array_timearray():
     timeperpoint = 0.020 #s
-    totalpoints = 10000
+    totalpoints = 2000
     noise_timearray = np.linspace(0, timeperpoint*totalpoints, totalpoints)
     return noise_timearray
 
@@ -58,14 +58,13 @@ def Func_AllanDev(array):
 
     return tau_finalarray, Allan_squared_array
 
-################################################################################
-################################################################################
-# Noise sources
 
-def Func_Gaussian(sigma,mu,x):
-    y = 1/(sigma*np.sqrt(2*np.pi))*np.exp((-(x-mu)**2/(2*sigma**2)))
-    return y
+def Func_AC(x_array,y_array):
 
+    AC_amp = np.correlate(y_array,y_array,'full')
+    x_array = np.flip(x_array)
+
+    return x_array,AC_amp
 
 ################################################################################
 ################################################################################
@@ -83,23 +82,17 @@ def TransferFunction_Cantilever():
 ################################################################################
 # Build arrays
 
-def Array_Signalarray(noise_timearray,mu):
+def Array_Signalarray(noise_timearray,mu,points):
     noise_signalarray = np.ones(len(noise_timearray))*mu
     return noise_signalarray
 
-def Array_Randomarray(noise_timearray):
-    noise_randomarray = np.random.rand(noise_timearray.size)*10-5
-    return noise_randomarray
-
 def Array_Gaussianarray(sigma,mu,x_array):
     noise_Gaussianarray = sigma*np.random.randn(x_array.size)+mu
-    #noise_Gaussianarray = Func_Gaussian(sigma,mu,x_array)
     return noise_Gaussianarray
 
 def Array_TwoLevelarray(hopmag,hopper,x_array):
 
-    hopper = hopper**(1/20)
-
+    hopchance_sign = np.random.random_integers(low=0,high=1,size=1)*2-1
     hopchance_array = np.random.uniform(low=0,high=1,size=len(x_array))
 
     flip = 1
@@ -112,6 +105,6 @@ def Array_TwoLevelarray(hopmag,hopper,x_array):
        else:
            hopmag_soln = hopmag
 
-       noise_TwoLevelarray = np.append(noise_TwoLevelarray,x_array[flip_index]+hopmag_soln)
+       noise_TwoLevelarray = np.append(noise_TwoLevelarray,x_array[flip_index]+hopchance_sign*hopmag_soln)
 
     return noise_TwoLevelarray

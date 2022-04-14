@@ -410,27 +410,37 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateTimeExp' in changed_id:
-
         mu = 1 # signal (e.g. frequency shift)
-
     else:
-
         mu = 1 # signal (e.g. frequency shift)
 
     #########################################################
     #########################################################
 
-    sigma = slider_sigma
-    RTS1mag = slider_RTS1mag
-    RTS1per = slider_RTS1per
-    RTS2mag = slider_RTS2mag
-    RTS2per = slider_RTS2per
-    RTS3mag = slider_RTS3mag
-    RTS3per = slider_RTS3per
-    RTS4mag = slider_RTS4mag
-    RTS4per = slider_RTS4per
-    RTS5mag = slider_RTS5mag
-    RTS5per = slider_RTS5per
+    sigma = 2#slider_sigma
+    points = 1000
+
+    RTS1mag = 1   #slider_RTS1mag
+    RTS1per = 0.905 #slider_RTS1per
+    RTS2mag = 0#10  #slider_RTS2mag
+    RTS2per = 0#0.992 #slider_RTS2per
+    RTS3mag = 0#0.5 #slider_RTS3mag
+    RTS3per = 0#0.974 #slider_RTS3per
+    RTS4mag = 0#8   #slider_RTS4mag
+    RTS4per = 0#0.975 #slider_RTS4per
+    RTS5mag = 0#5   #slider_RTS5mag
+    RTS5per = 0#0.892 #slider_RTS5per
+    RTS6mag = 0#2
+    RTS6per = 0#0.989
+    RTS7mag = 0#4
+    RTS7per = 0#0.942
+    RTS8mag = 0#6
+    RTS8per = 0#0.985
+    RTS9mag = 0#7
+    RTS9per = 0#0.899
+    RTS10mag = 0#4
+    RTS10per = 0#0.982
+
     f0y = 10**(-1*slider_f0y)
     f1y = 10**(-1*slider_f1y)
     f2y = 10**(-1*slider_f2y)
@@ -441,7 +451,7 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
 
     noise_timearray = Physics_Noise.Array_timearray()
 
-    noise_Signalarray = Physics_Noise.Array_Signalarray(noise_timearray,mu)
+    noise_Signalarray = Physics_Noise.Array_Signalarray(noise_timearray,mu,points)
     noise_SignalHistogram = Physics_Noise.Func_Histogram(noise_Signalarray,noise_Signalbins)
     PSD_Signalfreqs,PSD_Signalps = Physics_Noise.Func_PSD(noise_Signalarray)
     Allan_Signaltau, Allan_Signalvar = Physics_Noise.Func_AllanDev(noise_Signalarray)
@@ -456,10 +466,46 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
     noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS3mag,RTS3per,noise_TwoLevelarray)
     noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS4mag,RTS4per,noise_TwoLevelarray)
     noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS5mag,RTS5per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS6mag,RTS6per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS7mag,RTS7per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS8mag,RTS8per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS9mag,RTS9per,noise_TwoLevelarray)
+    noise_TwoLevelarray = Physics_Noise.Array_TwoLevelarray(RTS10mag,RTS10per,noise_TwoLevelarray)
     noise_TwoLevelHistogram = Physics_Noise.Func_Histogram(noise_TwoLevelarray,noise_TwoLevelbins)
     PSD_TwoLevelfreqs,PSD_TwoLevelps = Physics_Noise.Func_PSD(noise_TwoLevelarray)
-    Allan_TwoLeveltau, Allan_TwoLevelvar = Physics_Noise.Func_AllanDev(noise_TwoLevelarray)
+    Allan_TwoLeveltau, Allan_TwoLevelvar = Physics_Noise.Func_AC(noise_timearray,noise_TwoLevelarray)
+#    Allan_TwoLeveltau, Allan_TwoLevelvar = Physics_Noise.Func_AllanDev(noise_TwoLevelarray)
 
+
+    # Saving results
+    noise_magparamarray = np.array([RTS1mag,RTS2mag,RTS3mag,RTS4mag,RTS5mag,RTS6mag,RTS7mag,RTS8mag,RTS9mag,RTS10mag])
+    noise_perparamarray = np.array([RTS1per,RTS2per,RTS3per,RTS4per,RTS5per,RTS6per,RTS7per,RTS8per,RTS9per,RTS10per])
+    save_noise_magparam = pd.DataFrame({"noise_magparamarray": [str(x) for x in noise_magparamarray]})
+    save_noise_perparam = pd.DataFrame({"noise_perparamarray": [str(x) for x in noise_perparamarray]})
+    save_noise_paramarrays = pd.concat([save_noise_magparam,save_noise_perparam], axis=1, join="inner")
+
+    save_noise_timearray = pd.DataFrame({"noise_timearray": [str(x) for x in noise_timearray]})
+    save_noise_TwoLevelarray = pd.DataFrame({"noise_TwoLevelarray": [str(x) for x in noise_TwoLevelarray]})
+    save_noise_timearrays = pd.concat([save_noise_timearray,save_noise_TwoLevelarray], axis=1, join="inner")
+
+    save_noise_TwoLevelbins = pd.DataFrame({"noise_TwoLevelbins": [str(x) for x in noise_TwoLevelbins]})
+    save_noise_TwoLevelhist = pd.DataFrame({"noise_TwoLevelHistogram": [str(x) for x in noise_TwoLevelHistogram[0]]})
+    save_noise_histarrays = pd.concat([save_noise_TwoLevelbins,save_noise_TwoLevelhist], axis=1, join="inner")
+
+    save_noise_PSDarray_TwoLevelfreqs = pd.DataFrame({"PSD_TwoLevelfreqs": [str(x) for x in PSD_TwoLevelfreqs]})
+    save_noise_PSDarray_TwoLevelps = pd.DataFrame({"PSD_TwoLevelps": [str(x) for x in PSD_TwoLevelps]})
+    save_noise_PSDarrays = pd.concat([save_noise_PSDarray_TwoLevelfreqs,save_noise_PSDarray_TwoLevelps], axis=1, join="inner")
+
+    save_noise_Allanarray_TwoLeveltau = pd.DataFrame({"Allan_TwoLeveltau": [str(x) for x in Allan_TwoLeveltau]})
+    save_noise_Allanarray_TwoLevelvar = pd.DataFrame({"Allan_TwoLevelvar": [str(x) for x in Allan_TwoLevelvar]})
+    save_noise_Allanarrays = pd.concat([save_noise_Allanarray_TwoLeveltau,save_noise_Allanarray_TwoLevelvar], axis=1, join="inner")
+
+    save_noisearrays = pd.concat([save_noise_paramarrays,save_noise_timearrays,save_noise_histarrays,save_noise_PSDarrays,save_noise_Allanarrays], axis=0)
+    save_noisearrays.to_csv('Xsave_Noisearrays.csv',index=False)
+
+    hopchance_array = np.random.uniform(low=0,high=1,size=10000)
+    save_hopchancearray = pd.DataFrame({"hopchance_array": [str(x) for x in hopchance_array]})
+    save_hopchancearray.to_csv('Xsave_hopchancearray.csv',index=False)
 
     # http://www.scholarpedia.org/article/1/f_noise#1.2Ff_noise_in_solids.2C_condensed_matter_and_electronic_devices
 
@@ -572,16 +618,16 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
         name = "PinkNoise Allan", mode='markers', showlegend=False,
         line_color=color_other
         ), row=3, col=6)
-    fig3.add_trace(go.Scatter(
-        x = PSD_TwoLevelfreqs, y = 1/(f1y*PSD_TwoLevelfreqs**1),
-        name = "1/f^1 line", mode='lines', showlegend=False,
-        line_color=color_Ev
-        ), row=3, col=6)
-    fig3.add_trace(go.Scatter(
-        x = PSD_TwoLevelfreqs, y = 1/(f2y*PSD_TwoLevelfreqs**2),
-        name = "1/f^2 line", mode='lines', showlegend=False,
-        line_color=color_Ec
-        ), row=3, col=6)
+    # fig3.add_trace(go.Scatter(
+    #     x = PSD_TwoLevelfreqs, y = 1/(f1y*PSD_TwoLevelfreqs**1),
+    #     name = "1/f^1 line", mode='lines', showlegend=False,
+    #     line_color=color_Ev
+    #     ), row=3, col=6)
+    # fig3.add_trace(go.Scatter(
+    #     x = PSD_TwoLevelfreqs, y = 1/(f2y*PSD_TwoLevelfreqs**2),
+    #     name = "1/f^2 line", mode='lines', showlegend=False,
+    #     line_color=color_Ec
+    #     ), row=3, col=6)
 
     ############################################################################
     ############################################################################
@@ -596,7 +642,7 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
     fig3.update_yaxes(title_standoff=0,row=3, col=4, title_text = "PSD",type="log")
     fig3.update_yaxes(title_standoff=0,row=1, col=6, title_text = "sigma^2",type="log")
     fig3.update_yaxes(title_standoff=0,row=2, col=6, title_text = "sigma^2",type="log")
-    fig3.update_yaxes(title_standoff=0,row=3, col=6, title_text = "sigma^2",type="log")
+    #fig3.update_yaxes(title_standoff=0,row=3, col=6, title_text = "sigma^2",type="log")
 
     fig3.update_xaxes(title_standoff=5,row=1, col=1, showticklabels=True, title_text= "Time (s)")
     fig3.update_xaxes(title_standoff=5,row=2, col=1, showticklabels=True, title_text= "Time (s)")
@@ -608,19 +654,7 @@ def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_R
     fig3.update_xaxes(title_standoff=5,row=3, col=4, showticklabels=True, title_text= "freq",type="log")
     fig3.update_xaxes(title_standoff=5,row=1, col=6, showticklabels=True, title_text= "tau",type="log")
     fig3.update_xaxes(title_standoff=5,row=2, col=6, showticklabels=True, title_text= "tau",type="log")
-    fig3.update_xaxes(title_standoff=5,row=3, col=6, showticklabels=True, title_text= "tau",type="log")
-
-
-
-    # 
-    # # Saving results
-    # save_bias_biasarray = pd.DataFrame({"Vg_biasarray": [str(x) for x in Vg_array]})
-    # save_Vs_biasarray = pd.DataFrame({"Vs_biasarray": [str(x) for x in Vs_biasarray]})
-    # save_F_biasarray = pd.DataFrame({"F_biasarray": [str(x) for x in F_biasarray]})
-    # save_df_biasarray = pd.DataFrame({"df_biasarray": [str(x) for x in df_biasarray]})
-    # save_dg_biasarray = pd.DataFrame({"dg_biasarray": [str(x) for x in dg_biasarray]})
-    # save_biasarrays = pd.concat([save_bias_biasarray,save_Vs_biasarray,save_F_biasarray,save_df_biasarray,save_dg_biasarray], axis=1, join="inner")
-    # save_biasarrays.to_csv('Xsave_BiasSweep_biasarrays.csv',index=False)
+    #fig3.update_xaxes(title_standoff=5,row=3, col=6, showticklabels=True, title_text= "tau",type="log")
 
     return fig3
 
