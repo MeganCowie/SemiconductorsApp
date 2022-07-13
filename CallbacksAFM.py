@@ -9,7 +9,7 @@ import Physics_ncAFM
 import Physics_Noise
 import Physics_Optics
 
-
+import Organization_IntermValues
 import Organization_BuildArrays
 
 ################################################################################
@@ -20,48 +20,20 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
-        # input (slider) parameters
-        Vg = slider_Vg #eV
-        zins = slider_zins*1e-7 # cm
-        Eg = slider_Eg
-        epsilon_sem = slider_epsilonsem
-        WFmet = slider_WFmet #eV
-        EAsem = slider_EAsem #eV
-        Nd = round((10**slider_donor*10**8)/(1000**3)) #/cm^3
-        Na = round((10**slider_acceptor*10**8)/(1000**3)) #/cm^3
-        mn = slider_emass*Physics_Semiconductors.me # kg
-        mp = slider_hmass*Physics_Semiconductors.me # kg
-        T = slider_T # K
-        sampletype = toggle_sampletype #false = semiconducting, true = metallic
-        RTN = toggle_RTN #false = off, true = on
-        amplitude = slider_amplitude #nm
-        frequency = slider_resfreq #Hz
-        hop = slider_hop
-        lag = slider_lag/10**9*frequency #radians
-        biassteps = slider_biassteps
-        zinssteps = slider_zinssteps
-        timesteps = slider_timesteps
 
+        # Input values and arrays
+        Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+        sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(toggle_sampletype,toggle_RTN,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,zins)
 
-        # Independent variable arrays
-        Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
-        zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
-        time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
-        zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
-        zinslag_AFMarray = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,zins, lag)
-
-        # Dependent variable arrays calculations
+        # Calculations and results for before hop
         Vs_AFMarray, F_AFMarray = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Ec_AFMarray,Ev_AFMarray,Ei_AFMarray,Ef_AFMarray,zsem_AFMarray,psi_AFMarray,Insulatorx_AFMarray,Insulatory_AFMarray,Vacuumx_AFMarray,Vacuumy_AFMarray,Gatex_AFMarray,Gatey_AFMarray = Organization_BuildArrays.BandDiagram_AFMarray(Vs_AFMarray,zinslag_AFMarray,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        # Find traces for top of hop
-        #Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
-        #Vs_AFMarray1, F_AFMarray1 = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        #Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-        Vs_AFMarray1, F_AFMarray1 = Vs_AFMarray, F_AFMarray
-        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray
+        # Calculations and results for after hop
+        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
+        Vs_AFMarray1, F_AFMarray1 = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,RTN,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # Stack arrays at bottom and top of hop
         Vs_zinsarray = np.append(Vs_zinsarray, np.flipud(Vs_zinsarray1))
@@ -197,6 +169,7 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
 
+
         fig1.frames=[
             go.Frame(data=[
 
@@ -277,47 +250,21 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
 
-        # input (slider) parameters
-        Vg = slider_Vg
-        zins = slider_zins*1e-7 # cm
-        Eg = slider_Eg
-        epsilon_sem = slider_epsilonsem
-        WFmet = slider_WFmet #eV
-        EAsem = slider_EAsem #eV
-        Nd = round((10**slider_donor*10**8)/(1000**3))
-        Na = round((10**slider_acceptor*10**8)/(1000**3))
-        mn = slider_emass*Physics_Semiconductors.me # kg
-        mp = slider_hmass*Physics_Semiconductors.me # kg
-        T = slider_T # K
-        sampletype = toggle_sampletype #false = semiconducting, true = metallic
-        amplitude = slider_amplitude #nm
-        frequency = slider_resfreq #Hz
-        springconst = slider_springconst #N/m
-        Qfactor = slider_Qfactor
-        tipradius = slider_tipradius #nm
-        hop = slider_hop
-        lag = slider_lag/10**9*frequency #rad
+        # Input values and arrays
+        Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+        sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(toggle_sampletype,False,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,zins)
+        springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
 
-        biassteps = slider_biassteps
-        zinssteps = slider_zinssteps
-        timesteps = slider_timesteps
-
-        Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
-        zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
-
+        # Calculations and results for before hop
         Vs_biasarray0, F_biasarray0, df_biasarray0, dg_biasarray0 = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray0, F_biasarray0, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        #Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
-        #Vs_biasarray1, F_biasarray1, Vs_zinsarray1, F_zinsarray1 = Physics_SurfacepotForce.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        #df_biasarray1, dg_biasarray1 =  Physics_FreqshiftDissipation.dfdg_biasarray(Vg_array,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        # Calculations and results for after hop
+        Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
+        Vs_biasarray1, F_biasarray1, df_biasarray1, dg_biasarray1 = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray1, F_biasarray1, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
-        Vs_biasarray1 = Vs_biasarray0
-        F_biasarray1 = F_biasarray0
-        df_biasarray1 = df_biasarray0
-        dg_biasarray1 = dg_biasarray0
-
-        Vg_array = np.linspace(-10,10,biassteps) #eV
-
+        # Stack arrays at bottom and top of hop
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
         Vs_biasarray = np.append(Vs_biasarray0, np.flipud(Vs_biasarray1))
         F_biasarray = np.append(F_biasarray0, np.flipud(F_biasarray1))
@@ -351,16 +298,6 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2)
-
-        # Saving results
-        save_bias_biasarray = pd.DataFrame({"Vg_biasarray": [str(x) for x in Vg_array]})
-        save_Vs_biasarray = pd.DataFrame({"Vs_biasarray": [str(x) for x in Vs_biasarray]})
-        save_F_biasarray = pd.DataFrame({"F_biasarray": [str(x) for x in F_biasarray]})
-        save_df_biasarray = pd.DataFrame({"df_biasarray": [str(x) for x in df_biasarray]})
-        save_dg_biasarray = pd.DataFrame({"dg_biasarray": [str(x) for x in dg_biasarray]})
-        save_biasarrays = pd.concat([save_bias_biasarray,save_Vs_biasarray,save_F_biasarray,save_df_biasarray,save_dg_biasarray], axis=1, join="inner")
-        save_biasarrays.to_csv('Xsave_BiasSweep_biasarrays.csv',index=False)
-
 
     ############################################################################
 
@@ -402,9 +339,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 
     return fig2
 
+'''
 ################################################################################
 ################################################################################
 # FIGURE: Time trace experiment
+# NOT DONE YET
 
 def fig3_AFM(calculatebutton,slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
 
@@ -776,7 +715,7 @@ def fig4_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
     fig4.update_xaxes(row=6, col=1,title_text= "Delay (arb)")
 
     return fig4
-
+'''
 
 ################################################################################
 ################################################################################

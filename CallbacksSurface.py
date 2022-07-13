@@ -2,6 +2,7 @@ import dash
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import pandas as pd
 
 import Physics_Semiconductors
 import Physics_BandDiagram
@@ -16,36 +17,13 @@ import Organization_BuildArrays
 def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
 
     # Input values
-    Vg = slider_Vg*(1-slider_alpha) #eV
-    zins = slider_zins*1e-7 #cm
-    Eg = slider_Eg #eV
-    epsilon_sem = slider_epsilonsem #dimensionless
-    WFmet = slider_WFmet #eV
-    EAsem = slider_EAsem #eV
-    Nd = round((10**slider_donor*10**8)/(1000**3)) #/cm^3
-    Na = round((10**slider_acceptor*10**8)/(1000**3)) #/cm^3
-    mn = slider_emass*Physics_Semiconductors.me #kg
-    mp = slider_hmass*Physics_Semiconductors.me #kg
-    T = slider_T #K
-    sampletype = False #False=semiconducting; True=metallic
-    biassteps = slider_biassteps
-    zinssteps = slider_zinssteps
+    Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
 
-
-    # Input arrays
-    Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha) #eV
-    zins_array = np.linspace(0.05,20,zinssteps)*1e-7 #nm
-
-    Vs, F = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-
-
-    Vg = slider_Vg #eV
-    Vg_array = np.linspace(-10,10,biassteps) #eV
-
+    # Calculations and results
+    Vs, F = Physics_Semiconductors.Func_VsF(1,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     # Account for alpha
     Vg = slider_Vg #eV
@@ -290,8 +268,8 @@ def readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slide
     readout_epsilonsem = '{0:.1f}'.format(slider_epsilonsem)
     readout_WFmet = '{0:.2f}'.format(slider_WFmet)
     readout_EAsem = '{0:.2f}'.format(slider_EAsem)
-    readout_donor = '{0:.0e}'.format(round((10**slider_donor*10**8)/(1000**3)))
-    readout_acceptor = '{0:.0e}'.format(round((10**slider_acceptor*10**8)/(1000**3)))
+    readout_donor = '{0:.1e}'.format(round((10**slider_donor*10**8)/(1000**3)))
+    readout_acceptor = '{0:.1e}'.format(round((10**slider_acceptor*10**8)/(1000**3)))
     readout_emass = '{0:.1f}'.format(slider_emass)
     readout_hmass = '{0:.1f}'.format(slider_hmass)
     readout_T = '{0:.4g}'.format(slider_T)

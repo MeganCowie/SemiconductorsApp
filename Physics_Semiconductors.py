@@ -227,6 +227,12 @@ def Func_regime(Na,Nd,Vs,Ei,Ef):
             regime = 5 #inversion
     return regime
 
+
+
+
+################################################################################
+# NOT DONE YET
+
 # Accumulation layer width
     # ? Chapter  pg 173
 def Func_zA(Nd,Na,LD,Vs,T):

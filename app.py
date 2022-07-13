@@ -19,8 +19,10 @@ import PresetsSurface
 ###### important for latex ######
 import dash_defer_js_import as dji
 
+
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
+
 
 ###### important for latex ######
 app.index_string = '''
@@ -129,7 +131,7 @@ app.layout = dbc.Container(
         html.H1(children='Time Trace Experiment'),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards3, md=3),
+            #dbc.Col(ControlsAFM.AFM_Cards3, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
         ], align="top",),
         html.Hr(),
@@ -137,9 +139,10 @@ app.layout = dbc.Container(
         html.Br(),
         dbc.Row([
             dbc.Col(ControlsAFM.AFM_Cards4, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
+            #dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
         ], align="top",),
         html.Hr(),
+
 
     ###### important for latex ######
     axis_latex_script,
@@ -445,7 +448,7 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
     fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
     return fig2
-
+'''
 # Time trace experiment figure
 @app.callback(
     Output('AFMGraph3', 'figure'),
@@ -498,7 +501,7 @@ def update_figure(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,sl
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
     fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
     return fig4
-
+'''
 # AFM readouts
 @app.callback(
     [Output('AFMText_timesteps', 'children'),

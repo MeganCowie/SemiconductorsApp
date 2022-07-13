@@ -60,7 +60,7 @@ def VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EA
 ################################################################################
 # Find supplemental information related to Vs and F
 
-def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     NC,NV = Physics_Semiconductors.Func_NCNV(T,mn,mp)
     Ec,Ev = Physics_Semiconductors.Func_EcEv(T,Eg)
@@ -151,7 +151,7 @@ def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor
         Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
         return [Vs_soln,F_soln,df_soln, dg_soln]
 
-    # Then parallelize the calcylation of y for every x
+    # Then parallelize the calculation of y for every x
     result = Parallel(n_jobs=-1)(
         delayed(compute)(Vg) for Vg in Vg_array
     )
@@ -162,14 +162,12 @@ def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor
         [dg_soln for Vs_soln,F_soln,df_soln,dg_soln in result]
     ]
 
-################################################################################
-################################################################################
-# Band diagram vs. zins_AFMarray
+
 
 ################################################################################
 ################################################################################
 # DELAY ARRAYS
-
+'''
 def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     # First list any functions that are constant as a function of x
@@ -195,6 +193,7 @@ def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequen
         [df_soln for Vs_soln, F_soln, df_soln, dg_soln in result],
         [dg_soln for Vs_soln, F_soln, df_soln, dg_soln in result]
     ]
+'''
 
 
 
@@ -218,8 +217,7 @@ def VsFdfdg_delayarrays(delay_array,intensity_delayarray,steps,amplitude,frequen
 
 
 
-
-
+'''
 ################################################################################
 ################################################################################
 # Physics over time -- NOT FINISHED YET and not needed for MoSe2 data.
@@ -275,7 +273,7 @@ def dfdg_timearray(time_array,steps,amplitude,frequency,springconst,Qfactor,tipr
 
     return df_AFMtimearray, dg_AFMtimearray
 
-
+'''
 
 
 
