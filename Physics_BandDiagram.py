@@ -33,6 +33,8 @@ def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
     Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
     no,po = Physics_Semiconductors.Func_nopo(NC, NV, Ec, Ev, Ef, T)
 
+    # Sze Physics of Semiconductor Devices, pg. 202 # CHECK
+    # Assumes complete ionization
     def zsem_eqn(psi_variable):
           f = psi_variable*(Na-Nd) + (kB*T)*po*(np.exp(-psi_variable/(kB*T))-1) + (kB*T)*no*(np.exp(psi_variable/(kB*T))-1)
           E = np.sign(psi_variable) * np.sqrt(2*e/(epsilon_sem*epsilon_o)*f)
@@ -44,7 +46,6 @@ def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
         psi = 0 * zsem
     else:
         psi = np.linspace(Vs, Vs * 0.01, 501)
-        #psi = np.linspace(Vs, Vs * 0.01, 1001)
         zsem = np.array([])
         for value in psi:
             zsem_current, error = quad(zsem_eqn, value, Vs)
@@ -59,39 +60,50 @@ def BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 
 def BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
+
     NC,NV = Physics_Semiconductors.Func_NCNV(T,mn,mp)
     Ec,Ev = Physics_Semiconductors.Func_EcEv(T,Eg)
     ni = Physics_Semiconductors.Func_ni(NC,NV,Eg,T)
     Ei = Physics_Semiconductors.Func_Ei(Ev, Ec, T, mn, mp)
     Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
     zsem, psi = BandBending(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
     CPD_metsem = Physics_Semiconductors.Func_CPD(WFmet, EAsem, Ec, Ef)
 
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 433)
     Vins = Vg - Vs - CPD_metsem # potential drop across insulator
+
+    # Draw the potential energy everywhere
     offtop = 2 # arbitraty offsets to draw vacuum gap as "wide gap" semiconductor
     offbot = 8
+
     Insulatorx = [0, 0, -zins*1e7, -zins*1e7, 0]
-    Insulatory = [Ec-Vs+EAsem-offbot, Ec-Vs+EAsem-offtop, Vg+WFmet-offtop, Vg+WFmet-offbot,  Ec-Vs+EAsem-offbot]
+    #Insulatory = [Ec-Vs+EAsem-offbot, Ec-Vs+EAsem-offtop, Vg+WFmet-offtop, Vg+WFmet-offbot,  Ec-Vs+EAsem-offbot]
+    Insulatory = [Ec-Vs+EAsem-offbot, Ec-Vs+EAsem-offtop, -Vg+WFmet-offtop, -Vg+WFmet-offbot,  Ec-Vs+EAsem-offbot]
 
     Vacuumx = np.hstack((np.array([-zins*1e7-20, -zins*1e7]),zsem*1e7))
-    Vacuumy = np.hstack((np.array([Vg+WFmet, Vg+WFmet]),np.array(Ec-psi+EAsem)))
+    Vacuumy = np.hstack((np.array([-Vg+WFmet, -Vg+WFmet]),np.array(Ec+psi+EAsem)))
 
     Gatex = np.array([-zins*1e7-20, -zins*1e7])
-    Gatey = np.array([Vg, Vg])
+    Gatey = np.array([-Vg, -Vg])
 
     zmetarray = np.array([-zins*1e7-20, -zins*1e7,-zins*1e7])
     zinsarray = np.array([-zins*1e7, 0])
     z_array = np.hstack((zmetarray,zinsarray,zsem*1e7))
 
     CBO = 3.5
-    psiox = Vg - Vs - CPD_metsem
-    func_ins = psiox/(zins*1e7)*zinsarray+Ec-Vs+CBO
+    func_ins = Vins/(zins*1e7)*zinsarray+Ec-Vs+CBO
+
+
+
+
+    # Draw the electric field everywhere
     Esem=-np.gradient(psi,zsem*1e7)
     Eins=-np.gradient(func_ins,-zinsarray)
     Emet = [0,0,0] # the electric field inside a metal is zero
     E_array = np.hstack((Emet,Eins,Esem))
 
+    # Draw the charge everywhere
     Qsem=-np.gradient(Esem,zsem*1e7)
     Qins=-np.array([0, 0])
     Qmet = [0,0,-trapz(Qsem,zsem*1e7)] # the metal has equal and opposite charge as the net semiconductor

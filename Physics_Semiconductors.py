@@ -149,11 +149,14 @@ def Func_uf(N_A,N_D,n_i,T,Vs):
     return u,f
 
 # Charge in the semiconductor
+    # Sze Physics of Semiconductor Devices (pg. 201-202)
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_Qs(u,f,epsilon_sem,T,LD):
     Qs = -1*np.sign(u)*kB*T*epsilon_sem*epsilon_o*100/LD*f #eV*C/Vm**2
     return Qs
 
 # Force between MIS plates
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_F(f,epsilon_sem,T,LD):
     F = 1/(2*epsilon_o*100)*(kB*T*epsilon_sem*epsilon_o*100/LD*f)**2 #N/m**2
     return F
@@ -180,7 +183,10 @@ def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
         C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
         u,f= Func_uf(N_A,N_D,n_i,T,Vs)
         Qs = Func_Qs(u,f,epsilon_sem,T,LD)
+
+        # Continuity equations (needs citation)
         if Na ==0: #n-type
+            #expression = Vg_variable+CPD_metsem-Vs+Qs/(C_l) # INCORRECT #eV (I incorporated the CPD, not included in Hudlet)
             expression = Vg_variable+CPD_metsem+Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
         elif Nd ==0: #p-type
             expression = Vg_variable+CPD_metsem+Vs+Qs/(C_l) #eV

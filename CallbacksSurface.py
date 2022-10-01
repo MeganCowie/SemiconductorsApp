@@ -43,17 +43,17 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         [{}, {}, {}],
         [{}, {}, {}]])
     fig0.add_trace(go.Scatter(
-        x = zsem*1e7, y = Ev-psi,
+        x = zsem*1e7, y = Ev+psi,
         name = "Valence Band", mode='lines', showlegend=False,
         line_color=color_Ev
         ), row=1, col=1)
     fig0.add_trace(go.Scatter(
-        x = zsem*1e7, y = Ei-psi,
+        x = zsem*1e7, y = Ei+psi,
         name = "Intrinsic Energy", mode='lines', showlegend=False,
         line_color=color_Ei
         ), row=1, col=1)
     fig0.add_trace(go.Scatter(
-        x = zsem*1e7, y = Ec-psi,
+        x = zsem*1e7, y = Ec+psi,
         name = "Conduction Band", mode='lines', showlegend=False,
         line_color=color_Ec
         ), row=1, col=1)
@@ -176,6 +176,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     #    ), row=6, col=3)
 
     # Automated axis scaling
+
     biasmin = -3
     biasmax = +3
     if biasmin<Vg and Vg>biasmax:
