@@ -33,7 +33,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_resfreq', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', marks=None, min=200000, max=400000, step=10000, value=330000), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', marks=None, min=200000, max=400000, step=10000, value=300000), md=12),
         ]),
 ])
 
@@ -92,7 +92,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_Qfactor', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Qfactor', marks=None, min=200, max=30000, step=100, value=18000,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_Qfactor', marks=None, min=200, max=30000, step=100, value=23000,), md=12),
         ]),
         dbc.Row([
             dbc.Col(dbc.Label("Tip Radius (nm)", id="AFMText_tipradiuslabel", style={"margin-left": "10px"}), md=8),

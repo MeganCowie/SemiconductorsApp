@@ -148,7 +148,7 @@ def Func_uf(N_A,N_D,n_i,T,Vs):
         f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
     return u,f
 
-# Charge in the semiconductor
+# Charge at the surface of the semiconductor
     # Sze Physics of Semiconductor Devices (pg. 201-202)
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_Qs(u,f,epsilon_sem,T,LD):

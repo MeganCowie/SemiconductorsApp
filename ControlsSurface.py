@@ -15,7 +15,7 @@ Surface_Card0 = dbc.Card([
             {'label': '   Silicon', 'value': 2},
             {'label': '   Pentacene', 'value': 3},
             {'label': '   Other', 'value': 4}
-            ],value=1,labelStyle={"width": '50%','display': 'inline-block'},
+            ],value=2,labelStyle={"width": '50%','display': 'inline-block'},
             ), style={"margin-left": "50px", "margin-top": "0px",'fontSize': 18},width="auto")
         ]),
 ], color='#eaeaea',style={"border":"#eaeaea"})

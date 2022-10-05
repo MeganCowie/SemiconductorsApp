@@ -24,10 +24,20 @@ def zins_AFMarray(time_AFMarray,amplitude,zins):
     zins_AFMarray = zins+position_AFMarray*1e-7 #cm
     return zins_AFMarray
 
-def zinslag_AFMarray(time_AFMarray,amplitude,zins,lag):
-    position_AFMarray = amplitude*np.sin(time_AFMarray-lag)+amplitude #nm
+def zinslag_AFMarray(time_AFMarray,amplitude,frequency,lag,sampletype,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+
+    zins_top = zins+amplitude*1e-7
+    zins_bot = zins
+
+    Vstop_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins_top,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vsbot_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins_bot,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vsdiff_soln = (Vsbot_soln-Vstop_soln)
+    lag_soln = 3000*Vsdiff_soln**2/10**9*frequency #radians
+
+    position_AFMarray = amplitude*np.sin(time_AFMarray-lag_soln)+amplitude #nm
     zinslag_AFMarray = zins+position_AFMarray*1e-7 #cm
-    return zinslag_AFMarray
+    return zinslag_AFMarray, lag_soln
+
 
 def SurfacepotForce_AFMarray(guess,zins_AFMarray,sampletype,RTN,hop,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Vs_AFMarray = []

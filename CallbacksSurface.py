@@ -177,8 +177,8 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
 
     # Automated axis scaling
 
-    biasmin = -3
-    biasmax = +3
+    biasmin = -10
+    biasmax = +10
     if biasmin<Vg and Vg>biasmax:
         biasrange_indexmin = find_nearest(Vg_array,biasmin)
         biasrange_indexmax = find_nearest(Vg_array,Vg+1)

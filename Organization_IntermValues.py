@@ -29,7 +29,7 @@ def Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsi
     return Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array
 
 
-def AFM1_inputvalues(toggle_sampletype,toggle_RTN,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,zins):
+def AFM1_inputvalues(toggle_sampletype,toggle_RTN,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     # values
     sampletype = toggle_sampletype #false = semiconducting, true = metallic
@@ -43,7 +43,7 @@ def AFM1_inputvalues(toggle_sampletype,toggle_RTN,slider_amplitude,slider_resfre
     # arrays
     time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
     zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
-    zinslag_AFMarray = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,zins, lag)
+    zinslag_AFMarray,lag_soln = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,frequency,lag,sampletype,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     return sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 

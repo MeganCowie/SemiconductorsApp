@@ -137,23 +137,58 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
 ################################################################################
 # Vs, F, df, and dg vs. Vg
 
+
+# This function returns df and dg for the given Vg, as well as Vs and F at
+# that Vg
 def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
-    # First list any functions that are constant as a function of x
+    # First list any functions that are constant as a function of Vg
     time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
     zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
-    zinslag_AFMarray = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,zins,lag)
 
-    # Then list any functions that are not constant as a function of x
+    # Then list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
-        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        zinslag_AFMarraysoln,lag_soln = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,frequency,lag,sampletype,  Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarraysoln,sampletype,False,hop,   Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        df_soln, dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarraysoln,frequency,springconst,amplitude,Qfactor,tipradius)
+        Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
+        return [Vs_soln,F_soln,df_soln, dg_soln, lag_soln]
+
+    # Then parallelize the calculation of y for every Vg
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(Vg) for Vg in Vg_array
+    )
+    return [
+        [Vs_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [F_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [df_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [dg_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [lag_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result]
+    ]
+
+################################################################################
+################################################################################
+# Vs, F, df, and dg vs. zins
+
+# This function returns df and dg for the given zins as the closest tip-sample
+# separation, as well as Vs and F at the closest tip-sample separation
+def VsFdfdg_zinsarray(zins_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+
+    # First list any functions that are constant as a function of zins
+    time_AFMarray = Physics_ncAFM.time_AFMarray(timesteps)
+
+    # Then list any functions that are not constant as a function of zins
+    def compute(zins_variable):
+        zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins_variable)
+        zinslag_AFMarray,lag_soln = Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,frequency,lag,sampletype,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg,zins_variable,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         df_soln, dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarraysoln,frequency,springconst,amplitude,Qfactor,tipradius)
         Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
         return [Vs_soln,F_soln,df_soln, dg_soln]
 
-    # Then parallelize the calculation of y for every x
+    # Then parallelize the calculation of y for every zins
     result = Parallel(n_jobs=-1)(
-        delayed(compute)(Vg) for Vg in Vg_array
+        delayed(compute)(zins) for zins in zins_array
     )
     return [
         [Vs_soln for Vs_soln,F_soln,df_soln,dg_soln in result],
@@ -162,8 +197,39 @@ def VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor
         [dg_soln for Vs_soln,F_soln,df_soln,dg_soln in result]
     ]
 
+'''
+################################################################################
+################################################################################
+# Find the difference in surface potential as a function of bias
 
+def Vsdiff_biasarray(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,  amplitude):
 
+    zins_top = zins+amplitude
+    zins_bot = zins
+
+    time_AFMarray = Physics_ncAFM.time_AFMarray(30)
+    zins_AFMarray = Physics_ncAFM.zins_AFMarray(time_AFMarray,amplitude,zins)
+    lag = 30
+
+    # Then list any functions that are not constant as a function of Vg
+    def compute(Vg_variable):
+        Vstop_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg_variable,zins_top,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vsbot_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg_variable,zins_bot,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vsdiff_soln = (Vsbot_soln-Vstop_soln)
+        lag_soln = 300*np.abs(Vsdiff_soln**2)/10**9*300000 #radians
+
+        zinslag_AFMarray, lag_soln=Physics_ncAFM.zinslag_AFMarray(time_AFMarray,amplitude,lag,sampletype,  Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+
+        return [Vstop_soln, Vsbot_soln, Vsdiff_soln, lag_soln]
+
+    # Then parallelize the calculation of y for every Vg
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(Vg) for Vg in Vg_array
+    )
+    return [
+        lag_soln for Vstop_soln,Vsbot_soln,Vsdiff_soln, lag_soln in result
+    ]
+'''
 ################################################################################
 ################################################################################
 # DELAY ARRAYS
