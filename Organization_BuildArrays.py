@@ -81,8 +81,8 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
     u,f=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs)
     zA = Physics_Semiconductors.Func_zA(Nd,Na,LD,Vs,T)
     zD = Physics_Semiconductors.Func_zD(epsilon_sem,Nd,Na,Vs,T)
-    Qs = Physics_Semiconductors.Func_Qs(u,f,epsilon_sem,T,L_D)
-    Cs = Physics_Semiconductors.Func_Qs(u,f,epsilon_sem,T,L_D)
+    Qs = Physics_Semiconductors.Func_Qs(N_A,N_D,u,f,epsilon_sem,T,L_D)
+    Cs = Physics_Semiconductors.Func_Qs(N_A,N_D,u,f,epsilon_sem,T,L_D)
 
 
     # Bias array
@@ -93,20 +93,10 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
         Vs_soln = Vs_biasarray[Vg_index]
         zD_soln = Physics_Semiconductors.Func_zD(epsilon_sem, Nd, Na, Vs_soln, T)
         u_soln,f_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs_soln)
-        Qs_soln = Physics_Semiconductors.Func_Qs(u_soln,f_soln,epsilon_sem,T,L_D)
-
-
-        if N_A ==0: #n-type
-            Cd_soln = (epsilon_sem*epsilon_o*100)/(np.sqrt(2)*LD)*(1-np.exp(-u_soln)+(n_i**2/(N_D**2)*(np.exp(u_soln)-1)))/f_soln
-        elif N_D ==0: #p-type
-            Cd_soln = (epsilon_sem*epsilon_o*100)/(np.sqrt(2)*LD)*(1-np.exp(-u_soln)+(n_i**2/(N_A**2)*(np.exp(u_soln)-1)))/f_soln/C_l
-        Cs_soln = Cd_soln/(C_l+Cd_soln)
-
-        # This is only true in depletion.
-        #Cs_soln = (np.sqrt(1/C_l**2+2*(Vg_array[Vg_index]-CPD_metsem)/(e*N_A*epsilon_o*epsilon_sem)))**-1
+        f =       (np.exp(u_soln)-u_soln-1+(n_i**2/N_D**2)*(np.exp(-1*u_soln)+u_soln-1))**(1/2) #dimensionless
+        Qs_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,u_soln,f_soln,epsilon_sem,T,L_D)
 
         zD_biasarray = np.append(zD_biasarray, zD_soln)
-        Cs_biasarray = np.append(Cs_biasarray, Cs_soln)
         Qs_biasarray = np.append(Qs_biasarray, Qs_soln)
 
     # zins array
@@ -117,20 +107,17 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
         Vs_soln = Vs_zinsarray[zins_index]
         zD_soln = Physics_Semiconductors.Func_zD(epsilon_sem, Nd, Na, Vs_soln, T)
         u_soln,f_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs_soln)
-        Qs_soln = Physics_Semiconductors.Func_Qs(u_soln,f_soln,epsilon_sem,T,L_D)
-        Cs_soln = Qs_soln/Vs_soln/C_l
+        Qs_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,u_soln,f_soln,epsilon_sem,T,L_D)
 
         zD_zinsarray = np.append(zD_zinsarray, zD_soln)
-        Cs_zinsarray = np.append(Cs_zinsarray, Cs_soln)
         Qs_zinsarray = np.append(Qs_zinsarray, Qs_soln)
 
 
     zQ_biasarray = zD_biasarray
     zQ_zinsarray = zD_zinsarray
     zQ = zD
-    Cs = zD
 
-    return regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray
+    return regime, LD, zQ,Qs, zQ_biasarray, Qs_biasarray, zQ_zinsarray, Qs_zinsarray
 
 
 ################################################################################

@@ -22,7 +22,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     # Calculations and results
     Vs, F = Physics_Semiconductors.Func_VsF(1,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vs_biasarray, F_biasarray, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    regime, LD, zQ, Cs, Qs, zQ_biasarray, Cs_biasarray, Qs_biasarray, zQ_zinsarray, Cs_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    regime, LD, zQ, Qs, zQ_biasarray, Qs_biasarray, zQ_zinsarray, Qs_zinsarray = Organization_BuildArrays.VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Ec, Ev, Ei, Ef, zsem, psi, z_array, E_array, Q_array, Insulatorx, Insulatory, Vacuumx, Vacuumy, Gatex, Gatey, ni = Physics_BandDiagram.BandDiagram(Vs,sampletype,Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
     # Account for alpha
@@ -118,13 +118,13 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         name = "Charge Width (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=5, col=2)
+    #fig0.add_trace(go.Scatter(
+    #    x = [Vg], y = [zQ*10**9],
+    #    name = "This Charge Width (bias)", mode='markers', showlegend=False,
+    #    marker=dict(color=color_indicator,size=10),
+    #    ), row=5, col=2)
     fig0.add_trace(go.Scatter(
-        x = [Vg], y = [zQ*10**9],
-        name = "This Charge Width (bias)", mode='markers', showlegend=False,
-        marker=dict(color=color_indicator,size=10),
-        ), row=5, col=2)
-    fig0.add_trace(go.Scatter(
-        x = Vg_array, y = Cs_biasarray,
+        x = Vg_array, y = Qs_biasarray,
         name = "C/Cox (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=6, col=2)
@@ -165,7 +165,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         marker=dict(color=color_indicator,size=10),
         ), row=5, col=3)
     fig0.add_trace(go.Scatter(
-        x = zins_array*1e7, y = Cs_zinsarray,
+        x = zins_array*1e7, y = Qs_zinsarray,
         name = "C/Cox (zins)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=6, col=3)
