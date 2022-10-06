@@ -95,8 +95,6 @@ def BandDiagram(Vs,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
     func_ins = Vins/(zins*1e7)*zinsarray+Ec-Vs+CBO
 
 
-
-
     # Draw the electric field everywhere
     Esem=-np.gradient(psi,zsem*1e7)
     Eins=-np.gradient(func_ins,-zinsarray)

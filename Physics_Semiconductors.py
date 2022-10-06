@@ -90,7 +90,7 @@ def Func_ni(NC, NV, Eg, T): #1/cm**3
 # The conduction band level does not impact the Vs or F, so set arbitrarily as 1
     # Jonscher Solid Semiconductors (pg 30)
 def Func_EcEv(T, Eg): # eV
-    Ec = 1 #silicon 1.17 - 4.73e-4 * T ** 2 / (T + 636.0)
+    Ec = 1
     Ev = Ec-Eg
     return Ec, Ev
 
@@ -138,6 +138,11 @@ def Func_LD(epsilon_sem,N_D,N_A,T):
     LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(N_D+N_A)*e)) #m (Note units: N_A and N_D are in m^-3)
     return LD
 
+# Insulator capacitance
+def Func_Cins(zins):
+    Cins= epsilon_o*100/(zins/100) #C/Vm**2
+    return Cins
+
 # intgration constants
 def Func_uf(N_A,N_D,n_i,T,Vs):
     if N_A ==0: #n-type
@@ -183,16 +188,16 @@ def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
     LD = Func_LD(epsilon_sem, N_D, N_A, T)
 
     def Vs_eqn(Vs,Vg_variable,zins_variable):
-        C_l= epsilon_o*100/(zins_variable/100) #C/Vm**2
+        Cins= Func_Cins(zins_variable)
         u,f= Func_uf(N_A,N_D,n_i,T,Vs)
         Qs = Func_Qs(N_A,N_D,u,f,epsilon_sem,T,LD)
 
         # Continuity equations (needs citation)
         #if Na ==0: #n-type
-            #expression = Vg_variable+CPD_metsem-Vs+Qs/(C_l) # INCORRECT #eV (I incorporated the CPD, not included in Hudlet)
-            #expression = Vg_variable+CPD_metsem+Vs-Qs/(C_l) #eV (I incorporated the CPD, not included in Hudlet)
+            #expression = Vg_variable+CPD_metsem-Vs+Qs/(Cins) # INCORRECT #eV (I incorporated the CPD, not included in Hudlet)
+            #expression = Vg_variable+CPD_metsem+Vs-Qs/(Cins) #eV (I incorporated the CPD, not included in Hudlet)
         #elif Nd ==0: #p-type
-        expression = Vg_variable+CPD_metsem+Vs+Qs/(C_l) #eV
+        expression = Vg_variable+CPD_metsem+Vs+Qs/(Cins) #eV
         return expression
 
     def F_eqn(Vs_variable):
@@ -213,34 +218,32 @@ def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 def Func_regime(Na,Nd,Vs,Ei,Ef):
     Vb = Ei-Ef
     if Na ==0: #n-type
+        if Vs < 0:
+            regime = 1 #accumulation
+        elif Vs == 0:
+            regime = 2 #flatband
+        elif Vs < Ei:
+            regime = 3 #depletion
+        elif Vs == Vb:
+            regime = 4 #threshold
+        elif Vs > Ei:
+            regime = 5 #inversion
+    elif Nd ==0: #p-type
         if Vs > 0:
             regime = 1 #accumulation
         elif Vs == 0:
             regime = 2 #flatband
-        elif Vs > Vb:# & Vs > 0:
+        elif Vs > Vb:
             regime = 3 #depletion
         elif Vs == Vb:
             regime = 4 #threshold
         elif Vs < Vb:
             regime = 5 #inversion
-    elif Nd ==0: #p-type
-        if Vs < 0:
-            regime = 1 #accumulation
-        elif Vs == 0:
-            regime = 2 #flatband
-        elif Vs < Vb:# & Vs > 0:
-            regime = 3 #depletion
-        elif Vs == Vb:
-            regime = 4 #threshold
-        elif Vs > Vb:
-            regime = 5 #inversion
     return regime
 
 
-
-
 ################################################################################
-# NOT DONE YET
+# WHAT A MESS. FIX THIS -- NOT DONE YET
 
 # Accumulation layer width
     # ? Chapter  pg 173
@@ -254,12 +257,17 @@ def Func_zA(Nd,Na,LD,Vs,T):
 
 # Depletion layer width (pg. 435 eq. 10.5)
     # ? Chapter  pg 173
-def Func_zD(epsilon_sem, Nd, Na, Vs, T):
-    zD = 1
-    #if Na ==0: #n-type
-    #    zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/(Nd*e))/100 #m (Note units: Na and Nd are in cm^-3)
-    #elif Nd ==0: #p-type
-    #    zD = np.sqrt(2*epsilon_sem*epsilon_o*Vs/(Na*e))/100 #m (Note units: Na and Nd are in cm^-3)
+def Func_zD(zins,epsilon_sem,Nd,Na,Vg,T,WFmet,EAsem,Ec,Ef,Vs):
+    Cins= Func_Cins(zins)
+    CPD = Func_CPD(WFmet, EAsem, Ec, Ef)
+    #zD = 1
+    if Na ==0: #n-type
+        zD = np.sqrt((epsilon_sem*epsilon_o*100)**2/Cins**2+2*(epsilon_sem*epsilon_o*100)*np.abs(Vg-CPD)/(Nd*e)) -(epsilon_sem*epsilon_o*100)/Cins #m (Note units: Na and Nd are in cm^-3)
+        zD = np.sqrt(2*(epsilon_sem*epsilon_o*100)*np.abs(Vs)/(Nd*e)) #m (Note units: Na and Nd are in cm^-3)
+    elif Nd ==0: #p-type
+        zD = np.sqrt((epsilon_sem*epsilon_o*100)**2/Cins**2+2*(epsilon_sem*epsilon_o*100)*np.abs(Vg-CPD)/(Na*e)) -(epsilon_sem*epsilon_o*100)/Cins #m (Note units: Na and Nd are in cm^-3)
+        zD = np.sqrt(2*(epsilon_sem*epsilon_o*100)*Vs/(Na*e)) #m (Note units: Na and Nd are in cm^-3)
+
     return zD
 
 # Inversion layer width
@@ -271,3 +279,28 @@ def Func_zI():
     #elif Nd ==0: #p-type
     #    zI = np.sqrt(4*epsilon_sem*epsilon_o*Vs/(Na*e))/100 #m (Note units: Na and Nd are in cm^-3)
     return zI
+
+
+# Return zA, zD, or zI depending on what regime we are in
+def Func_zQ(Na,Nd,Vs,Ei,Ef,zins,epsilon_sem,Vg,T,WFmet,EAsem,Ec):
+    regime = Func_regime(Na,Nd,Vs,Ei,Ef)
+    zD = Func_zD(zins,epsilon_sem,Nd,Na,Vg,T,WFmet,EAsem,Ec,Ef,Vs)
+
+    if regime == 1: #accumulation
+        zQ=zD
+    elif regime == 2: #flatband
+        zQ=zD
+    elif regime == 3: #depletion
+        zQ = zD
+    elif regime == 4: #threshold
+        zQ=zD
+    elif regime == 5: #inversion
+        zQ=zD
+
+    return zQ
+
+
+################################################################################
+def Func_P(Qs,zQ):
+    P = 1*Qs*zQ #polarization given dipole moment, treating with N=1
+    return polarization

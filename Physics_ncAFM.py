@@ -32,7 +32,7 @@ def zinslag_AFMarray(time_AFMarray,amplitude,frequency,lag,sampletype,  Vg,zins,
     Vstop_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins_top,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vsbot_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg,zins_bot,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vsdiff_soln = (Vsbot_soln-Vstop_soln)
-    lag_soln = 3000*Vsdiff_soln**2/10**9*frequency #radians
+    lag_soln = 3000*(Vsdiff_soln**2)/10**9*frequency #radians
 
     position_AFMarray = amplitude*np.sin(time_AFMarray-lag_soln)+amplitude #nm
     zinslag_AFMarray = zins+position_AFMarray*1e-7 #cm

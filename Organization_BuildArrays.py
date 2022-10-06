@@ -79,45 +79,47 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef)
     LD = Physics_Semiconductors.Func_LD(epsilon_sem,N_D,N_A,T)
     u,f=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs)
-    zA = Physics_Semiconductors.Func_zA(Nd,Na,LD,Vs,T)
-    zD = Physics_Semiconductors.Func_zD(epsilon_sem,Nd,Na,Vs,T)
+    zQ = Physics_Semiconductors.Func_zQ(Na,Nd,Vs,Ei,Ef,zins,epsilon_sem,Vg,T,WFmet,EAsem,Ec)
     Qs = Physics_Semiconductors.Func_Qs(N_A,N_D,u,f,epsilon_sem,T,L_D)
     Cs = Physics_Semiconductors.Func_Qs(N_A,N_D,u,f,epsilon_sem,T,L_D)
 
 
     # Bias array
-    zD_biasarray = []
+    zQ_biasarray = []
     Cs_biasarray = []
     Qs_biasarray = []
     for Vg_index in range(len(Vg_array)):
+        Vg_variable = Vg_array[Vg_index]
         Vs_soln = Vs_biasarray[Vg_index]
-        zD_soln = Physics_Semiconductors.Func_zD(epsilon_sem, Nd, Na, Vs_soln, T)
+        # if in the depletion regime
+        zQ_soln = Physics_Semiconductors.Func_zQ(Na,Nd,Vs_soln,Ei,Ef,zins,epsilon_sem,Vg_variable,T,WFmet,EAsem,Ec)
+
         u_soln,f_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs_soln)
-        f =       (np.exp(u_soln)-u_soln-1+(n_i**2/N_D**2)*(np.exp(-1*u_soln)+u_soln-1))**(1/2) #dimensionless
         Qs_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,u_soln,f_soln,epsilon_sem,T,L_D)
 
-        zD_biasarray = np.append(zD_biasarray, zD_soln)
+        zQ_biasarray = np.append(zQ_biasarray, zQ_soln)
         Qs_biasarray = np.append(Qs_biasarray, Qs_soln)
 
     # zins array
-    zD_zinsarray = []
+    zQ_zinsarray = []
     Cs_zinsarray = []
     Qs_zinsarray = []
     for zins_index in range(len(zins_array)):
+        zins_variable = zins_array[zins_index]
         Vs_soln = Vs_zinsarray[zins_index]
-        zD_soln = Physics_Semiconductors.Func_zD(epsilon_sem, Nd, Na, Vs_soln, T)
+        zQ_soln = Physics_Semiconductors.Func_zQ(Na,Nd,Vs_soln,Ei,Ef,zins_variable,epsilon_sem,Vg,T,WFmet,EAsem,Ec)
         u_soln,f_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vs_soln)
         Qs_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,u_soln,f_soln,epsilon_sem,T,L_D)
 
-        zD_zinsarray = np.append(zD_zinsarray, zD_soln)
+        zQ_zinsarray = np.append(zQ_zinsarray, zQ_soln)
         Qs_zinsarray = np.append(Qs_zinsarray, Qs_soln)
 
+    # This is physics and it shouldn't go here but I'm tired
+    P = zQ*Qs
+    P_biasarray = zQ_biasarray*Qs_biasarray
+    P_zinsarray = zQ_zinsarray*Qs_zinsarray
 
-    zQ_biasarray = zD_biasarray
-    zQ_zinsarray = zD_zinsarray
-    zQ = zD
-
-    return regime, LD, zQ,Qs, zQ_biasarray, Qs_biasarray, zQ_zinsarray, Qs_zinsarray
+    return regime, LD, zQ,Qs,P, zQ_biasarray, Qs_biasarray,P_biasarray, zQ_zinsarray, Qs_zinsarray, P_zinsarray
 
 
 ################################################################################
