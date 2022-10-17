@@ -20,10 +20,10 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     elif button_presets == 2: #SiO2
         toggle_type = False
         slider_Vg = 0
-        slider_zins = 6
+        slider_zins = 12#13
         slider_Eg = 1.12
         slider_epsilonsem = 11.7
-        slider_WFmet = 4.1
+        slider_WFmet = 4.15
         slider_EAsem = 4.05
         slider_emass = 0.98
         slider_hmass = 0.19

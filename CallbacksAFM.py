@@ -256,13 +256,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
 
         # Calculations and results for before hop
-        Vs_biasarray0, F_biasarray0, df_biasarray0, dg_biasarray0,lag_biasarray = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray0, F_biasarray0, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray0, F_biasarray0, df_biasarray0, dg_biasarray0,lag_biasarray0 = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # Calculations and results for after hop
         Na = round((10**(slider_acceptor+hop)*10**8)/(1000**3))
         Vs_biasarray1, F_biasarray1, df_biasarray1, dg_biasarray1,lag_biasarray1 = Organization_BuildArrays.VsFdfdg_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray1, F_biasarray1, Vs_zinsarray, F_zinsarray = Organization_BuildArrays.VsF_arrays(Vg_array,zins_array,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # Stack arrays at bottom and top of hop
         Vg_array = np.append(Vg_array, np.flipud(Vg_array))
@@ -272,6 +270,10 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         dg_biasarray = np.append(dg_biasarray0, np.flipud(dg_biasarray1))
 
 
+
+        Data_Vg = np.genfromtxt ('Data_Vg.csv', delimiter=",")
+        Data_df = np.genfromtxt ('Data_df.csv', delimiter=",")
+
         #########################################################
         #########################################################
         fig2 = make_subplots(
@@ -279,7 +281,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             column_widths=[0.5, 0.5], row_heights=[1,1],
             specs=[[{}, {}], [{}, {}]])
         fig2.add_trace(go.Scatter(
-            x = Vg_array, y = lag_biasarray,#Vs_biasarray,
+            x = Vg_array, y = lag_biasarray0,#Vs_biasarray,
             name = "ContactPotential", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=1)
@@ -292,6 +294,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             x = Vg_array, y = df_biasarray,
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
+            ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df+1.5,
+            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            line_color=color_indicator
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Vg_array, y = dg_biasarray,
@@ -729,7 +736,7 @@ def readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, sli
     readout_resfreq = '{0:.0f}'.format(slider_resfreq)
     readout_springconst = '{0:.0f}'.format(slider_springconst)
     readout_Qfactor = '{0:.0f}'.format(slider_Qfactor)
-    readout_tipradius = '{0:.0f}'.format(slider_tipradius)
+    readout_tipradius = '{0:.1f}'.format(slider_tipradius)
     readout_pulsetimesteps = '{0:.0f}'.format(slider_pulsetimesteps)
     readout_delaysteps = '{0:.0f}'.format(slider_delaysteps)
     return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps

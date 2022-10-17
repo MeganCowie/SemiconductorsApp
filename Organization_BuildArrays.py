@@ -116,8 +116,8 @@ def VsF_supp(Vs,Vg_array,zins_array,Vs_biasarray,Vs_zinsarray,Vg,zins,Eg,epsilon
 
     # This is physics and it shouldn't go here but I'm tired
     P = zQ*Qs
-    P_biasarray = zQ_biasarray*Qs_biasarray
-    P_zinsarray = zQ_zinsarray*Qs_zinsarray
+    P_biasarray = zQ_biasarray*10**9*Qs_biasarray/100000000
+    P_zinsarray = zQ_zinsarray*10**9*Qs_zinsarray/100000000
 
     return regime, LD, zQ,Qs,P, zQ_biasarray, Qs_biasarray,P_biasarray, zQ_zinsarray, Qs_zinsarray, P_zinsarray
 
@@ -173,17 +173,67 @@ def VsFdfdg_zinsarray(zins_array,timesteps,amplitude,frequency,springconst,Qfact
         Vs_AFMarraysoln, F_AFMarraysoln = Physics_ncAFM.SurfacepotForce_AFMarray(1,zinslag_AFMarray,sampletype,False,hop,   Vg,zins_variable,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         df_soln, dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarraysoln,frequency,springconst,amplitude,Qfactor,tipradius)
         Vs_soln, F_soln = Vs_AFMarraysoln[0],F_AFMarraysoln[0]
-        return [Vs_soln,F_soln,df_soln, dg_soln]
+        return [Vs_soln,F_soln,df_soln, dg_soln,lag_soln]
 
     # Then parallelize the calculation of y for every zins
     result = Parallel(n_jobs=-1)(
         delayed(compute)(zins) for zins in zins_array
     )
     return [
-        [Vs_soln for Vs_soln,F_soln,df_soln,dg_soln in result],
-        [F_soln for Vs_soln,F_soln,df_soln,dg_soln in result],
-        [df_soln for Vs_soln,F_soln,df_soln,dg_soln in result],
-        [dg_soln for Vs_soln,F_soln,df_soln,dg_soln in result]
+        [Vs_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [F_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [df_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [dg_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result],
+        [lag_soln for Vs_soln,F_soln,df_soln,dg_soln,lag_soln in result]
+]
+
+################################################################################
+################################################################################
+# Vstop and Vsbot vs. Vg
+
+
+def VstopVsbot_biasarray(Vg_array,timesteps,amplitude,frequency,springconst,Qfactor,tipradius,sampletype,hop,lag,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+
+    # First list any functions that are constant as a function of Vg
+    NC,NV = Physics_Semiconductors.Func_NCNV(T,mn,mp)
+    Ec,Ev = Physics_Semiconductors.Func_EcEv(T,Eg)
+    ni = Physics_Semiconductors.Func_ni(NC,NV,Eg,T)
+    Ei = Physics_Semiconductors.Func_Ei(Ev, Ec, T, mn, mp)
+    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
+    CPD = Physics_Semiconductors.Func_CPD(WFmet, EAsem, Ec, Ef)
+
+    n_i = ni*(100)**3 #m**-3
+    N_D = Nd*(100)**3 #m**-3
+    N_A = Na*(100)**3 #m**-3
+    L_D = Physics_Semiconductors.Func_LD(epsilon_sem, N_D, N_A, T)
+    C_l= epsilon_o*100/(zins/100) #C/Vm**2
+
+    zins_top = zins+amplitude*1e-7
+    zins_bot = zins
+
+    # Then list any functions that are not constant as a function of Vg
+    def compute(Vg_variable):
+        Vstop_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg_variable,zins_top,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vsbot_soln, F_soln = Physics_Semiconductors.Func_VsF(1,sampletype,   Vg_variable,zins_bot,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        zQtop_soln = Physics_Semiconductors.Func_zQ(Na,Nd,Vstop_soln,Ei,Ef,zins_top,epsilon_sem,Vg_variable,T,WFmet,EAsem,Ec)
+        zQbot_soln = Physics_Semiconductors.Func_zQ(Na,Nd,Vsbot_soln,Ei,Ef,zins_bot,epsilon_sem,Vg_variable,T,WFmet,EAsem,Ec)
+        utop_soln,ftop_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vstop_soln)
+        ubot_soln,fbot_soln=Physics_Semiconductors.Func_uf(N_A,N_D,n_i,T,Vsbot_soln)
+        Qstop_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,utop_soln,ftop_soln,epsilon_sem,T,L_D)
+        Qsbot_soln = Physics_Semiconductors.Func_Qs(N_A,N_D,ubot_soln,fbot_soln,epsilon_sem,T,L_D)
+        return [Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln]
+
+    # Then parallelize the calculation of y for every Vg
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(Vg) for Vg in Vg_array
+    )
+    return [
+        [Vstop_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result],
+        [Vsbot_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result],
+        [zQtop_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result],
+        [zQbot_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result],
+        [Qstop_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result],
+        [Qsbot_soln for Vstop_soln,Vsbot_soln,zQtop_soln,zQbot_soln,Qstop_soln,Qsbot_soln in result]
     ]
 
 '''

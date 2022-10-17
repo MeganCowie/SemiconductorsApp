@@ -134,6 +134,8 @@ def Func_Vfb(CPD_metsem): # eV
     return Vfb
 
 # Debye length
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
+    # Sze Physics of Semiconductor Devices (pg 202)
 def Func_LD(epsilon_sem,N_D,N_A,T):
     LD = np.sqrt(epsilon_sem*epsilon_o*100*kB*T/(2*(N_D+N_A)*e)) #m (Note units: N_A and N_D are in m^-3)
     return LD
@@ -144,12 +146,12 @@ def Func_Cins(zins):
     return Cins
 
 # intgration constants
-def Func_uf(N_A,N_D,n_i,T,Vs):
+def Func_uf(N_A,N_D,n_i,T,V):
     if N_A ==0: #n-type
-        u = Vs/(kB*T) #dimensionless
+        u = V/(kB*T) #dimensionless
         f = (np.exp(u)-u-1+(n_i**2/(N_D**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
     elif N_D ==0: #p-type
-        u = -1*Vs/(kB*T) #dimensionless
+        u = -1*V/(kB*T) #dimensionless
         f = (np.exp(u)-u-1+(n_i**2/(N_A**2))*(np.exp(-1*u)+u-1))**(1/2) #dimensionless
     return u,f
 
@@ -214,19 +216,20 @@ def Func_VsF(guess,sampletype,   Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,
 
     return Vs, F
 
+
 # Identify MIS capacitor regime (accumulation, depletion, inversion)
 def Func_regime(Na,Nd,Vs,Ei,Ef):
-    Vb = Ei-Ef
+    Vb = Ef-Ei
     if Na ==0: #n-type
         if Vs < 0:
             regime = 1 #accumulation
         elif Vs == 0:
             regime = 2 #flatband
-        elif Vs < Ei:
+        elif Vs < Vb:
             regime = 3 #depletion
         elif Vs == Vb:
             regime = 4 #threshold
-        elif Vs > Ei:
+        elif Vs > Vb:
             regime = 5 #inversion
     elif Nd ==0: #p-type
         if Vs > 0:
