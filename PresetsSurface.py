@@ -13,8 +13,8 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_acceptor = 32.8
         slider_T = 300
         slider_alpha = 0
-        stylen = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
-        stylep = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
+        stylen = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
+        stylep = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
         disabledn = True
         disabledp = False
     elif button_presets == 2: #Si
@@ -31,8 +31,8 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0
-        stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+        stylen = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
+        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
         disabledn = False
         disabledp = True
     elif button_presets == 3: #Pentacene
@@ -49,8 +49,8 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0.8
-        stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+        stylen = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
+        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
         disabledn = False
         disabledp = True
     else:
@@ -68,8 +68,8 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_T = slider_T
         slider_alpha = slider_alpha
         if toggle_type == True: #p-type
-            stylen = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
-            stylep = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
+            stylen = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
+            stylep = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
             disabledn = True
             disabledp = False
             if slider_acceptor == 0:
@@ -78,8 +78,8 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
                 slider_acceptor = slider_acceptor
             slider_donor = 0
         elif toggle_type == False: #n-type
-            stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-            stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+            stylen = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
+            stylep = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
             disabledn = False
             disabledp = True
             if slider_donor == 0:
@@ -91,15 +91,15 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
 
 def togglefunctions(toggle_type, slider_donor, slider_acceptor):
     if toggle_type == True: #p-type
-        stylen = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
-        stylep = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
+        stylen = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
+        stylep = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
         disabledn = True
         disabledp = False
         slider_donor = 0
         slider_acceptor = slider_acceptor
     elif toggle_type == False: #n-type
-        stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+        stylen = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
+        stylep = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
         disabledn = False
         disabledp = True
         slider_donor = slider_donor

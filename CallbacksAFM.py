@@ -713,11 +713,11 @@ def readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, sli
 
 def togglefunctions(toggle):
     if toggle == True:
-        style_L = {'color': '#7f7f7f', 'fontSize': 14, 'width':130, 'text-align': 'center'}
-        style_R = {'color': '#57c5f7', 'fontSize': 14, 'width':60, 'text-align': 'left'}
+        style_L = {'color': '#7f7f7f', 'fontSize': 14, 'width':130, 'textAlign': 'center'}
+        style_R = {'color': '#57c5f7', 'fontSize': 14, 'width':60, 'textAlign': 'left'}
     elif toggle == False:
-        style_L = {'color': '#57c5f7', 'fontSize': 14, 'width':130, 'text-align': 'center'}
-        style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':60, 'text-align': 'left'}
+        style_L = {'color': '#57c5f7', 'fontSize': 14, 'width':130, 'textAlign': 'center'}
+        style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':60, 'textAlign': 'left'}
     return style_L, style_R
 
 def find_nearest(array, value):

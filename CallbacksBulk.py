@@ -223,13 +223,13 @@ def togglefunctions(toggle):
     valuen = 0
     valuep = 0
     if toggle == True:
-        stylen = {'color': '#7f7f7f', 'fontSize': 20, 'text-align': 'right'}
-        stylep = {'color': '#57c5f7', 'fontSize': 20, 'text-align': 'right'}
+        stylen = {'color': '#7f7f7f', 'fontSize': 20, 'textAlign': 'right'}
+        stylep = {'color': '#57c5f7', 'fontSize': 20, 'textAlign': 'right'}
         disabledn = True
         disabledp = False
     elif toggle == False:
-        stylen = {'color': '#57c5f7', 'fontSize': 20, 'text-align': 'right'}
-        stylep = {'color': '#7f7f7f', 'fontSize': 20, 'text-align': 'right'}
+        stylen = {'color': '#57c5f7', 'fontSize': 20, 'textAlign': 'right'}
+        stylep = {'color': '#7f7f7f', 'fontSize': 20, 'textAlign': 'right'}
         disabledn = False
         disabledp = True
     return stylen, stylep, disabledn, disabledp, valuen, valuep

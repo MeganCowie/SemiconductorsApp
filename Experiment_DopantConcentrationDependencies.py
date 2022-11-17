@@ -21,8 +21,8 @@ slider_donor = 15.9615
 slider_acceptor = 0
 slider_T = 300
 slider_alpha = 0
-stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+stylen = {'color': '#57c5f7', 'fontSize': 18, 'textAlign': 'right'}
+stylep = {'color': '#7f7f7f', 'fontSize': 18, 'textAlign': 'right'}
 disabledn = False
 disabledp = True
 
