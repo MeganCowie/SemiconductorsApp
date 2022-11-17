@@ -9,7 +9,7 @@ Everything we have done so far has been in equilibrium. Now we have all the back
 |Semiconductor bulk      | 0             | constant      | $\propto z$   | Linear|
 |Semiconductor surface   | constant      | $\propto z$   | $\propto z^2$ | Quadratic|
 
-<br />
+&nbsp;
 
 ### The MIS Capacitor
 
