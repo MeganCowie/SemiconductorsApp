@@ -24,35 +24,6 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 
-###### important for latex ######
-app.index_string = '''
-<!DOCTYPE html>
-<html>
-    <head>
-        {%metas%}
-        <title>{%title%}</title>
-        {%favicon%}
-        {%css%}
-    </head>
-    <body>
-        {%app_entry%}
-        <footer>
-            {%config%}
-            {%scripts%}
-            <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                tex2jax: {
-                inlineMath: [ ['$','$']],
-                processEscapes: true
-                }
-            });
-            </script>
-            {%renderer%}
-        </footer>
-    </body>
-</html>
-'''
-
 Distributions_text = open("Text_Distributions.md", "r").read()
 ElectronicStructure_text = open("Text_ElectronicStructure.md", "r").read()
 CarrierStatistics1_text = open("Text_CarrierStatistics1.md", "r").read()
@@ -72,12 +43,12 @@ app.layout = dbc.Container(
         html.Hr(),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(ElectronicStructure_text, mathjax=True), md=12),
         ], align="top",),
         html.Br(),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(Distributions_text, mathjax=True), md=12),
         ], align="top",),
         html.Br(),
         dbc.Row([
@@ -87,7 +58,7 @@ app.layout = dbc.Container(
         ], align="top",),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(CarrierStatistics1_text, mathjax=True), md=12),
         ], align="top",),
         html.Br(),
         dbc.Row([
@@ -96,7 +67,7 @@ app.layout = dbc.Container(
         ], align="top",),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(CarrierStatistics2_text, mathjax=True), md=12),
         ], align="top",),
         html.Br(),
         dbc.Row([
@@ -106,7 +77,7 @@ app.layout = dbc.Container(
         html.Hr(),
         html.Br(),
         dbc.Row([
-            dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
+            dbc.Col(dcc.Markdown(ElectricalGating_text, mathjax=True), md=12),
         ], align="top",),
         dbc.Row([
             dbc.Col(ControlsSurface.Surface_Cards, md=3),
