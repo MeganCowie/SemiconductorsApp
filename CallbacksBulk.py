@@ -15,7 +15,7 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
     # input (slider) parameters
     Ef, T = slider_Ef*Physics_Semiconductors.e, slider_T # J,K
 
-    E = np.arange(5000)/1000*Physics_Semiconductors.e # J
+    E = np.arange(500)/100*Physics_Semiconductors.e # J
     fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T) # dimensionless
     fb = Physics_Semiconductors.Func_MaxwellBoltzmann(E, Ef, T) # dimensionless
     min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
@@ -54,7 +54,7 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
 
     # Input parameters
     Ef, T = slider_Ef*Physics_Semiconductors.e, slider_T # J,K
-    E = (np.arange(5000)/5000+0.000000001)*Physics_Semiconductors.e # J
+    E = (np.arange(500)/500+0.000000001)*Physics_Semiconductors.e # J
     Ec = 0.6*Physics_Semiconductors.e # J
     Ev = 0.4*Physics_Semiconductors.e # J
     mn = slider_gc*Physics_Semiconductors.me # kg
@@ -121,7 +121,7 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
     mp = slider_hmass*Physics_Semiconductors.me #kg
     type = toggle_type
 
-    E = (np.arange(5000)/1000)*Physics_Semiconductors.e #J
+    E = (np.arange(500)/100)*Physics_Semiconductors.e #J
     Eg = 1.1*Physics_Semiconductors.e  #J
 
 
