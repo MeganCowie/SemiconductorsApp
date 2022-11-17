@@ -2,8 +2,9 @@ dash
 dash_bootstrap_components
 dash_defer_js_import
 plotly
+scipy
 numpy
 pandas
-scipy
 dash_daq
 joblib
+gunicorn
