@@ -91,14 +91,14 @@ dbc.Row([
         dbc.Col(html.Div(id='SurfaceText_donor',style={'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='SurfaceSlider_donor', marks=None, min=10, max=25, step=0.1, value=0, disabled=True)),
+        dbc.Col(dcc.Slider(id='SurfaceSlider_donor', marks=None, min=25, max=35, step=0.1, value=30)),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Acceptors (cm-3)", id="SurfaceText_acceptorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
         dbc.Col(html.Div(id='SurfaceText_acceptor',style={'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='SurfaceSlider_acceptor', marks=None, min=10, max=25, step=0.1, value=18.8)),
+        dbc.Col(dcc.Slider(id='SurfaceSlider_acceptor', marks=None, min=25, max=35, step=0.1, value=0, disabled=True)),
     ]),
     dbc.Row([
         dbc.Col([

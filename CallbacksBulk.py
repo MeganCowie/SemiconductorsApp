@@ -13,31 +13,31 @@ import Physics_Semiconductors
 def fig_probabilitydistributions(slider_Ef, slider_T):
 
     # input (slider) parameters
-    Ef, T = slider_Ef, slider_T
+    Ef, T = slider_Ef*Physics_Semiconductors.e, slider_T # J,K
 
-    E = np.arange(5000)/1000
-    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
-    g = Physics_Semiconductors.Func_MaxwellBoltzmann(E, Ef, T)
+    E = np.arange(5000)/1000*Physics_Semiconductors.e # J
+    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T) # dimensionless
+    fb = Physics_Semiconductors.Func_MaxwellBoltzmann(E, Ef, T) # dimensionless
     min_x, max_x, min_y, max_y = 0, 1, 0, 1.5
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x = E, y = fc,
+        x = E/Physics_Semiconductors.e, y = fc,
         name = "Fermi Dirac", mode='lines',
         line_color=color_fc
         ))
     fig.add_trace(go.Scatter(
-        x = E, y = g,
+        x = E/Physics_Semiconductors.e, y = fb,
         name = "Maxwell Boltzmann", mode='lines',
         line_color=color_other
         ))
     fig.add_trace(go.Scatter(
-        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
+        x = np.array([1,1])*Ef/Physics_Semiconductors.e, y = np.array([min_y, max_y]),
         name = "Ef", mode='lines',
         line_color=color_Ef
         ))
     fig.add_trace(go.Scatter(
-        x = np.array([1,1])*3*sp.value('Boltzmann constant in eV/K')*T+Ef, y = np.array([min_y, max_y]),
+        x = np.array([1,1])*3*sp.value('Boltzmann constant in eV/K')*T+Ef/Physics_Semiconductors.e, y = np.array([min_y, max_y]),
         name = "3kBT+Ef", mode='lines',
         line_color=color_vac
         ))
@@ -52,53 +52,52 @@ def fig_probabilitydistributions(slider_Ef, slider_T):
 
 def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
 
-    # input (slider) parameters
-    Ef, T = slider_Ef, slider_T
+    # Input parameters
+    Ef, T = slider_Ef*Physics_Semiconductors.e, slider_T # J,K
+    E = (np.arange(5000)/5000+0.000000001)*Physics_Semiconductors.e # J
+    Ec = 0.6*Physics_Semiconductors.e # J
+    Ev = 0.4*Physics_Semiconductors.e # J
+    mn = slider_gc*Physics_Semiconductors.me # kg
+    mp = slider_gv*Physics_Semiconductors.me # kg
 
-    E = np.arange(5000)/5000+0.000000001
-    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
-    min_x, max_x, min_y, max_y = 0, 1, 0, 1
+    # Calculated vaues
+    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T) # dimensionless
+    gc, gv = Physics_Semiconductors.Func_gcgv(E, Ec, Ev, mn, mp) # /(J*m**3)
+    Ne, Nh = Physics_Semiconductors.Func_NeNh(E, fc, fv, gc, gv, Ec, Ev) # /(J*m**3)
 
-    gc_E=E-Ef-0.03
-    gv_E=-E+Ef-0.03
-    gc_E[gc_E<0] = 0
-    gv_E[gv_E<0] = 0
+    scaling = 1e28 # Just to display on the same axes
+    min_x, max_x, min_y, max_y = 0, 1, 0, 1 #eV,dimensionless
 
-    gc = slider_gc*(gc_E)**(1/2)
-    gv = slider_gv*(gv_E)**(1/2)
-
-    fcgc=fc*gc
-    fvgv=(1-fc)*gv
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Scatter(
-        x = np.array([1,1])*Ef, y = np.array([min_y, max_y]),
+        x = np.array([1,1])*Ef/Physics_Semiconductors.e, y = np.array([min_y, max_y]),
         name = "Ef", mode='lines',
         line_color=color_Ef
         ))
     fig.add_trace(go.Scatter(
-        x = E, y = fc,
+        x = E/Physics_Semiconductors.e, y = fc,
         name = "f<sub>f</sub>(E)", mode='lines',
         line_color=color_fc
         ))
     fig.add_trace(go.Scatter(
-        x = E, y = gc,
+        x = E/Physics_Semiconductors.e, y = gc*Physics_Semiconductors.e/scaling,
         name = "g<sub>c</sub>(E)", mode='lines',
         line_color=color_Ec
         ))
     fig.add_trace(go.Scatter(
-        x = E, y = gv,
+        x = E/Physics_Semiconductors.e, y = gv*Physics_Semiconductors.e/scaling,
         name = "g<sub>v</sub>(E)", mode='lines',
         line_color=color_Ev
         ),secondary_y=True)
     fig.add_trace(go.Scatter(
-        x=E[np.where(E>=Ef)], y=fcgc[np.where(E>=Ef)],
-        name = "n", mode= 'none',
+        x=E/Physics_Semiconductors.e, y=Ne*Physics_Semiconductors.e/scaling,
+        name = "n<sub>o</sub>", mode= 'none',
         fill='tozeroy', fillcolor=color_n,
         ))
     fig.add_trace(go.Scatter(
-        x=E[np.where(E<=Ef)], y=fvgv[np.where(E<=Ef)],
-        name = "p", mode= 'none',
+        x=E/Physics_Semiconductors.e, y=Nh*Physics_Semiconductors.e/scaling,
+        name = "p<sub>o</sub>", mode= 'none',
         fill='tozeroy', fillcolor=color_p,
         ),secondary_y=True)
     fig.update_layout(xaxis_title='Energy (eV)',
@@ -115,30 +114,25 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
 def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
 
     # input (slider) parameters
-    ND_ion=round((10**slider_donor*10**8))/(1000**3) #cm-3
-    NA_ion=round((10**slider_acceptor*10**8)/(1000**3)) #cm-3
+    Nd = round(10**slider_donor)/(1e9) #m-3
+    Na = round(10**slider_acceptor)/(1e9) #m-3
     T = slider_T #K
     mn = slider_emass*Physics_Semiconductors.me #kg
     mp = slider_hmass*Physics_Semiconductors.me #kg
-    type=toggle_type
+    type = toggle_type
 
-    E = np.arange(5000)/1000
-    Ec,Ev = 2,1
-    Eg = Ec-Ev
+    E = (np.arange(5000)/1000)*Physics_Semiconductors.e #J
+    Eg = 1.1*Physics_Semiconductors.e  #J
 
+
+    # Calculated results
+    Ec,Ev = Physics_Semiconductors.Func_EcEv(Eg)
     NC,NV = Physics_Semiconductors.Func_NCNV(T, mn, mp)
-    NC = NC/(100**3)
-    NV = NV/(100**3)
-
     Ei = Physics_Semiconductors.Func_Ei(Ev, Ec, T, mn, mp)
-    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, ND_ion, NA_ion)
-
+    Ef = Physics_Semiconductors.Func_Ef(NC, NV, Ec, Ev, T, Nd, Na)
     gc, gv = Physics_Semiconductors.Func_gcgv(E, Ec, Ev, mn, mp)
-    fc,fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
-
-    ni = Physics_Semiconductors.Func_ni(NC, NV, Eg, T)
-    n,p = Physics_Semiconductors.Func_nopo(NC, NV, Ec, Ev, Ef, T)
-    Ne,Nh = Physics_Semiconductors.Func_NeNh(E, fc, fv, gc, gv, Ec, Ev)
+    fc, fv = Physics_Semiconductors.Func_fcfv(E, Ef, T)
+    Ne, Nh = Physics_Semiconductors.Func_NeNh(E, fc, fv, gc, gv, Ec, Ev)
 
     min_x, max_x, min_y, max_y = 0, 1, 0, 3
 
@@ -146,60 +140,60 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
         rows=1, cols=3, shared_yaxes=True,
         column_widths=[0.2, 0.1, 0.1])
     fig.add_trace(go.Scatter(
-        x = fc, y = E,
+        x = fc, y = E/Physics_Semiconductors.e,
         name = "f(E)", mode='lines',
         line_color=color_fc
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = fv, y = E,
+        x = fv, y = E/Physics_Semiconductors.e,
         name = "1-f(E)", mode='lines',
         line_color=color_fv
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = np.array([min_x, max_x]), y = np.array([1,1])*Ec,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ec/Physics_Semiconductors.e,
         name = "Conduction Band", mode='lines',
         line_color=color_Ec
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = np.array([min_x, max_x]), y = np.array([1,1])*Ev,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ev/Physics_Semiconductors.e,
         name = "Valence Band", mode='lines',
         line_color=color_Ev
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = np.array([min_x, max_x]), y = np.array([1,1])*Ef,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ef/Physics_Semiconductors.e,
         name = "Fermi Energy", mode='lines',
         line_color=color_Ef
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = np.array([min_x, max_x]), y = np.array([1,1])*Ei,
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ei/Physics_Semiconductors.e,
         name = "Intrinsic Energy", mode='lines',
         line_color=color_Ei
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = gc, y = E,
+        x = gc*Physics_Semiconductors.e/(1000**3), y = E/Physics_Semiconductors.e,
         name = "DOS_cond", mode='lines',
         line_color=color_Ec, showlegend=False
         ), row=1, col=2)
     fig.add_trace(go.Scatter(
-        x = gv, y = E,
+        x = gv*Physics_Semiconductors.e/(1000**3), y = E/Physics_Semiconductors.e,
         name = "DOS_val", mode='lines',
         line_color=color_Ev, showlegend=False
         ), row=1, col=2)
     fig.add_trace(go.Scatter(
-        x = Ne, y = E,
-        name = "Electrons", mode='lines',
+        x = Ne*Physics_Semiconductors.e/(1000**3), y = E/Physics_Semiconductors.e,
+        name = "Electrons (n<sub>o</sub>)", mode='lines',
         line_color=color_n
         ), row=1, col=3)
     fig.add_trace(go.Scatter(
-        x = Nh, y = E,
-        name = "Holes", mode='lines',
+        x = Nh*Physics_Semiconductors.e/(1000**3), y = E/Physics_Semiconductors.e,
+        name = "Holes (p<sub>o</sub>)", mode='lines',
         line_color=color_p
         ), row=1, col=3)
     fig.update_layout(yaxis_title='Energy (eV)',
                       yaxis=dict(range=[min_y,max_y]), transition_duration=100, margin=dict(t=0))
     fig.update_xaxes(title_text="f(E)", range=[min_x,max_x], row=1, col=1)
-    fig.update_xaxes(title_text="g(E)", row=1, col=2)
-    fig.update_xaxes(title_text="Carriers", row=1, col=3)
+    fig.update_xaxes(title_text="g(E) (/eV cm^3)", row=1, col=2)
+    fig.update_xaxes(title_text="Carriers (/eV cm^3)", row=1, col=3)
     return fig
 
 
@@ -213,9 +207,9 @@ def readouts_probabilitydistributions(slider_Ef, slider_T):
     return readout_Ef, readout_T
 
 def readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
-    readout_donor = '{0:.0e}'.format(round((10**slider_donor*10**8)/(1000**3)))
-    readout_acceptor ='{0:.0e}'.format(round((10**slider_acceptor*10**8)/(1000**3)))
-    readout_T ='{0:.4g}'.format(slider_T)
+    readout_donor = '{0:.0e}'.format(round((10**slider_donor)/(1e15))) #/cm**3
+    readout_acceptor ='{0:.0e}'.format(round((10**slider_acceptor)/(1e15))) #/cm**3
+    readout_T ='{0:.4g}'.format(slider_T) #K
     readout_emass = '{0:.1f}'.format(slider_emass)
     readout_hmass = '{0:.1f}'.format(slider_hmass)
     return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass

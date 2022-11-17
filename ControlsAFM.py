@@ -99,7 +99,7 @@ AFM_Card2 = dbc.Card([
             dbc.Col(html.Div(id='AFMText_tipradius', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
         ], justify="between"),
         dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_tipradius', marks=None, min=1, max=25, step=0.1, value=20.2,), md=12),
+            dbc.Col(dcc.Slider(id='AFMSlider_tipradius', marks=None, min=1, max=25, step=0.1, value=12,), md=12),
         ]),
 ])
 

@@ -73,14 +73,14 @@ Bulk_Card = dbc.Card([
         dbc.Col(html.Div(id='BulkText_donor',style={'text-align': 'right', "margin-left": "-10px", "margin-right": "10px","margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='BulkSlider_donor', marks=None, min=17, max=20, step=0.1, value=0, disabled=True)),
+        dbc.Col(dcc.Slider(id='BulkSlider_donor', marks=None, min=25, max=35, step=0.1, value=0, disabled=True)),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Acceptors (cm-3)", id="BulkText_acceptorlabel", style = {'text-align': 'right', "margin-left": "10px"}), md=8),
         dbc.Col(html.Div(id='BulkText_acceptor',style={'text-align': 'right', "margin-left": "-10px", "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='BulkSlider_acceptor', marks=None, min=17, max=20, step=0.1, value=0)),
+        dbc.Col(dcc.Slider(id='BulkSlider_acceptor', marks=None, min=25, max=35, step=0.1, value=0)),
     ]),
     dbc.Row([
         dbc.Col([
