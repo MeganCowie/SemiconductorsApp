@@ -17,7 +17,7 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         stylep = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
         disabledn = True
         disabledp = False
-    elif button_presets == 2: #SiO2
+    elif button_presets == 2: #Si
         toggle_type = False
         slider_Vg = 0
         slider_zins = 5
@@ -27,7 +27,7 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_EAsem = 4.05
         slider_emass = 0.98
         slider_hmass = 0.19
-        slider_donor = 30
+        slider_donor = 33#30
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0

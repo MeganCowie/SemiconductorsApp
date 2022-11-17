@@ -152,14 +152,14 @@ Surface_Card3 = dbc.Card([
         dbc.Col(html.Div(id='SurfaceText_biassteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='SurfaceSlider_biassteps', marks=None, min=128, max=1024, step=128, value=256), md=12),
+        dbc.Col(dcc.Slider(id='SurfaceSlider_biassteps', marks=None, min=128, max=1024, step=56, value=56), md=12),
     ]),
     dbc.Row([
         dbc.Col(dbc.Label("Insulator Thickness Precision", id="SurfaceText_zinsstepslabel", style={"margin-left": "10px"}), md=8),
         dbc.Col(html.Div(id='SurfaceText_zinssteps', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
     ], justify="between"),
     dbc.Row([
-        dbc.Col(dcc.Slider(id='SurfaceSlider_zinssteps', marks=None, min=128, max=1024, step=128, value=256), md=12),
+        dbc.Col(dcc.Slider(id='SurfaceSlider_zinssteps', marks=None, min=128, max=1024, step=56, value=56), md=12),
     ]),
 ]),
 
