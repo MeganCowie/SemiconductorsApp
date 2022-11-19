@@ -8,13 +8,13 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
 from __main__ import *
-import ControlsBulk
-import ControlsSurface
-import ControlsAFM
-import CallbacksBulk
-import CallbacksSurface
-import CallbacksAFM
-import PresetsSurface
+import Controls_Bulk
+import Controls_Surface
+import Controls_AFM
+import Callbacks_Bulk
+import Callbacks_Surface
+import Callbacks_AFM
+import Presets_Surface
 
 ###### important for latex ######
 import dash_defer_js_import as dji
@@ -81,7 +81,7 @@ app.layout = dbc.Container(
         ], align="top",),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsBulk.Distributions, md=3),
+            dbc.Col(Controls_Bulk.Distributions, md=3),
             dbc.Col(html.Div(id="DistributionsGraph"), md=9),
 
         ], align="top",),
@@ -91,7 +91,7 @@ app.layout = dbc.Container(
         ], align="top",),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsBulk.CarrierIntegrals, md=3),
+            dbc.Col(Controls_Bulk.CarrierIntegrals, md=3),
             dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=9),
         ], align="top",),
         html.Br(),
@@ -100,7 +100,7 @@ app.layout = dbc.Container(
         ], align="top",),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsBulk.Bulk_Card, md=3),
+            dbc.Col(Controls_Bulk.Bulk_Card, md=3),
             dbc.Col(dcc.Graph(id="BulkGraph"), md=9),
         ], align="top",),
         html.Hr(),
@@ -109,7 +109,7 @@ app.layout = dbc.Container(
             dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
         ], align="top",),
         dbc.Row([
-            dbc.Col(ControlsSurface.Surface_Cards, md=3),
+            dbc.Col(Controls_Surface.Surface_Cards, md=3),
             dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
         ], align="top",),
 
@@ -117,28 +117,28 @@ app.layout = dbc.Container(
         html.H1(children='fm-AFM Oscillations'),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards1, md=3),
+            dbc.Col(Controls_AFM.AFM_Cards1, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph1"), md=9),
         ], align="top",),
         html.Hr(),
         html.H1(children='Bias Sweep Experiment'),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards2, md=3),
+            dbc.Col(Controls_AFM.AFM_Cards2, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph2"), md=9),
         ], align="top",),
         html.Hr(),
         html.H1(children='Time Trace Experiment'),
         html.Br(),
         dbc.Row([
-            #dbc.Col(ControlsAFM.AFM_Cards3, md=3),
+            #dbc.Col(Controls_AFM.AFM_Cards3, md=3),
             dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
         ], align="top",),
         html.Hr(),
         html.H1(children='Delay Sweep Experiment'),
         html.Br(),
         dbc.Row([
-            dbc.Col(ControlsAFM.AFM_Cards4, md=3),
+            dbc.Col(Controls_AFM.AFM_Cards4, md=3),
             #dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
         ], align="top",),
         html.Hr(),
@@ -165,7 +165,7 @@ app.layout = dbc.Container(
     [Input('DistributionsSlider_Ef', 'value'),
      Input('DistributionsSlider_T', 'value')])
 def update_figure(slider_Ef, slider_T):
-     fig = CallbacksBulk.fig_probabilitydistributions(slider_Ef, slider_T)
+     fig = Callbacks_Bulk.fig_probabilitydistributions(slider_Ef, slider_T)
      return dcc.Graph(figure=fig)
 
 # carrier integrals figure
@@ -176,7 +176,7 @@ def update_figure(slider_Ef, slider_T):
      Input('CarrierIntegralsSlider_gc', 'value'),
      Input('CarrierIntegralsSlider_gv', 'value')])
 def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
-     fig = CallbacksBulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
+     fig = Callbacks_Bulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
      return dcc.Graph(figure=fig)
 
 # carriers figure
@@ -189,7 +189,7 @@ def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
      Input('BulkSlider_hmass', 'value'),
      Input('BulkToggle_type', 'value')])
 def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type):
-    fig = CallbacksBulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
+    fig = Callbacks_Bulk.fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass, toggle_type)
     return fig
 
 # probability distributions readouts
@@ -199,7 +199,7 @@ def update_figure(slider_donor, slider_acceptor, slider_T, slider_emass, slider_
     [Input('DistributionsSlider_Ef', 'value'),
      Input('DistributionsSlider_T', 'value')])
 def update_output(slider_Ef, slider_T):
-    readout_Ef, readout_T = CallbacksBulk.readouts_probabilitydistributions(slider_Ef, slider_T)
+    readout_Ef, readout_T = Callbacks_Bulk.readouts_probabilitydistributions(slider_Ef, slider_T)
     return readout_Ef, readout_T
 
 # carriers readouts
@@ -215,7 +215,7 @@ def update_output(slider_Ef, slider_T):
      Input('BulkSlider_emass', 'value'),
      Input('BulkSlider_hmass', 'value')])
 def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass):
-    readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = CallbacksBulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
+    readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass = Callbacks_Bulk.readouts_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_hmass)
     return readout_donor, readout_acceptor, readout_T, readout_emass, readout_hmass
 
 # toggle functionality
@@ -230,7 +230,7 @@ def update_output(slider_donor, slider_acceptor, slider_T, slider_emass, slider_
      Output('BulkText_typep', 'children')],
     [Input('BulkToggle_type', 'value')])
 def update_output(toggle):
-    stylen, stylep, disabledn, disabledp, valuen, valuep,  = CallbacksBulk.togglefunctions(toggle)
+    stylen, stylep, disabledn, disabledp, valuen, valuep,  = Callbacks_Bulk.togglefunctions(toggle)
     return stylen, stylep, disabledn, disabledp, valuen, valuep, 'n-type', 'p-type'
 
 
@@ -262,7 +262,7 @@ def update_output(toggle):
      Input('SurfaceSlider_biassteps', 'value'),
      Input('SurfaceSlider_zinssteps', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    fig0, fig0supp, regime, ni, LD, zQ = CallbacksSurface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+    fig0, fig0supp, regime, ni, LD, zQ = Callbacks_Surface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
     return fig0, fig0supp, regime, ni, LD, zQ
 
 # surface readouts
@@ -296,7 +296,7 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('SurfaceSlider_biassteps', 'value'),
      Input('SurfaceSlider_zinssteps', 'value')])
 def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = CallbacksSurface.readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+    readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps = Callbacks_Surface.readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
     return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
 
 
@@ -371,7 +371,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
     else:
         button_presets = button_presets
 
-    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = PresetsSurface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
+    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets_Surface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'SurfaceSlider_Vg' in changed_id:
@@ -415,7 +415,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
      Input('AFMtoggle_sampletype', 'value'),
      Input('AFMtoggle_RTN', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
-    fig1 = CallbacksAFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
+    fig1 = Callbacks_AFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
     return fig1
 
 # Bias experiment figure
@@ -446,7 +446,7 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_hop', 'value'),
      Input('AFMSlider_lag', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
-    fig2 = CallbacksAFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
+    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
     return fig2
 '''
 # Time trace experiment figure
@@ -468,7 +468,7 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_f1y', 'value'),
      Input('AFMSlider_f2y', 'value'),])
 def update_figure(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y):
-    fig3 = CallbacksAFM.fig3_AFM(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y)
+    fig3 = Callbacks_AFM.fig3_AFM(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,slider_RTS2mag,slider_RTS2per,slider_RTS3mag,slider_RTS3per,slider_RTS4mag,slider_RTS4per,slider_RTS5mag,slider_RTS5per,slider_f0y,slider_f1y,slider_f2y)
     return fig3
 
 # Delay experiment figure
@@ -499,7 +499,7 @@ def update_figure(calculatebutton, slider_sigma,slider_RTS1mag,slider_RTS1per,sl
      Input('AFMSlider_pulsetimesteps', 'value'),
      Input('AFMSlider_delaysteps', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps):
-    fig4 = CallbacksAFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
+    fig4 = Callbacks_AFM.fig4_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha, slider_timesteps, slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag,slider_pulsetimesteps,slider_delaysteps)
     return fig4
 '''
 # AFM readouts
@@ -525,7 +525,7 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_pulsetimesteps', 'value'),
      Input('AFMSlider_delaysteps', 'value')])
 def update_output(slider_timesteps,slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
-    readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = CallbacksAFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
+    readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = Callbacks_AFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
     return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
 
 # toggle functionality
@@ -536,7 +536,7 @@ def update_output(slider_timesteps,slider_amplitude, slider_hop, slider_lag, sli
      Output('AFMText_metallic', 'children')],
     [Input('AFMtoggle_sampletype', 'value')])
 def update_output(toggle):
-    style_s, style_m = CallbacksAFM.togglefunctions(toggle)
+    style_s, style_m = Callbacks_AFM.togglefunctions(toggle)
     return style_s, style_m, 'Semiconducting', 'Metallic'
 
 @app.callback(
@@ -546,7 +546,7 @@ def update_output(toggle):
     Output('AFMText_RTNon', 'children')],
    [Input('AFMtoggle_RTN', 'value')])
 def update_output(toggle):
-   style_off, style_on = CallbacksAFM.togglefunctions(toggle)
+   style_off, style_on = Callbacks_AFM.togglefunctions(toggle)
    return style_off, style_on, 'Jump off', 'Jump on'
 
 

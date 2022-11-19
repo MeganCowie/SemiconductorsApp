@@ -196,8 +196,8 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,):
     elif Nd <= 1e-9: #p-type
         guess = -1*e
     def Vs_eqn(Vs,Vg_variable,zins_variable):
-        f = Func_f(T,Vs,nb,pb)
-        Es = Func_E(nb,pb,Vs,epsilon_sem,T,f)
+        fs = Func_f(T,Vs,nb,pb)
+        Es = Func_E(nb,pb,Vs,epsilon_sem,T,fs)
         Qs = Func_Q(epsilon_sem,Es)
         Cins = Func_Cins(zins_variable)
         expression = Vg_variable-CPD-Vs+e*Qs/Cins #J

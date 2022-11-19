@@ -30,7 +30,7 @@ def Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln]
 
-    # Then parallelize the calculation of y for every Vg
+    # Then parallelize the calculations for every Vg
     result = Parallel(n_jobs=-1)(
         delayed(compute)(Vg) for Vg in Vg_array
     )
@@ -45,7 +45,7 @@ def Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
 
 def Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
 
-    # Calculate list any functions that are not constant as a function of Vg
+    # Calculate list any functions that are not constant as a function of zins
     def compute(zins_variable):
         Vs_soln = Physics_Semiconductors.Func_Vs(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
@@ -54,7 +54,7 @@ def Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln]
 
-    # Then parallelize the calculation of y for every Vg
+    # Then parallelize the calculations for every zins
     result = Parallel(n_jobs=-1)(
         delayed(compute)(zins) for zins in zins_array
     )
@@ -78,7 +78,7 @@ def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         F_soln = Physics_Semiconductors.Func_F(f_soln,epsilon_sem,T,LD)
         return [Vs_soln,F_soln]
 
-    # Then parallelize the calculation of y for every time
+    # Then parallelize the calculations for every time
     result = Parallel(n_jobs=-1)(
         delayed(compute)(zins) for zins in zinslag_AFMarray
     )
@@ -91,11 +91,13 @@ def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
 
 def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD):
 
+    # Calculate list any functions that are not constant as a function of zins
     def compute(zins_variable):
         Vs_soln = Physics_Semiconductors.Func_Vs(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
         zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln  = Physics_BandDiagram.BandDiagram(Vg,zins_variable,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs_soln,Ec,Ev,Ef,CPD)
         return [zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln]
 
+    # Then parallelize the calculations for every zins
     result = Parallel(n_jobs=-1)(
         delayed(compute)(zins) for zins in zins_AFMarray
     )
@@ -122,7 +124,7 @@ def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
         return [Vs_soln,F_soln,df_soln,dg_soln]
 
-    # Then parallelize the calculation of y for every Vg
+    # Then parallelize the calculations for every Vg
     result = Parallel(n_jobs=-1)(
         delayed(compute)(Vg) for Vg in Vg_array
     )
