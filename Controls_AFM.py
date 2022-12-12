@@ -7,115 +7,79 @@ import dash_daq as daq
 ################################################################################
 # ncAFM cards
 
-AFM_Card1 = dbc.Card([
-    dbc.Row([
-        dbc.Button("Calculate", id="AFMbutton_Calculate", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
-    ], style={'padding': 10}, justify="center"),
-    dbc.Row([
-        dbc.Col(dbc.Label("zins(t) Precision", id="AFMText_timestepslabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-        dbc.Col(html.Div(id='AFMText_timesteps', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-    ], justify="between"),
-    dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_timesteps', marks=None, min=10, max=50, step=10, value=30), md=12),
-    ]),
-])
+AFM_Card1 = html.Div([
+    html.Div([        
+        html.Div([
+            html.Button("Calculate", id="AFMbutton_Calculate", className='button'),
+        ], className = 'button_container'),
 
-AFM_Card2 = dbc.Card([
-        dbc.Row([
-            dbc.Col(dbc.Label("Amplitude (nm)", id="AFMText_amplitudelabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_amplitude', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_amplitude', marks=None, min=1, max=20, step=1, value=6), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Resonant Frequency (Hz)", id="AFMText_resfreqlabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_resfreq', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_resfreq', marks=None, min=200000, max=400000, step=10000, value=300000), md=12),
-        ]),
-])
+        html.Div([
+            html.Div("zins(t) Precision", className='label_name', id="AFMText_timestepslabel"),
+            html.Div(id='AFMText_timesteps', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_timesteps', className='slider', marks=None, min=10, max=50, step=10, value=30),
 
+        html.Div([
+            html.Div("Amplitude (nm)", className='label_name', id="AFMText_amplitudelabel"),
+            html.Div(id='AFMText_amplitude', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_amplitude', className='slider', marks=None, min=1, max=20, step=1, value=6),
 
-AFM_Card3 = dbc.Card([
-    dbc.Row([
-        dbc.Col(dbc.Label("Lag (ns)", id="AFMText_laglabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-        dbc.Col(html.Div(id='AFMText_lag', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-    ], justify="between"),
-    dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_lag', marks=None, min=0, max=100, step=5, value=30,), md=12),
-    ]),
-    dbc.Row([
-        dbc.Col(dbc.Label("Hop", id="AFMText_hoplabel", style={"margin-left": "10px"}), md=8),
-        dbc.Col(html.Div(id='AFMText_hop', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
-    ], justify="between"),
-    dbc.Row([
-        dbc.Col(dcc.Slider(id='AFMSlider_hop', marks=None, min=0, max=1, step=0.01, value=0.05,), md=12),
-    ]),
-    dbc.Row([
-        dbc.Col(html.Div(id='AFMText_RTNoff'),  md=4),
-        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_RTN', value=False), md=4),
-        dbc.Col(html.Div(id='AFMText_RTNon',style={"margin-bottom": "20px"}),  md=4),
-    ], style={'padding': 5}),
-    dbc.Row([
-        dbc.Col(html.Div(id='AFMText_semiconducting'),  md=4),
-        dbc.Col(daq.ToggleSwitch(id='AFMtoggle_sampletype', value=False, style={ "margin-bottom": "20px"}), md=4),
-        dbc.Col(html.Div(id='AFMText_metallic'),  md=4),
-    ], style={'padding': 5}),
-]),
+        html.Div([
+            html.Div("Resonant Frequency (Hz)", className='label_name', id="AFMText_resfreqlabel"),
+            html.Div(id='AFMText_resfreq', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_resfreq', className='slider', marks=None, min=100000, max=10000000, step=100000, value=300000),
 
-AFM_Cards1 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2), dbc.Col(AFM_Card3)]
+        html.Div([
+            html.Div("Lag (ns)", className='label_name', id="AFMText_laglabel"),
+            html.Div(id='AFMText_lag', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=100, step=5, value=30),
+    ], className= 'controls_container'),
+], className='controls', hidden=True, id='display_fmAFMoscillationscontrols')
 
 
 ################################################################################
 ################################################################################
 # Bias experiment cards
 
-AFM_Card1 = dbc.Card([
-    dbc.Row([
-        dbc.Button("Calculate", id="AFMbutton_CalculateBiasExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
-    ], style={'padding': 10}, justify="center"),
-])
+AFM_Card2 = html.Div([
+    html.Div([
+        html.Div([
+            html.Button("Calculate", id="AFMbutton_CalculateBiasExp", className='button'),
+        ], className = 'button_container'),
 
+        html.Div([
+            html.Div("Spring Constant (N/m)", className='label_name', id="AFMText_springconstlabel"),
+            html.Div(id='AFMText_springconst', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_springconst', className='slider', marks=None, min=30, max=50, step=1, value=42),
 
-AFM_Card2 = dbc.Card([
-        dbc.Row([
-            dbc.Col(dbc.Label("Spring Constant (N/m)", id="AFMText_springconstlabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_springconst', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_springconst', marks=None, min=30, max=50, step=1, value=42,), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Q factor", id="AFMText_Qfactorlabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_Qfactor', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_Qfactor', marks=None, min=200, max=30000, step=100, value=23000,), md=12),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label("Tip Radius (nm)", id="AFMText_tipradiuslabel", style={"margin-left": "10px"}), md=8),
-            dbc.Col(html.Div(id='AFMText_tipradius', style = {'text-align': 'right', "margin-right": "10px"}), md=4),
-        ], justify="between"),
-        dbc.Row([
-            dbc.Col(dcc.Slider(id='AFMSlider_tipradius', marks=None, min=1, max=25, step=0.1, value=12,), md=12),
-        ]),
-])
+        html.Div([
+            html.Div("Q factor", className='label_name', id="AFMText_Qfactorlabel"),
+            html.Div(id='AFMText_Qfactor', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_Qfactor', className='slider', marks=None, min=200, max=30000, step=100, value=23000),
 
-AFM_Cards2 = [dbc.Col(AFM_Card1), dbc.Col(AFM_Card2)]
+        html.Div([
+            html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
+            html.Div(id='AFMText_tipradius', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.1, value=13.8),
+    ], className= 'controls_container'),
+], className='controls', hidden=True, id='display_BiasSweepExperimentcontrols')
+
 
 ################################################################################
 ################################################################################
 # Time trace experiment cards
 
-AFM_Card1 = dbc.Card([
+AFM_Card3 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_CalculateTimeExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
-])
 
-AFM_Card2 = dbc.Card([
     dbc.Row([
         dbc.Col(dbc.Label("Sigma", id="AFMText_sigmalabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
         dbc.Col(html.Div(id='AFMText_sigma', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
@@ -123,9 +87,7 @@ AFM_Card2 = dbc.Card([
     dbc.Row([
         dbc.Col(dcc.Slider(id='AFMSlider_sigma', marks=None, min=0, max=2, step=0.01, value=0.05), md=12),
     ]),
-])
 
-AFM_Card3 = dbc.Card([
     dbc.Row([
         dbc.Col([
                 dbc.Row([
@@ -226,9 +188,7 @@ AFM_Card3 = dbc.Card([
                 ]),
         ], md=6)
     ]),
-])
 
-AFM_Card4 = dbc.Card([
     dbc.Row([
         dbc.Col(dbc.Label("1/f^0 y-intercept", id="AFMText_f0ylabel", style={"margin-left": "10px", "margin-top": "20px"}), md=8),
         dbc.Col(html.Div(id='AFMText_f0y', style = {'text-align': 'right', "margin-right": "10px", "margin-top": "20px"}), md=4),
@@ -252,13 +212,12 @@ AFM_Card4 = dbc.Card([
     ]),
 ])
 
-AFM_Cards3 = [dbc.Col(AFM_Card1),dbc.Col(AFM_Card2),dbc.Col(AFM_Card3),dbc.Col(AFM_Card4)]
 
 ################################################################################
 ################################################################################
 # Delay sweep experiment cards
 
-AFM_Card1 = dbc.Card([
+AFM_Card4 = dbc.Card([
     dbc.Row([
         dbc.Button("Calculate", id="AFMbutton_CalculateDelayExp", color="secondary", className="mr-1", style={'fontSize': 14, 'width':300}),
     ], style={'padding': 10}, justify="center"),
@@ -277,6 +236,3 @@ AFM_Card1 = dbc.Card([
         dbc.Col(dcc.Slider(id='AFMSlider_delaysteps', marks=None, min=50, max=1000, step=50, value=100), md=12),
     ]),
 ])
-
-
-AFM_Cards4 = [dbc.Col(AFM_Card1)]

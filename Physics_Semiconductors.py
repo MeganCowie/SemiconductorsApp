@@ -179,7 +179,7 @@ def Func_E(nb,pb,V,epsilon_sem,T,f):
     # Sze Physics of Semiconductor Devices (pg. 201-202)
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_Q(epsilon_sem,E):
-    Q = -epsilon_sem*epsilon_o*E #C/m**2
+    Q = -epsilon_sem*epsilon_o*E #C/m**2 
     return Q
 
 # Spatial electron and hole concentrations inside semiconductor
@@ -190,7 +190,7 @@ def Func_ndpd(nb,pb,Na,Nd,V,T):
     return nd,pd
 
 # Surface potential
-def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,):
+def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
     if Na <=1e-9: #n-type
         guess = 1*e
     elif Nd <= 1e-9: #p-type
@@ -207,8 +207,8 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,):
 
 # Force between MIS plates
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-def Func_F(f,epsilon_sem,T,LD):
-    F = -1/(2*epsilon_o)*(kB*T*epsilon_sem*epsilon_o*f/(LD*e))**2 # N/m**2
+def Func_F(Qs,epsilon_sem):
+    F = -Qs**2/(2*epsilon_o) # N/m**2
     return F
 
 # Identify MIS capacitor regime
@@ -241,6 +241,16 @@ def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
             regime = 5 #weak inversion
     return regime
 
+
+# Polarization
+    # One-dimensional sum of electric dipoles
+def Func_P(zsem, Qsem):
+    d = 1 #arbitrary depth #m
+    A = 1 #arbitrary area #m**2
+    V = A*d #arbitrary volume #m**3
+    p = zsem*Qsem*A #electric dipole  #Cm 
+    P = np.sum(p)/V #electric polarization #C/m**2
+    return P
 
 ################################################################################
 # WHAT A MESS. FIX THIS -- NOT DONE YET
@@ -281,26 +291,3 @@ def Func_zI():
     return zI
 
 
-# Return zA, zD, or zI depending on what regime we are in
-def Func_zQ(Na,Nd,Vs,Ei,Ef,zins,epsilon_sem,Vg,T,WFmet,EAsem,Ec):
-    regime = Func_regime(Na,Nd,Vs,Ei,Ef)
-    zD = Func_zD(zins,epsilon_sem,Nd,Na,Vg,T,WFmet,EAsem,Ec,Ef,Vs)
-
-    if regime == 1: #accumulation
-        zQ=zD
-    elif regime == 2: #flatband
-        zQ=zD
-    elif regime == 3: #depletion
-        zQ = zD
-    elif regime == 4: #threshold
-        zQ=zD
-    elif regime == 5: #inversion
-        zQ=zD
-
-    return zQ
-
-
-################################################################################
-def Func_P(Qs,zQ):
-    P = 1*Qs*zQ #polarization given dipole moment, treating with N=1
-    return polarization

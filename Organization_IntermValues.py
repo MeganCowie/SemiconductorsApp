@@ -1,6 +1,7 @@
 import numpy as np
 
 import Physics_Semiconductors
+import Physics_BandDiagram
 import Physics_ncAFM
 
 
@@ -45,33 +46,31 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     f = Physics_Semiconductors.Func_f(T,Vs,nb,pb)
     Es = Physics_Semiconductors.Func_E(nb,pb,Vs,epsilon_sem,T,f)
     Qs = Physics_Semiconductors.Func_Q(epsilon_sem,Es)
-    F = Physics_Semiconductors.Func_F(f,epsilon_sem,T,LD)
+    F = Physics_Semiconductors.Func_F(Qs,epsilon_sem)
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
-
-    return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime
+    zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs)
+    P = Physics_Semiconductors.Func_P(zsem, Qsem)
+    return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P
 
 
 ################################################################################
 ################################################################################
 
 
-def AFM1_inputvalues(toggle_sampletype,toggle_RTN,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
     # values
-    sampletype = toggle_sampletype #false = semiconducting, true = metallic
-    RTN = toggle_RTN #false = off, true = on
     amplitude = slider_amplitude*1e-9 #m
     frequency = slider_resfreq #Hz
-    hop = slider_hop
     lag = slider_lag/10**9*frequency #radians
     timesteps = slider_timesteps
 
     # arrays
     time_AFMarray = np.linspace(0, 2*np.pi, timesteps)
-    zins_AFMarray = zins+amplitude*np.sin(time_AFMarray)+amplitude #m
-    zinslag_AFMarray = zins+amplitude*np.sin(time_AFMarray-lag)+amplitude #m
+    zins_AFMarray = zins+amplitude*np.sin(time_AFMarray-np.pi/2)+amplitude #m
+    zinslag_AFMarray = zins+amplitude*np.sin(time_AFMarray-np.pi/2-lag)+amplitude #m
 
-    return sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
+    return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 
 
 def AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius):

@@ -2,10 +2,9 @@
 # INITIALIZE
 
 import dash
-from dash import dcc
-from dash import html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 
 from __main__ import *
 import Controls_Bulk
@@ -20,8 +19,10 @@ import Presets_Surface
 import dash_defer_js_import as dji
 
 
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
+app = dash.Dash(
+    meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ])
 
 
 ###### important for latex ######
@@ -55,9 +56,9 @@ app.index_string = '''
 
 Distributions_text = open("Text_Distributions.md", "r").read()
 ElectronicStructure_text = open("Text_ElectronicStructure.md", "r").read()
-CarrierStatistics1_text = open("Text_CarrierStatistics1.md", "r").read()
-CarrierStatistics2_text = open("Text_CarrierStatistics2.md", "r").read()
-ElectricalGating_text = open("Text_ElectricalGating.md", "r").read()
+CarrierIntegrals_text = open("Text_CarrierIntegrals.md", "r").read()
+BulkCarrierStatistics_text = open("Text_BulkCarrierStatistics.md", "r").read()
+SurfaceCarrierStatistics_text = open("Text_SurfaceCarrierStatistics.md", "r").read()
 
 axis_latex_script = dji.Import(src="https://cdn.jsdelivr.net/gh/yueyericardo/simuc@master/apps/dash/resources/redraw.js")
 mathjax_script = dji.Import(src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_SVG")
@@ -71,77 +72,60 @@ app.layout = dbc.Container(
     [
         html.Hr(),
         html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(Distributions_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_Bulk.Distributions, md=3),
-            dbc.Col(html.Div(id="DistributionsGraph"), md=9),
+        html.Button('Electronic Structure', className='toggle-label', n_clicks=0, id='header_ElectronicStructure'), html.Br(),
+        html.Div(dcc.Markdown(ElectronicStructure_text, dangerously_allow_html=True), hidden=True, id='display_ElectronicStructuretext'),
 
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics1_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_Bulk.CarrierIntegrals, md=3),
-            dbc.Col(html.Div(id="CarrierIntegralsGraph"), md=9),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(CarrierStatistics2_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_Bulk.Bulk_Card, md=3),
-            dbc.Col(dcc.Graph(id="BulkGraph"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(dcc.Markdown(ElectricalGating_text, dangerously_allow_html=True), md=12),
-        ], align="top",),
-        dbc.Row([
-            dbc.Col(Controls_Surface.Surface_Cards, md=3),
-            dbc.Col([dcc.Graph(id="SurfaceGraph"),dcc.Graph(id="SurfaceGraphSupp")], md=9),
-        ], align="top",),
+        html.Button('Distributions', className='toggle-label', n_clicks=0, id='header_Distributions'),
+        html.Div([
+            html.Br(),
+            Controls_Bulk.Distributions,
+            html.Div(dcc.Graph(id="DistributionsGraph"), className='graph', hidden=True, id='display_Distributionsgraph'),
+            ], className='controlsgraph'), 
+        html.Div(dcc.Markdown(Distributions_text, dangerously_allow_html=True), hidden=True, id='display_Distributionstext'),
 
-        html.Hr(),
-        html.H1(children='fm-AFM Oscillations'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_AFM.AFM_Cards1, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph1"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.H1(children='Bias Sweep Experiment'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_AFM.AFM_Cards2, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph2"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.H1(children='Time Trace Experiment'),
-        html.Br(),
-        dbc.Row([
-            #dbc.Col(Controls_AFM.AFM_Cards3, md=3),
-            dbc.Col(dcc.Graph(id="AFMGraph3"), md=9),
-        ], align="top",),
-        html.Hr(),
-        html.H1(children='Delay Sweep Experiment'),
-        html.Br(),
-        dbc.Row([
-            dbc.Col(Controls_AFM.AFM_Cards4, md=3),
-            #dbc.Col(dcc.Graph(id="AFMGraph4"), md=9),
-        ], align="top",),
-        html.Hr(),
+        html.Button('Carrier Integrals', className='toggle-label', n_clicks=0, id='header_CarrierIntegrals'),
+        html.Div([
+            html.Br(),
+            Controls_Bulk.CarrierIntegrals,
+            html.Div(dcc.Graph(id="CarrierIntegralsGraph"), className='graph', hidden=True, id='display_CarrierIntegralsgraph'),
+            ], className='controlsgraph'), 
+        html.Div(dcc.Markdown(CarrierIntegrals_text, dangerously_allow_html=True), hidden=True, id='display_CarrierIntegralstext'),
+
+        html.Button('Bulk Carrier Statistics', className='toggle-label', n_clicks=0, id='header_BulkCarrierStatistics'),
+        html.Div([
+            html.Br(),
+            Controls_Bulk.Bulk_Card,
+            html.Div(dcc.Graph(id="BulkGraph"), className='graph', hidden=True, id='display_BulkCarrierStatisticsgraph'),
+            ], className='controlsgraph'), 
+        html.Div(dcc.Markdown(BulkCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_BulkCarrierStatisticstext'),
+
+        html.Button('Surface Carrier Statistics', className='toggle-label', n_clicks=0, id='header_SurfaceCarrierStatistics'),
+        html.Div([
+            html.Br(),
+            Controls_Surface.Surface_Card, 
+            html.Div(dcc.Graph(id="SurfaceGraph"), className='graph', hidden=True, id='display_SurfaceCarrierStatisticsgraph'),
+            ], className='controlsgraph'), 
+        html.Div(dcc.Markdown(SurfaceCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_SurfaceCarrierStatisticstext'),
+
+        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=0, id='header_fmAFMoscillations'),
+        html.Div([
+            html.Br(),
+            Controls_AFM.AFM_Card1, 
+            html.Div(dcc.Graph(id="AFMGraph1"), className='graph', hidden=True, id='display_fmAFMoscillationsgraph'),
+            ], className='controlsgraph'), 
+
+        html.Button('Bias Sweep Experiment', className='toggle-label', n_clicks=0, id='header_BiasSweepExperiment'), 
+        html.Div([
+            html.Br(),
+            Controls_AFM.AFM_Card2, 
+            html.Div(dcc.Graph(id="AFMGraph2"), className='graph', hidden=True, id='display_BiasSweepExperimentgraph'),
+            ], className='controlsgraph'), 
+
+        html.Button('Time Trace Experiment', className='toggle-label', n_clicks=0, id='header_TimeTraceExperiment'), html.Br(),
+        html.Div([dbc.Col(Controls_AFM.AFM_Card3, md=3), dcc.Graph(id="AFMGraph3")], hidden=True, id='display_TimeTraceExperimentgraph'), 
+
+        html.Button('Delay Sweep Experiment', className='toggle-label', n_clicks=0, id='header_DelaySweepExperiment'), html.Br(),
+        html.Div([dbc.Col(Controls_AFM.AFM_Card4, md=3), dcc.Graph(id="AFMGraph4")], hidden=True, id='display_DelaySweepExperimentgraph'), 
 
 
     ###### important for latex ######
@@ -152,7 +136,60 @@ app.layout = dbc.Container(
     fluid=True,
 )
 
+################################################################################################################################################################
+################################################################################################################################################################
+# Display
 
+# Show and hide Divs
+# If n_clicks is even, it's hidden and if it's odd, it's shown
+@app.callback(
+    [Output('display_ElectronicStructuretext', 'hidden'),
+     Output('display_Distributionstext', 'hidden'),
+     Output('display_Distributionscontrols', 'hidden'),
+     Output('display_Distributionsgraph', 'hidden'),
+     Output('display_CarrierIntegralstext', 'hidden'),
+     Output('display_CarrierIntegralscontrols', 'hidden'),
+     Output('display_CarrierIntegralsgraph', 'hidden'),
+     Output('display_BulkCarrierStatisticstext', 'hidden'),
+     Output('display_BulkCarrierStatisticscontrols', 'hidden'),
+     Output('display_BulkCarrierStatisticsgraph', 'hidden'),
+     Output('display_SurfaceCarrierStatisticstext', 'hidden'),
+     Output('display_SurfaceCarrierStatisticscontrols', 'hidden'),
+     Output('display_SurfaceCarrierStatisticsgraph', 'hidden'),
+     Output('display_fmAFMoscillationscontrols', 'hidden'),
+     Output('display_fmAFMoscillationsgraph', 'hidden'),
+     Output('display_BiasSweepExperimentcontrols', 'hidden'),
+     Output('display_BiasSweepExperimentgraph', 'hidden')],
+    [Input('header_ElectronicStructure', 'n_clicks'),
+     Input('header_Distributions', 'n_clicks'),
+     Input('header_CarrierIntegrals', 'n_clicks'),
+     Input('header_BulkCarrierStatistics', 'n_clicks'),
+     Input('header_SurfaceCarrierStatistics', 'n_clicks'),
+     Input('header_fmAFMoscillations', 'n_clicks'),
+     Input('header_BiasSweepExperiment', 'n_clicks')])
+def update_display(click_electronicstructure,click_distributions,click_carrierintegrals,click_bulkcarrierstatistics,click_surfacecarrierstatistics,click_fmAFMoscillations,click_biassweepexperiment):
+    hide_electronicstructure = True
+    hide_distributions = True   
+    hide_carrierintegrals = True   
+    hide_bulkcarrierstatistics = True   
+    hide_surfacecarrierstatistics = True   
+    hide_fmAFMoscillations = True   
+    hide_biassweepexperiment = True   
+    if (click_electronicstructure % 2) != 0:
+        hide_electronicstructure = False
+    if (click_distributions % 2) != 0:
+        hide_distributions = False
+    if (click_carrierintegrals % 2) != 0:
+        hide_carrierintegrals = False
+    if (click_bulkcarrierstatistics % 2) != 0:
+        hide_bulkcarrierstatistics = False
+    if (click_surfacecarrierstatistics % 2) != 0:
+        hide_surfacecarrierstatistics = False
+    if (click_fmAFMoscillations % 2) != 0:
+        hide_fmAFMoscillations = False
+    if (click_biassweepexperiment% 2) != 0:
+        hide_biassweepexperiment = False
+    return hide_electronicstructure, hide_distributions,hide_distributions,hide_distributions, hide_carrierintegrals,hide_carrierintegrals,hide_carrierintegrals, hide_bulkcarrierstatistics,hide_bulkcarrierstatistics,hide_bulkcarrierstatistics, hide_surfacecarrierstatistics,hide_surfacecarrierstatistics,hide_surfacecarrierstatistics, hide_fmAFMoscillations,hide_fmAFMoscillations, hide_biassweepexperiment,hide_biassweepexperiment
 
 
 ################################################################################################################################################################
@@ -161,23 +198,23 @@ app.layout = dbc.Container(
 
 # probability distributions figure
 @app.callback(
-    Output('DistributionsGraph', 'children'),
+    Output('DistributionsGraph', 'figure'),
     [Input('DistributionsSlider_Ef', 'value'),
      Input('DistributionsSlider_T', 'value')])
 def update_figure(slider_Ef, slider_T):
      fig = Callbacks_Bulk.fig_probabilitydistributions(slider_Ef, slider_T)
-     return dcc.Graph(figure=fig)
+     return fig
 
 # carrier integrals figure
 @app.callback(
-    Output('CarrierIntegralsGraph', 'children'),
+    Output('CarrierIntegralsGraph', 'figure'),
     [Input('CarrierIntegralsSlider_Ef', 'value'),
      Input('CarrierIntegralsSlider_T', 'value'),
      Input('CarrierIntegralsSlider_gc', 'value'),
      Input('CarrierIntegralsSlider_gv', 'value')])
 def update_figure(slider_Ef, slider_T,slider_gc,slider_gv):
      fig = Callbacks_Bulk.fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv)
-     return dcc.Graph(figure=fig)
+     return fig
 
 # carriers figure
 @app.callback(
@@ -242,7 +279,6 @@ def update_output(toggle):
 # surface figure
 @app.callback(
     [Output('SurfaceGraph', 'figure'),
-     Output('SurfaceGraphSupp', 'figure'),
      Output('SurfaceText_regime', 'children'),
      Output('SurfaceText_ni', 'children'),
      Output('SurfaceText_LD', 'children'),
@@ -262,8 +298,8 @@ def update_output(toggle):
      Input('SurfaceSlider_biassteps', 'value'),
      Input('SurfaceSlider_zinssteps', 'value')])
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
-    fig0, fig0supp, regime, ni, LD, zQ = Callbacks_Surface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
-    return fig0, fig0supp, regime, ni, LD, zQ
+    fig0, regime, ni, LD, zQ = Callbacks_Surface.fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps)
+    return fig0, regime, ni, LD, zQ
 
 # surface readouts
 @app.callback(
@@ -409,13 +445,10 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
      Input('AFMSlider_timesteps', 'value'),
      Input('AFMSlider_amplitude', 'value'),
      Input('AFMSlider_resfreq', 'value'),
-     Input('AFMSlider_hop', 'value'),
      Input('AFMSlider_lag', 'value'),
-     Input('AFMbutton_Calculate', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMtoggle_RTN', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN):
-    fig1 = Callbacks_AFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude,slider_resfreq, slider_hop, slider_lag, calculatebutton, toggle_sampletype, toggle_RTN)
+     Input('AFMbutton_Calculate', 'n_clicks')])
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, calculatebutton):
+    fig1 = Callbacks_AFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, calculatebutton)
     return fig1
 
 # Bias experiment figure
@@ -442,11 +475,9 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_tipradius', 'value'),
      Input('AFMSlider_Qfactor', 'value'),
      Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
-     Input('AFMtoggle_sampletype', 'value'),
-     Input('AFMSlider_hop', 'value'),
      Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag):
-    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, toggle_sampletype, slider_hop,slider_lag)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, slider_lag):
+    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, slider_lag)
     return fig2
 '''
 # Time trace experiment figure
@@ -506,7 +537,6 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
 @app.callback(
     [Output('AFMText_timesteps', 'children'),
      Output('AFMText_amplitude', 'children'),
-     Output('AFMText_hop', 'children'),
      Output('AFMText_lag', 'children'),
      Output('AFMText_resfreq', 'children'),
      Output('AFMText_springconst', 'children'),
@@ -516,7 +546,6 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Output('AFMText_pulsetimesteps', 'children')],
     [Input('AFMSlider_timesteps', 'value'),
      Input('AFMSlider_amplitude', 'value'),
-     Input('AFMSlider_hop', 'value'),
      Input('AFMSlider_lag', 'value'),
      Input('AFMSlider_resfreq', 'value'),
      Input('AFMSlider_springconst', 'value'),
@@ -524,30 +553,9 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_tipradius', 'value'),
      Input('AFMSlider_pulsetimesteps', 'value'),
      Input('AFMSlider_delaysteps', 'value')])
-def update_output(slider_timesteps,slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
-    readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = Callbacks_AFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
-    return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
-
-# toggle functionality
-@app.callback(
-    [Output('AFMText_semiconducting', 'style'),
-     Output('AFMText_metallic', 'style'),
-     Output('AFMText_semiconducting', 'children'),
-     Output('AFMText_metallic', 'children')],
-    [Input('AFMtoggle_sampletype', 'value')])
-def update_output(toggle):
-    style_s, style_m = Callbacks_AFM.togglefunctions(toggle)
-    return style_s, style_m, 'Semiconducting', 'Metallic'
-
-@app.callback(
-   [Output('AFMText_RTNoff', 'style'),
-    Output('AFMText_RTNon', 'style'),
-    Output('AFMText_RTNoff', 'children'),
-    Output('AFMText_RTNon', 'children')],
-   [Input('AFMtoggle_RTN', 'value')])
-def update_output(toggle):
-   style_off, style_on = Callbacks_AFM.togglefunctions(toggle)
-   return style_off, style_on, 'Jump off', 'Jump on'
+def update_output(slider_timesteps,slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
+    readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = Callbacks_AFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
+    return readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
 
 
 ################################################################################################################################################################

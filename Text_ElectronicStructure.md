@@ -1,5 +1,3 @@
-## Electronic Structure
-
 We will start by giving a very brief overview of the free electron model (a.k.a. the Sommerfeld model) and the nearly free electron model (a.k.a. the weak binding model). I won't provide a full derivation here, but will rather outline some key points. Firstly, we find the energy of a free electron: Considering only the particle's kinetic energy ($E=\frac{p^2}{2m}$) and the de Broglie wave-particle duality theory ($\lambda=\frac{h}{p}$) we find the dispersion relation of a free electron:
 
 $$E=\frac{\hbar^2 k^2}{2m}$$
@@ -25,3 +23,5 @@ $$m^*\equiv \hbar^2\left(\frac{\partial^2 E}{\partial k^2}\right)^{-1}$$
 i.e. the effective mass is defined by the band curvature. For the free electron model, this gives a constant mass for all E and all k, equal to the electron rest mass, $m=m_e$. For the nearly free model, the effective mass depends on the $E-k$ landscape, which varies from band to band. In general, $m_p>m_n$, i.e. the curvature of the conduction band is usually greater than that of the valence band.
 
 Therefore, we can see that the parabolic band edge approximation is directly reflected in the effective mass. If the band edge is parabolic, the effective mass is constant. If there are non-parabolic corrections, the effective mass is not constant. In general, in real materials the band edge is anisotropic, and so the effective mass is better represented by a three-dimensional tensor. All of the carrier density derivations to follow are done with the approximation that the effective mass is isotropic, and $m_n\approx m_p$. Note that the effective $m_n$ and $m_p$ are both positive. Why is the negative sign for the holes accounted for in the dispersion relation rather than the effective mass, given that the valence band curvature is negative? This is because the effective mass of an electron in the valence band is negative, but not so for the hole.
+
+&nbsp

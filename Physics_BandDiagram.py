@@ -33,23 +33,23 @@ def BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs):
 
     # Source?
     def z_sem_eqn(V_variable):
-        f_soln= Physics_Semiconductors.Func_f(T,V_variable,nb,pb)
-        E_soln=Physics_Semiconductors.Func_E(nb,pb,V_variable,epsilon_sem,T,f_soln)
+        f_soln= Physics_Semiconductors.Func_f(T,V_variable,nb,pb) #dimensionless
+        E_soln=Physics_Semiconductors.Func_E(nb,pb,V_variable,epsilon_sem,T,f_soln) #V/m
         eqn = 1 / (Physics_Semiconductors.e*E_soln) #m/J
         return eqn
 
     def compute(V_variable):
         zsem_soln, error = quad(z_sem_eqn, V_variable, Vs) #m
-        fsem_soln = Physics_Semiconductors.Func_f(T,V_variable,nb,pb)
-        Esem_soln = Physics_Semiconductors.Func_E(nb,pb,V_variable,epsilon_sem,T,fsem_soln)
-        Qsem_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Esem_soln)
-        Vsem_soln = V_variable
+        fsem_soln = Physics_Semiconductors.Func_f(T,V_variable,nb,pb) #dimensionless
+        Esem_soln = Physics_Semiconductors.Func_E(nb,pb,V_variable,epsilon_sem,T,fsem_soln) #V/m
+        Qsem_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Esem_soln) #C/m**2
+        Vsem_soln = V_variable #J
         return [zsem_soln, Vsem_soln, Esem_soln, Qsem_soln]
 
     if Vs == 0: # flatband case
         Vsem_soln = 0
         fsem_soln = Physics_Semiconductors.Func_f(T,0,nb,pb)
-        Esem_soln = Physics_Semiconductors.Func_E(nb,pb,0,epsilon_sem,T,fsem)
+        Esem_soln = Physics_Semiconductors.Func_E(nb,pb,0,epsilon_sem,T,fsem_soln)
         Qsem_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Esem_soln)
         z_sem = np.linspace(0, 150, numdatapoints)
         V_sem = np.repeat(Vsem_soln, numdatapoints)
@@ -72,10 +72,7 @@ def BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs):
 
 
 # Create arrays needed to draw the band diagram
-def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD):
-
-    # Semiconductor
-    zsem, Vsem, E_sem, Q_sem = BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs)
+def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD, zsem,Vsem,E_sem,Q_sem):
 
     # Insulator
     if EAsem>WFmet:
@@ -83,16 +80,16 @@ def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CP
     else:
         offbot =  2*WFmet #J
     zgap = np.array([0, 0, -zins, -zins, 0])
-    Vgap = np.array([Ec+Vs+EAsem-offbot, Ec+Vs+EAsem, Vg+WFmet, Vg+WFmet-offbot, Ec+Vs+EAsem-offbot])
+    Vgap = np.array([Ec-Vs+EAsem-offbot, Ec-Vs+EAsem, -Vg+WFmet, -Vg+WFmet-offbot, Ec-Vs+EAsem-offbot])
 
     # Metal (gate)
     offgate = 20e-9 #m #  Arbitrary spatial drawing of the gate (z)
     zmet = np.array([-zins-offgate, -zins])
-    Vmet = np.array([Vg, Vg])
+    Vmet = np.array([-Vg, -Vg])
 
     # Vacuum
     zvac = np.hstack((zmet,zsem))
-    Vvac = np.hstack((Vmet+WFmet, Ec+Vsem+EAsem))
+    Vvac = np.hstack((Vmet+WFmet, Ec-Vsem+EAsem))
 
     #######################################################
 
@@ -114,7 +111,7 @@ def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CP
     Qmetarray = np.array([0, 0, 0])
     Qarray = np.hstack((Qmetarray,Qinsarray,Qsemarray))
 
-    return zsem, Vsem, zgap,Vgap, zvac,Vvac, zmet,Vmet, zarray,Earray,Qarray
+    return zgap,Vgap, zvac,Vvac, zmet,Vmet, zarray,Earray,Qarray
 
 
 #save_X = pd.DataFrame({"X": [str(x) for x in zsem]})

@@ -1,5 +1,3 @@
-### Probability Distributions
-
 Here we show when it is appropriate to use the Maxwell Boltzmann distribution in lieu of Fermi Dirac. The Fermi-Dirac $f_F$ and Maxwell-Boltzmann $f_M$ distribution functions are given below:
 
 $$f_F(E)=\frac{1}{1+e^{(E-E_f)/k_BT}}$$
@@ -13,3 +11,5 @@ $$ e^{-(E-E_f)/k_BT}=0.05 $$
 $$ E \approx 3 k_BT +E_f $$
 
 This, to me, is the more obvious "limit": $f_M(E)$ may be used in lieu of $f_F(E)$ when $E \approx 3 k_BT +E_f$, for any (thermal) temperature $T$ and state $E$.
+
+&nbsp

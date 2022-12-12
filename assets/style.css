@@ -1,0 +1,259 @@
+/*-----------------------------GENERAL FORMATTING-----------------------------*/
+
+*{
+    margin: 0;
+    padding:0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+/*-----------------------------GENERAL FORMATTING-----------------------------*/
+
+/*----- notepage ----- */
+  .toggle-label {
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: left;
+    padding: 1rem;
+    color: #ffffff;
+    background: #463357;
+    border-radius: 2px;
+    transition: all 0.25s ease-out;
+    width: 100%;
+  }
+  .toggle-label:hover{
+    cursor: pointer;
+  }
+  .toggle-label::before {
+    content: ' ';
+    display: inline-block;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid currentColor;
+    vertical-align: middle;
+    margin-right: .7rem;
+    transform: translateY(-2px);
+    transition: transform .2s ease-out;
+  }
+  .toggle:checked+.toggle-label::before {
+    transform: rotate(90deg) translateX(-3px);
+  }
+  .collapsible-content {
+    height: 0px;
+    overflow: hidden;
+    transition: height .25s ease-in-out;
+  }
+  .toggle:checked + .toggle-label + .collapsible-content {
+    height: auto;
+  }
+  .collapsible-content .content-inner {
+    text-align: left;
+    background: #f1f1f1;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    padding: .5rem 1rem;
+  }
+  .collapsible-content p {
+     margin-bottom: 0;
+  }
+  .fig-horizontal {
+    display: inline-block;
+  }
+  .fig-vertical {
+    display: none;
+  }
+  
+  @media(min-width: 1600px){
+    .notepage{
+      width: 50%;
+    }
+  }
+  @media(max-width: 1300px){
+    .notepage{
+      width: 100%;
+    }
+  }
+  @media(max-width: 900px){
+    .fig-horizontal {
+      display:none;
+    }
+    .fig-vertical {
+      display: inline-block;
+    }
+  }
+  @media(max-width: 700px){
+    .notepage{
+      margin-top: 0vh;
+      margin-bottom: 0vh;
+      width: 100%;
+      position: relative;
+      display: inline-block;
+      padding: 5px;
+    }
+    .fig-horizontal {
+      display:none;
+    }
+    .fig-vertical {
+      display: inline-block;
+    }
+  }
+
+
+  /*-----------------------------Controls-----------------------------*/
+  .controlsgraph {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .controlsgraph .controls {
+    width: 20%;
+    float: left;
+    padding: 0.2rem;
+  }
+
+  .controlsgraph .graph {
+    width: 80%;
+    float: right;
+  }
+
+  .controls_container{
+    border: 1px solid #e9e9e9; 
+    border-radius: 5px;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+/*----- Slider & Labels ----- */
+  .label_container {
+    display: inline-block;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .label_container .label_name{
+    width: 70%;
+    text-align: left;
+    float: left;
+  }
+
+  .label_container .label_value{
+    width: 30%;
+    text-align: right;
+    float: right;
+  }
+
+  .slider {
+    width: 100%;
+    margin-bottom: -1.5rem;
+  }
+
+/*----- Readout ----- */
+.readout_large{
+  width: 100%;
+  text-align: center; 
+  color: #57c5f7;
+  font-size: 18px;
+}
+
+.readout_small{
+  width: 100%;
+  margin-bottom: -1.2rem;
+  margin-top: -0.8rem
+}
+ 
+.readout_container {
+  display: inline-block;
+  width: 100%;
+  color: #57c5f7;
+  margin-bottom: 0.4rem;
+}
+
+.readout_container .readout_name{
+  width: 70%;
+  text-align: left;
+  float: left;
+}
+
+.readout_container .readout_value{
+  width: 30%;
+  text-align: right;
+  float: right;
+}
+
+/*----- Toggle ----- */
+  .toggle_container {
+    display: inline-block;
+    width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+  .toggle_container .toggle-left{
+    width: 35%;
+    text-align: left;
+    float: left;
+  }
+
+  .toggle_container .toggle-right{
+    width: 35%;
+    text-align: right;
+    float: right;
+  }
+
+  .toggle_container .toggle-switch{
+    width: 30%;
+    float: left;
+
+  }
+
+/*----- Button ----- */
+.button_container{
+  display: block;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 1.5rem;
+}
+
+.button_container .button{
+  display: inline-block;
+  text-decoration: none;
+  border: 1px solid #c4c4c4;
+  padding: 0.5rem;
+  background: #e9e9e9;
+  position: relative;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 16px;
+}
+.button_container .button:hover{
+  border: 2px solid #c4c4c4;
+  background: #6f518a;
+  transition: 1s;
+}
+
+/*----- Presets ----- */
+.presets_container{
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+  @media(max-width: 700px){
+    .controlsgraph {
+        display: block;
+      }
+    
+      .controlsgraph .controls {
+        display: inline-block;
+        width: 100%;
+      }
+    
+      .controlsgraph .graph {
+        display: inline-block;
+        width: 100%;
+      }
+  }

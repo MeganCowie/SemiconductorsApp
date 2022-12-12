@@ -16,19 +16,19 @@ import Organization_BuildArrays
 ################################################################################
 # FIGURE: ncAFM oscillations
 
-def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_hop,slider_lag,calculatebutton,toggle_sampletype,toggle_RTN):
+def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, calculatebutton):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
 
         # Input values and arrays
         Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
-        sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(toggle_sampletype,False,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
 
         # Calculations and results
-        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         Vs_AFMarray, F_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD)
 
@@ -36,6 +36,7 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         Vg = slider_Vg*Physics_Semiconductors.e #J
         Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
 
+    
         # Stack arrays to show two periods
         time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi))
         zins_AFMarray = np.hstack((zins_AFMarray,zins_AFMarray[1:]))
@@ -50,26 +51,26 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         Vvac_AFMarray_steps = np.vstack((Vvac_AFMarray,Vvac_AFMarray[1:]))
         zmet_AFMarray_steps = np.vstack((zmet_AFMarray,zmet_AFMarray[1:]))
         Vmet_AFMarray_steps = np.vstack((Vmet_AFMarray,Vmet_AFMarray[1:]))
-
+    
         #########################################################
         #########################################################
         fig1 = make_subplots(
             rows=3, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.3, 0.7], row_heights=[1,1,1],
             specs=[[{}, {}], [{}, {}], [{}, {}]])
-
+    
         fig1.add_trace(go.Scatter(
-            y = zsem_AFMarray[0]*1e9, x = (Ev+Vsem_AFMarray[0])/Physics_Semiconductors.e,
+            y = zsem_AFMarray[0]*1e9, x = (Ev-Vsem_AFMarray[0])/Physics_Semiconductors.e,
             name = "ValenceBand", mode='lines', showlegend=False,
             line_color=color_Ev
             ), row=1, col=1)
         fig1.add_trace(go.Scatter(
-            y = zsem_AFMarray[0]*1e9, x = (Ei+Vsem_AFMarray[0])/Physics_Semiconductors.e,
+            y = zsem_AFMarray[0]*1e9, x = (Ei-Vsem_AFMarray[0])/Physics_Semiconductors.e,
             name = "IntrinsicEnergy", mode='lines', showlegend=False,
             line_color=color_Ei
             ), row=1, col=1)
         fig1.add_trace(go.Scatter(
-            y = zsem_AFMarray[0]*1e9, x = (Ec+Vsem_AFMarray[0])/Physics_Semiconductors.e,
+            y = zsem_AFMarray[0]*1e9, x = (Ec-Vsem_AFMarray[0])/Physics_Semiconductors.e,
             name = "ConductionBand", mode='lines', showlegend=False,
             line_color=color_Ec
             ), row=1, col=1)
@@ -149,9 +150,9 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 
         fig1.frames=[
             go.Frame(data=[
-                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ev+Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ev),
-                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ei+Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ei),
-                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ec+Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ec),
+                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ev-Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ev),
+                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ei-Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ei),
+                go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(Ec-Vsem_AFMarray_steps[step])/Physics_Semiconductors.e,mode="lines", line_color=color_Ec),
                 go.Scatter(y=zsem_AFMarray_steps[step]*1e9, x=(0*zsem_AFMarray_steps[step]+Ef)/Physics_Semiconductors.e,mode="lines", line_color=color_Ef),
                 go.Scatter(y=zgap_AFMarray_steps[step]*1e9, x=Vgap_AFMarray_steps[step]/Physics_Semiconductors.e,mode="lines", line_color=color_ox),
                 go.Scatter(y=zmet_AFMarray_steps[step]*1e9, x=Vmet_AFMarray_steps[step]/Physics_Semiconductors.e,mode="lines", line_color=color_met),
@@ -170,7 +171,7 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
                 go.Scatter(x=[time_AFMarray[step]],y=[F_AFMarray[step]*(1e-9)**2*1e12],mode="markers", marker=dict(color=color_indicator, size=10)),
                 ],traces=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
                 for step in range(2*timesteps-1)]
-
+        
     ############################################################################
 
     else:
@@ -222,18 +223,18 @@ def fig1_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 ################################################################################
 # FIGURE: Bias sweep experiment
 
-def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,toggle_sampletype,slider_hop,slider_lag):
+def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_Qfactor,calculatebutton,slider_lag):
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
 
         # Input values and arrays
         Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
-        sampletype,RTN,amplitude,frequency,hop,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(toggle_sampletype,False,slider_amplitude,slider_resfreq,slider_hop,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
 
         # Calculations and results
-        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_biasarray,F_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
 
         # Account for alpha
@@ -241,8 +242,8 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
 
         # Plot data
-        #Data_Vg = np.genfromtxt ('Data_Vg.csv', delimiter=",")
-        #Data_df = np.genfromtxt ('Data_df.csv', delimiter=",")
+        Data_Vg = np.genfromtxt ('Data_Vg.csv', delimiter=",")
+        Data_df = np.genfromtxt ('Data_df.csv', delimiter=",")
 
         #########################################################
         #########################################################
@@ -265,11 +266,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=2)
-        #fig2.add_trace(go.Scatter(
-        #    x = Data_Vg, y = Data_df,
-        #    name = "FrequencyShiftData", mode='lines', showlegend=False,
-        #    line_color=color_indicator
-        #    ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df+1.53,
+            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            line_color=color_indicator
+            ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
             name = "Dissipation", mode='lines', showlegend=False,
@@ -693,32 +694,22 @@ def fig4_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 ################################################################################
 # READOUTS
 
-def readouts_AFM(slider_timesteps, slider_amplitude, slider_hop, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps):
+def readouts_AFM(slider_timesteps, slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps):
     readout_timesteps = '{0:.0f}'.format(slider_timesteps)
     readout_amplitude = '{0:.1f}'.format(slider_amplitude)
     readout_lag = '{0:.0f}'.format(slider_lag)
-    readout_hop = '{0:.2f}'.format(slider_hop)
     readout_resfreq = '{0:.0f}'.format(slider_resfreq)
     readout_springconst = '{0:.0f}'.format(slider_springconst)
     readout_Qfactor = '{0:.0f}'.format(slider_Qfactor)
     readout_tipradius = '{0:.1f}'.format(slider_tipradius)
     readout_pulsetimesteps = '{0:.0f}'.format(slider_pulsetimesteps)
     readout_delaysteps = '{0:.0f}'.format(slider_delaysteps)
-    return readout_timesteps, readout_amplitude, readout_hop, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
+    return readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
 
 
 ################################################################################
 ################################################################################
 # FUNCTIONALITY
-
-def togglefunctions(toggle):
-    if toggle == True:
-        style_L = {'color': '#7f7f7f', 'fontSize': 14, 'width':130, 'text-align': 'center'}
-        style_R = {'color': '#57c5f7', 'fontSize': 14, 'width':60, 'text-align': 'left'}
-    elif toggle == False:
-        style_L = {'color': '#57c5f7', 'fontSize': 14, 'width':130, 'text-align': 'center'}
-        style_R = {'color': '#7f7f7f', 'fontSize': 14, 'width':60, 'text-align': 'left'}
-    return style_L, style_R
 
 def find_nearest(array, value):
     array = np.asarray(array)
