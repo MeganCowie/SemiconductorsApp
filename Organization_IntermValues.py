@@ -57,7 +57,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 ################################################################################
 
 
-def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
+def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps, zins):
 
     # values
     amplitude = slider_amplitude*1e-9 #m

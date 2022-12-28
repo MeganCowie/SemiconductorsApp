@@ -80,7 +80,10 @@ def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CP
     else:
         offbot =  2*WFmet #J
     zgap = np.array([0, 0, -zins, -zins, 0])
-    Vgap = np.array([Ec-Vs+EAsem-offbot, Ec-Vs+EAsem, -Vg+WFmet, -Vg+WFmet-offbot, Ec-Vs+EAsem-offbot])
+    if Vs<0:
+        Vgap = np.array([Ec-Vs+EAsem-offbot, Ec-Vs+EAsem, -Vg+WFmet, Ec-Vs+EAsem-offbot, Ec-Vs+EAsem-offbot])
+    else:
+        Vgap = np.array([-Vg+WFmet-offbot, Ec-Vs+EAsem, -Vg+WFmet, -Vg+WFmet-offbot, -Vg+WFmet-offbot])
 
     # Metal (gate)
     offgate = 20e-9 #m #  Arbitrary spatial drawing of the gate (z)

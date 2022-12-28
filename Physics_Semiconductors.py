@@ -106,7 +106,7 @@ def Func_nbpb(Na, Nd, ni): # /m**3
         nb = ni**2/pb
     return nb,pb
 
-# intrinsic level
+# Intrinsic level
     # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 52)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 94)
     # Jonscher Solid Semiconductors (pg 31)
@@ -211,6 +211,16 @@ def Func_F(Qs,epsilon_sem):
     F = -Qs**2/(2*epsilon_o) # N/m**2
     return F
 
+# Polarization
+    # One-dimensional sum of electric dipoles
+def Func_P(zsem, Qsem):
+    d = 1 #arbitrary depth #m
+    A = 1 #arbitrary area #m**2
+    V = A*d #arbitrary volume #m**3
+    p = zsem*Qsem*A #electric dipole  #Cm 
+    P = np.sum(p)/V #electric polarization #C/m**2
+    return P
+
 # Identify MIS capacitor regime
 def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
     if Na <=1e-9: #n-type
@@ -241,53 +251,5 @@ def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
             regime = 5 #weak inversion
     return regime
 
-
-# Polarization
-    # One-dimensional sum of electric dipoles
-def Func_P(zsem, Qsem):
-    d = 1 #arbitrary depth #m
-    A = 1 #arbitrary area #m**2
-    V = A*d #arbitrary volume #m**3
-    p = zsem*Qsem*A #electric dipole  #Cm 
-    P = np.sum(p)/V #electric polarization #C/m**2
-    return P
-
-################################################################################
-# WHAT A MESS. FIX THIS -- NOT DONE YET
-
-# Accumulation layer width
-    # ? Chapter  pg 173
-def Func_zA(Nd,Na,LD,Vs,T):
-    zA = 1
-    #if Na ==0: #n-type
-    #    zA = np.sqrt(2)*LD*np.arccos(np.exp(-Vs/(2*kB*T))) #m
-    #elif Nd ==0: #p-type
-    #    zA = np.sqrt(2)*LD*np.arccos(np.exp(Vs/(2*kB*T))) #m
-    return zA
-
-# Depletion layer width (pg. 435 eq. 10.5)
-    # ? Chapter  pg 173
-def Func_zD(zins,epsilon_sem,Nd,Na,Vg,T,WFmet,EAsem,Ec,Ef,Vs):
-    Cins= Func_Cins(zins)
-    CPD = Func_CPD(WFmet, EAsem, Ef)
-    #zD = 1
-    if Na ==0: #n-type
-        zD = np.sqrt((epsilon_sem*epsilon_o*100)**2/Cins**2+2*(epsilon_sem*epsilon_o*100)*np.abs(Vg-CPD)/(Nd*e)) -(epsilon_sem*epsilon_o*100)/Cins #m (Note units: Na and Nd are in cm^-3)
-        zD = np.sqrt(2*(epsilon_sem*epsilon_o*100)*np.abs(Vs)/(Nd*e)) #m (Note units: Na and Nd are in cm^-3)
-    elif Nd ==0: #p-type
-        zD = np.sqrt((epsilon_sem*epsilon_o*100)**2/Cins**2+2*(epsilon_sem*epsilon_o*100)*np.abs(Vg-CPD)/(Na*e)) -(epsilon_sem*epsilon_o*100)/Cins #m (Note units: Na and Nd are in cm^-3)
-        zD = np.sqrt(2*(epsilon_sem*epsilon_o*100)*Vs/(Na*e)) #m (Note units: Na and Nd are in cm^-3)
-
-    return zD
-
-# Inversion layer width
-    # ? Chapter  pg 180
-def Func_zI():
-    zI = 1
-    #if Na ==0: #n-type
-    #    zI = np.sqrt(4*epsilon_sem*epsilon_o*Vs/(Nd*e))/100 #m (Note units: Na and Nd are in cm^-3)
-    #elif Nd ==0: #p-type
-    #    zI = np.sqrt(4*epsilon_sem*epsilon_o*Vs/(Na*e))/100 #m (Note units: Na and Nd are in cm^-3)
-    return zI
 
 

@@ -27,7 +27,7 @@ Surface_Card = html.Div([
             html.Div("Insulator Thickness (nm)", className='label_name', id="SurfaceText_zinslabel"),
             html.Div(id='SurfaceText_zins', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_zins', className='slider', marks=None, min=1, max=25, step=1, value=5.2),
+        dcc.Slider(id='SurfaceSlider_zins', className='slider', marks=None, min=1, max=25, step=0.1, value=5.2),
     ], className= 'controls_container'),
 
     html.Div([
@@ -53,19 +53,19 @@ Surface_Card = html.Div([
             html.Div("Work Func. (M) (eV)", className='label_name', id="SurfaceText_WFmetlabel"),
             html.Div(id='SurfaceText_WFmet', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_WFmet', className='slider', marks=None, min=0.1, max=8, step=0.1, value=4.1),
+        dcc.Slider(id='SurfaceSlider_WFmet', className='slider', marks=None, min=0.1, max=8, step=0.01, value=4.1),
 
         html.Div([
             html.Div("Elec. Affinity (S) (eV)", className='label_name', id="SurfaceText_EAsemlabel"),
             html.Div(id='SurfaceText_EAsem', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_EAsem', className='slider', marks=None, min=0.1, max=5, step=0.1, value=3.5),
+        dcc.Slider(id='SurfaceSlider_EAsem', className='slider', marks=None, min=0.1, max=5, step=0.01, value=3.5),
 
         html.Div([
             html.Div("Donors (cm-3)", className='label_name', id="SurfaceText_donorlabel"),
             html.Div(id='SurfaceText_donor', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_donor', className='slider', marks=None, min=25, max=35, step=0.1, value=30),
+        dcc.Slider(id='SurfaceSlider_donor', className='slider', marks=None, min=25, max=40, step=0.1, value=30),
 
         html.Div([
             html.Div("Acceptors (cm-3)", className='label_name', id="SurfaceText_acceptorlabel"),

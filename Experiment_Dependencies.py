@@ -4,30 +4,32 @@ import Organization_IntermValues
 import Organization_BuildArrays
 import numpy as np
 import pandas as pd
+import os
+
 
 ################################################################################
 # Haughton Si values
 
 toggle_type = False
 slider_Vg = 0
-slider_zins = 6
-slider_Eg = 1.1
+slider_zins = 8
+slider_Eg = 0.5
 slider_epsilonsem = 11.7
-slider_WFmet = 5.0
+slider_WFmet = 4.55
 slider_EAsem = 4.05
 slider_emass = 1
 slider_hmass = 1
-slider_donor = 33
+slider_donor = 32.7
 slider_acceptor = 0
 slider_T = 300
-slider_alpha = 0
+slider_alpha = 0.4
 stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
 stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
 disabledn = False
 disabledp = True
 
-slider_biassteps = 256
-slider_zinssteps = 128
+slider_biassteps = 1024
+slider_zinssteps = 1
 slider_timesteps = 200
 slider_amplitude = 6
 slider_resfreq = 300000
@@ -36,8 +38,8 @@ slider_hop = 0
 toggle_RTN = True
 toggle_sampletype = False
 slider_springconst = 42
-slider_Qfactor = 23000
-slider_tipradius = 13.8
+slider_Qfactor = 18000
+slider_tipradius = 21.2
 
 ################################################################################
 # Inputs
@@ -48,10 +50,10 @@ slider_tipradius = 13.8
 #experiment = 'Eg'
 #experiment = 'epsilonsem'
 #experiment = 'amplitude'
-experiment = 'zins'
-#experiment = 'lag'
+#experiment = 'zins'
+experiment = 'lag'
 
-#slider_zins = slider_zins+slider_amplitude
+slider_zins = slider_zins+slider_amplitude
 
 ################################################################################
 # Sweep ranges
@@ -63,7 +65,7 @@ elif experiment=='emass':
 elif experiment=='hmass':
     ExperimentArray =  np.linspace(0.1,1.2,23)
 elif experiment=='Eg':
-    ExperimentArray =  np.linspace(0.8,1.5,36)
+    ExperimentArray =  np.linspace(0.2,1.5,27)
 elif experiment=='epsilonsem':
     ExperimentArray =  np.linspace(1,20,39)
 elif experiment=='amplitude':
@@ -71,16 +73,14 @@ elif experiment=='amplitude':
 elif experiment=='zins':
     ExperimentArray =  np.linspace(4,20,17)#33)
 elif experiment=='lag':
-    ExperimentArray =  np.linspace(0,50,1)
+    ExperimentArray =  np.linspace(0,8,1)#161)
 
-
-################################################################################
-# Input values and arrays
-Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
-springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
 
 ################################################################################
 # Initialize arrays
+
+Vg_array = np.linspace(-10,10,slider_biassteps)*Physics_Semiconductors.e #J
+zins_array = np.linspace(0.5,20,slider_zinssteps)*1e-9 #m
 
 save_Vs_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
 save_F_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
@@ -97,10 +97,15 @@ save_P_zinsarrays = pd.DataFrame({"zins_array": [str(x) for x in zins_array*1e9]
 save_df_zinsarrays = pd.DataFrame({"zins_array": [str(x) for x in zins_array*1e9]})
 save_dg_zinsarrays = pd.DataFrame({"zins_array": [str(x) for x in zins_array*1e9]})
 
+print('zins = ' + str(slider_zins))
+
 ################################################################################
 # Vary experimental parameter
 
 for index in range(len(ExperimentArray)):
+
+    this_slider_lag = slider_lag
+    this_slider_amplitude = slider_amplitude
 
     if experiment=='Nd':
         Nd = round(10**ExperimentArray[index])/(1e9) #/m**3
@@ -113,23 +118,23 @@ for index in range(len(ExperimentArray)):
     elif experiment=='epsilonsem':
         epsilon_sem = ExperimentArray[index] #dimensionless
     elif experiment=='amplitude':
-        amplitude = ExperimentArray[index]*1e-9 #m
+        this_slider_amplitude = ExperimentArray[index]  #nm
     elif experiment=='zins':
         zins = ExperimentArray[index]*1e-9 #m
     elif experiment=='lag':
-        lag = ExperimentArray[index]/10**9*frequency #radians
+        this_slider_lag = ExperimentArray[index] #ns
     else:
         print('Error: Experiment not defined.')
 
+    # Input values and arrays
+    Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+    amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(this_slider_amplitude,slider_resfreq,this_slider_lag,slider_timesteps, zins)
+    springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
+
     # Calculations and results
-    amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
     Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray,df_zinsarray,dg_zinsarray = Organization_BuildArrays.All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
-
-    # Account for alpha
-    Vg = slider_Vg*Physics_Semiconductors.e #J
-    Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
 
     # Unit conversions
     Vs_biasarray = Vs_biasarray/Physics_Semiconductors.e
@@ -180,23 +185,29 @@ for index in range(len(ExperimentArray)):
 
     print(index+1,'/', len(ExperimentArray))
 
+print('zins = ' + str(slider_zins))
+
 
 ################################################################################
 # Save
 
-name = "%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
+thispath = "Xsave_Si_Dependencies_%s_%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f/" % (experiment, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha)
+thisname = "%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha)
 
-save_Vs_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_Vs.csv']),index=False)
-save_F_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_F.csv']),index=False)
-save_Es_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_Es.csv']),index=False)
-save_Qs_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_Qs.csv']),index=False)
-save_P_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_P.csv']),index=False)
-save_df_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_df.csv']),index=False)
-save_dg_biasarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'biasarrays_dg.csv']),index=False)
-save_Vs_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_Vs.csv']),index=False)
-save_F_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_F.csv']),index=False)
-save_Es_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_Es.csv']),index=False)
-save_Qs_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_Qs.csv']),index=False)
-save_P_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_P.csv']),index=False)
-save_df_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_df.csv']),index=False)
-save_dg_zinsarrays.to_csv('_'.join(['Xsave_Experiment',experiment,'Si',name,'zinsarrays_dg.csv']),index=False)
+if not os.path.exists(thispath):
+    os.mkdir(thispath)
+
+save_Vs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Vs',thisname])), index=False)
+save_F_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_F',thisname])), index=False)
+save_Es_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Es',thisname])), index=False)
+save_Qs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Qs',thisname])), index=False)
+save_P_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_P',thisname])), index=False)
+save_df_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_df',thisname])), index=False)
+save_dg_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_dg',thisname])), index=False)
+save_Vs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Vs',thisname])), index=False)
+save_F_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_F',thisname])), index=False)
+save_Es_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Es',thisname])), index=False)
+save_Qs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Qs',thisname])), index=False)
+save_P_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_P',thisname])), index=False)
+save_df_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_df',thisname])), index=False)
+save_dg_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_dg',thisname])), index=False)

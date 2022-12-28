@@ -60,13 +60,13 @@ AFM_Card2 = html.Div([
             html.Div("Q factor", className='label_name', id="AFMText_Qfactorlabel"),
             html.Div(id='AFMText_Qfactor', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_Qfactor', className='slider', marks=None, min=200, max=30000, step=100, value=23000),
+        dcc.Slider(id='AFMSlider_Qfactor', className='slider', marks=None, min=1000, max=30000, step=1000, value=18000),
 
         html.Div([
             html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
             html.Div(id='AFMText_tipradius', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.1, value=13.8),
+        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.1, value=12.6),
     ], className= 'controls_container'),
 ], className='controls', hidden=True, id='display_BiasSweepExperimentcontrols')
 
