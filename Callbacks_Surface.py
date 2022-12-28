@@ -16,6 +16,17 @@ import Organization_BuildArrays
 
 def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
 
+    #########################################################
+    # Input values
+    Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins+6,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+
+    # Calculations and results
+    NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+    Vs_biasarray_top,F_biasarray_top,Es_biasarray_top,Qs_biasarray_top,P_biasarray_top = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+    #########################################################
+
+
+
     # Input values
     Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
 
@@ -87,12 +98,12 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         line_color=color_met
         ), row=4, col=1)
     fig0.add_trace(go.Scatter(
-        x = zarray, y = Earray*1e-9,
+        x = zarray*1e9, y = Earray*1e-9,
         name = "Electric Field", mode='lines', showlegend=False,
         line_color=color_met
         ), row=5, col=1)
     fig0.add_trace(go.Scatter(
-        x = zarray, y = Qarray/Physics_Semiconductors.e*(1e-9)**2,
+        x = zarray*1e9, y = Qarray/Physics_Semiconductors.e*(1e-9)**2,
         name = "Charge Density", mode='lines', showlegend=False,
         line_color=color_met
         ), row=6, col=1)
@@ -138,15 +149,15 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         marker=dict(color=color_indicator,size=10),
         ), row=6, col=2)
     fig0.add_trace(go.Scatter(
-        x = Vg_array/Physics_Semiconductors.e, y = P_biasarray,
+        x = Vg_array/Physics_Semiconductors.e, y = P_biasarray-P_biasarray_top,
         name = "P (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=7, col=2)
-    fig0.add_trace(go.Scatter(
-        x = [Vg/Physics_Semiconductors.e], y = [P],
-        name = "This P (bias)", mode='markers', showlegend=False,
-        marker=dict(color=color_indicator,size=10),
-        ), row=7, col=2)
+    #fig0.add_trace(go.Scatter(
+    #    x = [Vg/Physics_Semiconductors.e], y = [P],
+    #    name = "This P (bias)", mode='markers', showlegend=False,
+    #    marker=dict(color=color_indicator,size=10),
+    #    ), row=7, col=2)
 
     fig0.add_trace(go.Scatter(
         x = zins_array*1e9, y = Vs_zinsarray/Physics_Semiconductors.e,
@@ -283,7 +294,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
 
 def readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
     readout_Vg = '{0:.4g}'.format(slider_Vg)
-    readout_zins = '{0:.0f}'.format(slider_zins)
+    readout_zins = '{0:.1f}'.format(slider_zins)
     readout_Eg = '{0:.1f}'.format(slider_Eg)
     readout_epsilonsem = '{0:.1f}'.format(slider_epsilonsem)
     readout_WFmet = '{0:.2f}'.format(slider_WFmet)
