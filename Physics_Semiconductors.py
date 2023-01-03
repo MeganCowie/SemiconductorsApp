@@ -65,9 +65,10 @@ def Func_NeNh(E, fc, fv, gc, gv, Ec, Ev): # /(J*m**3)
 # effective density of conduction and valence band states
     # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 44)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 89-91)
+    # Sze Physics of Semiconductor Devices (pg 19)
 def Func_NCNV(T, mn, mp): # /(m**3)
-    NC = 2*((2*sp.pi*mn*kB*T)/(2*sp.pi*hbar**2))**(3/2)
-    NV = 2*((2*sp.pi*mp*kB*T)/(2*sp.pi*hbar**2))**(3/2)
+    NC = 1/np.sqrt(2)*((mn*kB*T)/(sp.pi*hbar**2))**(3/2)
+    NV = 1/np.sqrt(2)*((mp*kB*T)/(sp.pi*hbar**2))**(3/2)
     return NC, NV
 
 # conduction and valence band absolute energies
@@ -93,18 +94,6 @@ def Func_nopo(NC, NV, Ec, Ev, Ef, T): # 1/m**3
     no = NC * np.exp((-Ec+Ef)/(kB*T))
     po = NV * np.exp((Ev-Ef)/(kB*T))
     return no, po
-
-# Total carrier concentrations in the bulk
-    # Neamen Semiconductor Physics & Devices, Ed 2 (pg 115)
-    # Sze Physics of Semiconductor Devices (pg 32)
-def Func_nbpb(Na, Nd, ni): # /m**3
-    if Na <=1e-9: #n-type
-        nb = (Nd-Na)/2+np.sqrt(((Nd-Na)/2)**2+ni**2)
-        pb = ni**2/nb
-    elif Nd <= 1e-9: #p-type
-        pb = (Na-Nd)/2+np.sqrt(((Na-Nd)/2)**2+ni**2)
-        nb = ni**2/pb
-    return nb,pb
 
 # Intrinsic level
     # Pierret Semiconductor Fundamentals, Vol 1, Ed 2 (pg 52)
@@ -148,30 +137,23 @@ def Func_Vfb(CPD):
     Vfb = CPD # J
     return Vfb
 
-# Insulator capacitance
-    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-    # https://link.springer.com/content/pdf/10.1007/b117561.pdf pg 171
-def Func_Cins(zins):
-    Cins= epsilon_o/zins #C/Vm**2
-    return Cins
-
 # Debye length
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
     # Sze Physics of Semiconductor Devices (pg 202)
-def Func_LD(epsilon_sem,pb,T):
-    LD = np.sqrt(kB*T*epsilon_o*epsilon_sem/(pb*e**2)) # m
+def Func_LD(epsilon_sem,po,T):
+    LD = np.sqrt(kB*T*epsilon_o*epsilon_sem/(po*e**2)) # m
     return LD
 
 # intgration constants
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-def Func_f(T,V,nb,pb):
+def Func_f(T,V,no,po):
     u = V/(kB*T) #dimensionless
-    f = np.sqrt(np.exp(-u)+u-1+nb/pb*(np.exp(u)-u-1)) #dimensionless
+    f = np.sqrt(np.exp(-u)+u-1+no/po*(np.exp(u)-u-1)) #dimensionless
     return f
 
 # Spatial electric field inside semiconductor
-def Func_E(nb,pb,V,epsilon_sem,T,f):
-    LD = np.sqrt(kB*T*epsilon_o*epsilon_sem/(pb*e**2)) # m
+def Func_E(no,po,V,epsilon_sem,T,f):
+    LD = np.sqrt(kB*T*epsilon_o*epsilon_sem/(po*e**2)) # m
     E = np.sign(V)*np.sqrt(2)*kB*T/(LD*e)*f # V/m
     return E
 
@@ -182,22 +164,22 @@ def Func_Q(epsilon_sem,E):
     Q = -epsilon_sem*epsilon_o*E #C/m**2 
     return Q
 
-# Spatial electron and hole concentrations inside semiconductor
-    # Sze Physics of Semiconductor Devices (pg 201)
-def Func_ndpd(nb,pb,Na,Nd,V,T):
-    nd = nb*np.exp(V/(kB*T)) # /m**3
-    pd = pb*np.exp(-V/(kB*T)) # /m**3
-    return nd,pd
+# Insulator capacitance
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
+    # https://link.springer.com/content/pdf/10.1007/b117561.pdf pg 171
+def Func_Cins(zins):
+    Cins= epsilon_o/zins #C/Vm**2
+    return Cins
 
 # Surface potential
-def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
+def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,no,po,ni):
     if Na <=1e-9: #n-type
         guess = 1*e
     elif Nd <= 1e-9: #p-type
         guess = -1*e
     def Vs_eqn(Vs,Vg_variable,zins_variable):
-        fs = Func_f(T,Vs,nb,pb)
-        Es = Func_E(nb,pb,Vs,epsilon_sem,T,fs)
+        fs = Func_f(T,Vs,no,po)
+        Es = Func_E(no,po,Vs,epsilon_sem,T,fs)
         Qs = Func_Q(epsilon_sem,Es)
         Cins = Func_Cins(zins_variable)
         expression = Vg_variable-CPD-Vs+e*Qs/Cins #J

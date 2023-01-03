@@ -26,11 +26,11 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  zins)
 
         # Calculations and results
-        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD)
+        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,no,po,ni)
+        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,no,po,ni)
+        Vs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,no,po,ni)
+        zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,no,po,Vs,Ec,Ev,Ef,CPD)
 
         # Account for alpha
         Vg = slider_Vg*Physics_Semiconductors.e #J
@@ -234,8 +234,8 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
 
         # Calculations and results
-        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
+        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+        Vs_biasarray,F_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,no,po,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
 
         # Account for alpha
         Vg = slider_Vg*Physics_Semiconductors.e #J
@@ -243,7 +243,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 
         # Plot data
         Data_Vg = np.genfromtxt ('Data_Vg.csv', delimiter=",")
-        Data_df = np.genfromtxt ('Data_df.csv', delimiter=",")
+        Data_df_A = np.genfromtxt ('Data_df_A.csv', delimiter=",")
+        Data_df_B = np.genfromtxt ('Data_df_B.csv', delimiter=",")
+        Data_df_C = np.genfromtxt ('Data_df_C.csv', delimiter=",")
+        Data_df_D = np.genfromtxt ('Data_df_D.csv', delimiter=",")
+        Data_df_E = np.genfromtxt ('Data_df_E.csv', delimiter=",")
 
         #########################################################
         #########################################################
@@ -267,9 +271,19 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             line_color=color_other
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df+1.38,
+            x = Data_Vg, y = Data_df_A+1.38,
             name = "FrequencyShiftData", mode='lines', showlegend=False,
             line_color=color_indicator
+            ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df_B+1.38,
+            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            line_color=color_Ev
+            ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df_C+1.38,
+            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            line_color=color_Ec
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,

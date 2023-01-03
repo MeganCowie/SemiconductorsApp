@@ -55,8 +55,8 @@ def fig_carrierintegrals(slider_Ef, slider_T,slider_gc,slider_gv):
     # Input parameters
     Ef, T = slider_Ef*Physics_Semiconductors.e, slider_T # J,K
     E = (np.arange(500)/500+0.000000001)*Physics_Semiconductors.e # J
-    Ec = 0.65*Physics_Semiconductors.e # J
-    Ev = 0.35*Physics_Semiconductors.e # J
+    Ec = 0.55*Physics_Semiconductors.e # J
+    Ev = 0.45*Physics_Semiconductors.e # J
     mn = slider_gc*Physics_Semiconductors.me # kg
     mp = slider_gv*Physics_Semiconductors.me # kg
 

@@ -125,13 +125,13 @@ Surface_Card = html.Div([
             html.Div("Gate Bias Precision", className='label_name', id="SurfaceText_biasstepslabel"),
             html.Div(id='SurfaceText_biassteps', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_biassteps', className='slider', marks=None, min=128, max=1024, step=56, value=56),
+        dcc.Slider(id='SurfaceSlider_biassteps', className='slider', marks=None, min=56, max=1024, step=56, value=56),
 
         html.Div([
             html.Div("Insulator Thickness Precision", className='label_name', id="SurfaceText_zinsstepslabel"),
             html.Div(id='SurfaceText_zinssteps', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_zinssteps', className='slider', marks=None, min=128, max=1024, step=56, value=56), 
+        dcc.Slider(id='SurfaceSlider_zinssteps', className='slider', marks=None, min=56, max=1024, step=56, value=56), 
     ], className= 'controls_container'),
 
 
