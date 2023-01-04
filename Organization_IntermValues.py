@@ -46,7 +46,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     f = Physics_Semiconductors.Func_f(T,Vs,nb,pb)
     Es = Physics_Semiconductors.Func_E(nb,pb,Vs,epsilon_sem,T,f)
     Qs = Physics_Semiconductors.Func_Q(epsilon_sem,Es)
-    F = Physics_Semiconductors.Func_F(Qs,CPD)
+    F = Physics_Semiconductors.Func_F(Qs,CPD,Vg,zins)
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
     zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs)
     P = Physics_Semiconductors.Func_P(zsem, Qsem)
@@ -73,11 +73,13 @@ def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps
     return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 
 
-def AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius):
+def AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius,slider_cantheight,slider_cantarea):
 
     # values
     springconst = slider_springconst #N/m
     Qfactor = slider_Qfactor
     tipradius = slider_tipradius*1e-9 #m
+    cantheight = slider_cantheight*1e-9 #m
+    cantarea = slider_cantarea*(1e-6)**2 #m^2
 
-    return springconst,Qfactor,tipradius
+    return springconst,Qfactor,tipradius,cantheight,cantarea

@@ -473,11 +473,13 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_resfreq', 'value'),
      Input('AFMSlider_springconst', 'value'),
      Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_cantheight', 'value'),
+     Input('AFMSlider_cantarea', 'value'),
      Input('AFMSlider_Qfactor', 'value'),
      Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
      Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, slider_lag):
-    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_Qfactor, calculatebutton, slider_lag)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag):
+    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag)
     return fig2
 '''
 # Time trace experiment figure
@@ -542,6 +544,8 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Output('AFMText_springconst', 'children'),
      Output('AFMText_Qfactor', 'children'),
      Output('AFMText_tipradius', 'children'),
+     Output('AFMText_cantheight', 'children'),
+     Output('AFMText_cantarea', 'children'),
      Output('AFMText_delaysteps', 'children'),
      Output('AFMText_pulsetimesteps', 'children')],
     [Input('AFMSlider_timesteps', 'value'),
@@ -551,11 +555,13 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_springconst', 'value'),
      Input('AFMSlider_Qfactor', 'value'),
      Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_cantheight', 'value'),
+     Input('AFMSlider_cantarea', 'value'),
      Input('AFMSlider_pulsetimesteps', 'value'),
      Input('AFMSlider_delaysteps', 'value')])
-def update_output(slider_timesteps,slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_delaysteps, slider_pulsetimesteps):
-    readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps = Callbacks_AFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_pulsetimesteps, slider_delaysteps)
-    return readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_pulsetimesteps, readout_delaysteps
+def update_output(slider_timesteps,slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_cantheight, slider_cantarea, slider_delaysteps, slider_pulsetimesteps):
+    readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_cantheight, readout_cantarea, readout_pulsetimesteps, readout_delaysteps = Callbacks_AFM.readouts_AFM(slider_timesteps, slider_amplitude, slider_lag, slider_resfreq, slider_springconst, slider_Qfactor, slider_tipradius, slider_cantheight, slider_cantarea, slider_pulsetimesteps, slider_delaysteps)
+    return readout_timesteps, readout_amplitude, readout_lag, readout_resfreq, readout_springconst, readout_Qfactor, readout_tipradius, readout_cantheight, readout_cantarea, readout_pulsetimesteps, readout_delaysteps
 
 
 ################################################################################################################################################################

@@ -201,8 +201,8 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
 
 # Force between MIS plates
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
-def Func_F(Qs,CPD):
-    F = -(Qs)**2/(2*epsilon_o) # N/m**2
+def Func_F(Qs,CPD,Vg,zins):
+    F = (-Qs**2/(2*epsilon_o))#-10**(37.35)*(epsilon_o*(Vg-CPD)**2/(2*zins**2)) # N/m**2 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     return F
 
 # Polarization

@@ -27,7 +27,7 @@ def Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
-        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD)
+        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg_variable,zins)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln, P_soln]
@@ -54,7 +54,7 @@ def Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
-        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD)
+        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg,zins_variable)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln]
@@ -75,7 +75,7 @@ def Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
 ################################################################################
 ################################################################################
 
-def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
+def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight):
 
     # Calculate list any functions that are not constant as a function of time
     def compute(zins_variable):
@@ -83,19 +83,21 @@ def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
-        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD)
+        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg,zins_variable)
+        Fcant_soln = Physics_ncAFM.cantilever(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,cantheight)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
-        return [Vs_soln,F_soln,P_soln]
+        return [Vs_soln,F_soln,Fcant_soln,P_soln]
 
     # Then parallelize the calculations for every time
     result = Parallel(n_jobs=-1)(
         delayed(compute)(zins) for zins in zinslag_AFMarray
     )
     return [
-        np.asarray([Vs_soln for Vs_soln,F_soln,P_soln in result]),
-        np.asarray([F_soln  for Vs_soln,F_soln,P_soln in result]),
-        np.asarray([P_soln  for Vs_soln,F_soln,P_soln in result]),
+        np.asarray([Vs_soln for Vs_soln,F_soln,F_soln_cant,P_soln in result]),
+        np.asarray([F_soln  for Vs_soln,F_soln,F_soln_cant,P_soln in result]),
+        np.asarray([Fcant_soln  for Vs_soln,F_soln,Fcant_soln,P_soln in result]),
+        np.asarray([P_soln  for Vs_soln,F_soln,F_soln_cant,P_soln in result]),
     ]
 
 ################################################################################
@@ -124,16 +126,17 @@ def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,
         np.asarray([Vmet_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
     ]
 
+
 ################################################################################
 
-def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray):
+def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray,cantheight,cantarea):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
-        Vs_AFMarray_soln,F_AFMarray_soln,P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_AFMarray_soln,F_AFMarray_soln,Fcant_AFMarray_soln,P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
         Vs_soln = Vs_AFMarray_soln[0]
         F_soln = F_AFMarray_soln[0]
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
+        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius,cantarea)
         return [Vs_soln,F_soln,df_soln,dg_soln]
 
     # Then parallelize the calculations for every Vg
@@ -147,46 +150,24 @@ def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         np.asarray([dg_soln for Vs_soln,F_soln,df_soln,dg_soln in result]),
     ]
 
-################################################################################
-
-def AFM_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray):
-
-    # Calculate list any functions that are not constant as a function of Vg
-    def compute(zins_variable):
-        Vs_AFMarray_soln,F_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg,zins_variable,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_soln = Vs_AFMarray_soln[0]
-        F_soln = F_AFMarray_soln[0]
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
-        return [Vs_soln,F_soln,df_soln,dg_soln]
-
-    # Then parallelize the calculations for every Vg
-    result = Parallel(n_jobs=-1)(
-        delayed(compute)(zins) for zins in zins_array
-    )
-    return [
-        np.asarray([Vs_soln for Vs_soln,F_soln,df_soln,dg_soln in result]),
-        np.asarray([F_soln  for Vs_soln,F_soln,df_soln,dg_soln in result]),
-        np.asarray([df_soln for Vs_soln,F_soln,df_soln,dg_soln in result]),
-        np.asarray([dg_soln for Vs_soln,F_soln,df_soln,dg_soln in result]),
-    ]
 
 ################################################################################
 ################################################################################
 
-def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray):
+def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,time_AFMarray,zinslag_AFMarray):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
-        Vs_AFMarray_soln,F_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_AFMarray_soln,F_AFMarray_soln, Fcant_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
         Vs_soln = Vs_AFMarray_soln[0]
         F_soln = F_AFMarray_soln[0]
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
-        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD)
+        F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg_variable,zins)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
+        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln,df_soln,dg_soln]
 
     # Then parallelize the calculations for every Vg
@@ -205,11 +186,11 @@ def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
 
 ################################################################################
 
-def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray):
+def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,time_AFMarray,zinslag_AFMarray):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(zins_variable):
-        Vs_AFMarray_soln,F_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg,zins_variable,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_AFMarray_soln,F_AFMarray_soln, Fcant_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg,zins_variable,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
         Vs_soln = Vs_AFMarray_soln[0]
         F_soln = F_AFMarray_soln[0]
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
@@ -217,7 +198,7 @@ def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
+        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln,df_soln,dg_soln]
 
     # Then parallelize the calculations for every Vg
