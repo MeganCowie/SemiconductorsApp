@@ -99,7 +99,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(BulkCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_BulkCarrierStatisticstext'),
 
-        html.Button('Surface Carrier Statistics', className='toggle-label', n_clicks=0, id='header_SurfaceCarrierStatistics'),
+        html.Button('Surface Carrier Statistics', className='toggle-label', n_clicks=1, id='header_SurfaceCarrierStatistics'),
         html.Div([
             html.Br(),
             Controls_Surface.Surface_Card, 
@@ -114,7 +114,7 @@ app.layout = dbc.Container(
             html.Div(dcc.Graph(id="AFMGraph1"), className='graph', hidden=True, id='display_fmAFMoscillationsgraph'),
             ], className='controlsgraph'), 
 
-        html.Button('Bias Sweep Experiment', className='toggle-label', n_clicks=0, id='header_BiasSweepExperiment'), 
+        html.Button('Bias Sweep Experiment', className='toggle-label', n_clicks=1, id='header_BiasSweepExperiment'), 
         html.Div([
             html.Br(),
             Controls_AFM.AFM_Card2, 
