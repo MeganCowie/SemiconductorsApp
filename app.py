@@ -13,7 +13,7 @@ import Controls_AFM
 import Callbacks_Bulk
 import Callbacks_Surface
 import Callbacks_AFM
-import Presets_Surface
+import Presets
 
 ###### important for latex ######
 import dash_defer_js_import as dji
@@ -336,7 +336,7 @@ def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
     return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
 
 
-# surface presets
+# presets
 @app.callback(
     [Output('SurfaceToggle_type', 'value'),
      Output('SurfaceSlider_Vg', 'value'),
@@ -407,7 +407,7 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
     else:
         button_presets = button_presets
 
-    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets_Surface.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
+    toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'SurfaceSlider_Vg' in changed_id:

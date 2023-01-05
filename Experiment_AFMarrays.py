@@ -5,31 +5,29 @@ import Organization_IntermValues
 import Organization_BuildArrays
 import numpy as np
 import pandas as pd
+import os
 
 ################################################################################
 # Haughton Si values
 
 toggle_type = False
-slider_Vg = 8.5
+slider_Vg = 0
 slider_zins = 6
-slider_Eg = 0.5
+slider_Eg = 1.1
 slider_epsilonsem = 11.7
-slider_WFmet = 4.6
+slider_WFmet = 4.64
 slider_EAsem = 4.05
 slider_emass = 1
 slider_hmass = 1
-slider_donor = 33.2
+slider_donor = 32.7
 slider_acceptor = 0
 slider_T = 300
-slider_alpha = 0.25
-stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+slider_alpha = 0.3
+stylen = {'color': '#57c5f7'}
+stylep = {'color': '#7f7f7f'}
 disabledn = False
 disabledp = True
 
-slider_biassteps = 0
-slider_zinssteps = 0
-slider_timesteps = 128
 slider_amplitude = 6
 slider_resfreq = 300000
 slider_lag = 0
@@ -38,7 +36,13 @@ toggle_RTN = True
 toggle_sampletype = False
 slider_springconst = 42
 slider_Qfactor = 18000
-slider_tipradius = 12.6
+slider_tipradius = 6.25
+slider_cantheight = 500
+slider_cantarea = 50
+
+slider_biassteps = 10#1024
+slider_zinssteps = 1
+slider_timesteps = 10#200
 
 ################################################################################
 # Input values and arrays
@@ -47,13 +51,12 @@ amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=O
 
 # Calculations and results
 NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-Vs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+Vs_AFMarray, F_AFMarray, Fcant_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,0)
 zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD)
 
 # Account for alpha
 Vg = slider_Vg*Physics_Semiconductors.e #J
 Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
-
 
 # Stack arrays to show two periods
 zsem_AFMarray = np.vstack((zsem_AFMarray,zsem_AFMarray[1:]))
@@ -101,17 +104,21 @@ Vvac_AFMarray = pd.DataFrame(Vvac_AFMarray/Physics_Semiconductors.e)
 ################################################################################
 # Save
 
-name = "%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
+thispath = "Xsave_Si_AFMarrays_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f/" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
+thisname = "%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f.csv" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
 
-save_AFMarrays.to_csv('_'.join(['Xsave_AFMtime','Si',name,'timearrays.csv']),index=False)
-zsem_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'zsem.csv']),index=False)
-Evsem_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Evsem.csv']),index=False)
-Eisem_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Eisem.csv']),index=False)
-Ecsem_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Ecsem.csv']),index=False)
-Efsem_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Efsem.csv']),index=False)
-zgap_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'zgap.csv']),index=False)
-Vgap_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Vgap.csv']),index=False)
-zmet_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'zmet.csv']),index=False)
-Vmet_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Vmet.csv']),index=False)
-zvac_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'zvac.csv']),index=False)
-Vvac_AFMarray.to_csv('_'.join(['Xsave_AFMbanddiagram','Si',name,'Vvac.csv']),index=False)
+if not os.path.exists(thispath):
+    os.mkdir(thispath)
+
+save_AFMarrays.to_csv(os.path.join(thispath,'_'.join(['timearrays_Vs',thisname])), index=False)
+zsem_AFMarray.to_csv(os.path.join(thispath,'_'.join(['zsem.csv',thisname])), index=False)
+Evsem_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Evsem.csv',thisname])), index=False)
+Eisem_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Eisem.csv',thisname])), index=False)
+Ecsem_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Ecsem.csv',thisname])), index=False)
+Efsem_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Efsem.csv',thisname])), index=False)
+zgap_AFMarray.to_csv(os.path.join(thispath,'_'.join(['zgap.csv',thisname])), index=False)
+Vgap_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Vgap.csv',thisname])), index=False)
+zmet_AFMarray.to_csv(os.path.join(thispath,'_'.join(['zmet.csv',thisname])), index=False)
+Vmet_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Vmet.csv',thisname])), index=False)
+zvac_AFMarray.to_csv(os.path.join(thispath,'_'.join(['zvac.csv',thisname])), index=False)
+Vvac_AFMarray.to_csv(os.path.join(thispath,'_'.join(['Vvac.csv',thisname])), index=False)

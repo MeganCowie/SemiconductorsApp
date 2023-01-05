@@ -5,31 +5,29 @@ import Organization_IntermValues
 import Organization_BuildArrays
 import numpy as np
 import pandas as pd
+import os
 
 ################################################################################
 # Haughton Si values
 
 toggle_type = False
-slider_Vg = 8.5
+slider_Vg = 0
 slider_zins = 6
-slider_Eg = 0.5
+slider_Eg = 1.1
 slider_epsilonsem = 11.7
-slider_WFmet = 4.6
+slider_WFmet = 4.64
 slider_EAsem = 4.05
 slider_emass = 1
 slider_hmass = 1
-slider_donor = 33.2
+slider_donor = 32.7
 slider_acceptor = 0
 slider_T = 300
-slider_alpha = 0.25
-stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+slider_alpha = 0.3
+stylen = {'color': '#57c5f7'}
+stylep = {'color': '#7f7f7f'}
 disabledn = False
 disabledp = True
 
-slider_biassteps = 0
-slider_zinssteps = 0
-slider_timesteps = 0
 slider_amplitude = 6
 slider_resfreq = 300000
 slider_lag = 0
@@ -38,7 +36,13 @@ toggle_RTN = True
 toggle_sampletype = False
 slider_springconst = 42
 slider_Qfactor = 18000
-slider_tipradius = 12.6
+slider_tipradius = 6.25
+slider_cantheight = 500
+slider_cantarea = 50
+
+slider_biassteps = 10#1024
+slider_zinssteps = 1
+slider_timesteps = 10#200
 
 #slider_zins = slider_zins+slider_amplitude
 
@@ -92,9 +96,13 @@ save_semarrays = pd.concat([save_semarray_z,save_semarray_Ev,save_semarray_Ei,sa
 ################################################################################
 # Save
 
-name = "%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
+thispath = "Xsave_Si_BandDiagram_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f/" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
+thisname = "%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0f_%.0f_%.0f_%.2f.csv" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius)
 
-save_gaparrays.to_csv('_'.join(['Xsave_BandDiagram','Si',name,'gaparrays.csv']),index=False)
-save_vacarrays.to_csv('_'.join(['Xsave_BandDiagram','Si',name,'vacarrays.csv']),index=False)
-save_metarrays.to_csv('_'.join(['Xsave_BandDiagram','Si',name,'metarrays.csv']),index=False)
-save_semarrays.to_csv('_'.join(['Xsave_BandDiagram','Si',name,'semarrays.csv']),index=False)
+if not os.path.exists(thispath):
+    os.mkdir(thispath)
+
+save_gaparrays.to_csv(os.path.join(thispath,'_'.join(['gaparrays_Vs',thisname])), index=False)
+save_vacarrays.to_csv(os.path.join(thispath,'_'.join(['vacarrays_Vs',thisname])), index=False)
+save_metarrays.to_csv(os.path.join(thispath,'_'.join(['metarrays_Vs',thisname])), index=False)
+save_semarrays.to_csv(os.path.join(thispath,'_'.join(['semarrays_Vs',thisname])), index=False)

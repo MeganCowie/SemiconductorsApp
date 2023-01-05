@@ -12,25 +12,22 @@ import os
 
 toggle_type = False
 slider_Vg = 0
-slider_zins = 8
-slider_Eg = 0.5
+slider_zins = 6
+slider_Eg = 1.1
 slider_epsilonsem = 11.7
-slider_WFmet = 4.55
+slider_WFmet = 4.64
 slider_EAsem = 4.05
 slider_emass = 1
 slider_hmass = 1
 slider_donor = 32.7
 slider_acceptor = 0
 slider_T = 300
-slider_alpha = 0.4
-stylen = {'color': '#57c5f7', 'fontSize': 18, 'text-align': 'right'}
-stylep = {'color': '#7f7f7f', 'fontSize': 18, 'text-align': 'right'}
+slider_alpha = 0.3
+stylen = {'color': '#57c5f7'}
+stylep = {'color': '#7f7f7f'}
 disabledn = False
 disabledp = True
 
-slider_biassteps = 1024
-slider_zinssteps = 1
-slider_timesteps = 200
 slider_amplitude = 6
 slider_resfreq = 300000
 slider_lag = 0
@@ -39,7 +36,13 @@ toggle_RTN = True
 toggle_sampletype = False
 slider_springconst = 42
 slider_Qfactor = 18000
-slider_tipradius = 21.2
+slider_tipradius = 6.25
+slider_cantheight = 500
+slider_cantarea = 50
+
+slider_biassteps = 10#1024
+slider_zinssteps = 1
+slider_timesteps = 10#200
 
 ################################################################################
 # Inputs
@@ -128,13 +131,13 @@ for index in range(len(ExperimentArray)):
 
     # Input values and arrays
     Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
-    amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(this_slider_amplitude,slider_resfreq,this_slider_lag,slider_timesteps, zins)
-    springconst,Qfactor,tipradius=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius)
+    amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  zins)
+    springconst,Qfactor,tipradius,cantheight,cantarea=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius,slider_cantheight,slider_cantarea)
 
     # Calculations and results
     NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-    Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
-    Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray,df_zinsarray,dg_zinsarray = Organization_BuildArrays.All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray)
+    Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray)
+    Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray,df_zinsarray,dg_zinsarray = Organization_BuildArrays.All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray)
 
     # Unit conversions
     Vs_biasarray = Vs_biasarray/Physics_Semiconductors.e
@@ -192,7 +195,7 @@ print('zins = ' + str(slider_zins))
 # Save
 
 thispath = "Xsave_Si_Dependencies_%s_%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f/" % (experiment, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha)
-thisname = "%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha)
+thisname = "%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f.csv" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha)
 
 if not os.path.exists(thispath):
     os.mkdir(thispath)

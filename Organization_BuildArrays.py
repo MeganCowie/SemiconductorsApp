@@ -154,7 +154,7 @@ def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
 ################################################################################
 ################################################################################
 
-def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,time_AFMarray,zinslag_AFMarray):
+def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
@@ -167,7 +167,7 @@ def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg_variable,zins)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
+        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius,cantarea)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln,df_soln,dg_soln]
 
     # Then parallelize the calculations for every Vg
@@ -186,7 +186,7 @@ def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
 
 ################################################################################
 
-def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,time_AFMarray,zinslag_AFMarray):
+def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(zins_variable):
@@ -198,7 +198,7 @@ def All_zinsarrays(Vg,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
-        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius)
+        df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius,cantarea)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln,df_soln,dg_soln]
 
     # Then parallelize the calculations for every Vg

@@ -1,8 +1,5 @@
 # Vary the dopant concentration of n-type silicon
 import Physics_Semiconductors
-import Physics_BandDiagram
-import Organization_IntermValues
-import Organization_BuildArrays
 import numpy as np
 import pandas as pd
 import os

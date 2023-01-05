@@ -66,7 +66,7 @@ AFM_Card2 = html.Div([
             html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
             html.Div(id='AFMText_tipradius', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.01, value=6.26),
+        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.01, value=6.25),
 
         html.Div([
             html.Div("Cantilever height (nm)", className='label_name', id="AFMText_cantheightlabel"),
@@ -78,7 +78,7 @@ AFM_Card2 = html.Div([
             html.Div("Cantilever area (um^2)", className='label_name', id="AFMText_cantarealabel"),
             html.Div(id='AFMText_cantarea', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_cantarea', className='slider', marks=None, min=0, max=100, step=5, value=50),
+        dcc.Slider(id='AFMSlider_cantarea', className='slider', marks=None, min=0, max=100, step=1, value=50),
 
     ], className= 'controls_container'),
 ], className='controls', hidden=True, id='display_BiasSweepExperimentcontrols')
