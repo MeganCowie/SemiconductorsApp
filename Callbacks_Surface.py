@@ -297,8 +297,8 @@ def readouts_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slide
     readout_epsilonsem = '{0:.1f}'.format(slider_epsilonsem)
     readout_WFmet = '{0:.2f}'.format(slider_WFmet)
     readout_EAsem = '{0:.2f}'.format(slider_EAsem)
-    readout_donor = '{0:.0e}'.format(round((10**slider_donor)/(1e15))) #/cm**3
-    readout_acceptor ='{0:.0e}'.format(round((10**slider_acceptor)/(1e15))) #/cm**3
+    readout_donor = '{0:.2e}'.format(round((10**slider_donor)/(1e15))) #/cm**3
+    readout_acceptor ='{0:.2e}'.format(round((10**slider_acceptor)/(1e15))) #/cm**3
     readout_emass = '{0:.1f}'.format(slider_emass)
     readout_hmass = '{0:.1f}'.format(slider_hmass)
     readout_T = '{0:.4g}'.format(slider_T)

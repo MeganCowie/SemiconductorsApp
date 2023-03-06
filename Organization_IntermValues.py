@@ -79,7 +79,7 @@ def AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius,slider_c
     springconst = slider_springconst #N/m
     Qfactor = slider_Qfactor
     tipradius = slider_tipradius*1e-9 #m
-    cantheight = slider_cantheight*1e-9 #m
+    cantheight = slider_cantheight*1e-6 #m
     cantarea = slider_cantarea*(1e-6)**2 #m^2
 
     return springconst,Qfactor,tipradius,cantheight,cantarea

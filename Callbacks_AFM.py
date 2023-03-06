@@ -271,18 +271,28 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_A+1.38,
-            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            name = "df_A", mode='lines', showlegend=False,
             line_color=color_indicator
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_B+1.69,
-            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            name = "df_B", mode='lines', showlegend=False,
             line_color=color_Ev
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_C+1.69,
-            name = "FrequencyShiftData", mode='lines', showlegend=False,
+            name = "df_C", mode='lines', showlegend=False,
             line_color=color_Ec
+            ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df_D+1.35,
+            name = "df_D", mode='lines', showlegend=False,
+            line_color=color_Ei
+            ), row=1, col=2)
+        fig2.add_trace(go.Scatter(
+            x = Data_Vg, y = Data_df_E+1.35,
+            name = "df_E", mode='lines', showlegend=False,
+            line_color=color_Ef
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
@@ -714,8 +724,8 @@ def readouts_AFM(slider_timesteps, slider_amplitude, slider_lag, slider_resfreq,
     readout_resfreq = '{0:.0f}'.format(slider_resfreq)
     readout_springconst = '{0:.0f}'.format(slider_springconst)
     readout_Qfactor = '{0:.0f}'.format(slider_Qfactor)
-    readout_tipradius = '{0:.2f}'.format(slider_tipradius)
-    readout_cantheight = '{0:.0f}'.format(slider_cantheight)
+    readout_tipradius = '{0:.3f}'.format(slider_tipradius)
+    readout_cantheight = '{0:.3f}'.format(slider_cantheight)
     readout_cantarea = '{0:.0f}'.format(slider_cantarea)
     readout_pulsetimesteps = '{0:.0f}'.format(slider_pulsetimesteps)
     readout_delaysteps = '{0:.0f}'.format(slider_delaysteps)

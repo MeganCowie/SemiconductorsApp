@@ -17,8 +17,8 @@ slider_Eg = 1.1
 slider_epsilonsem = 11.7
 slider_WFmet = 4.64
 slider_EAsem = 4.05
-slider_emass = 1
-slider_hmass = 1
+slider_emass = 1.08
+slider_hmass = 0.56
 slider_donor = 32.7
 slider_acceptor = 0
 slider_T = 300
@@ -40,9 +40,9 @@ slider_tipradius = 6.25
 slider_cantheight = 500
 slider_cantarea = 50
 
-slider_biassteps = 10#1024
+slider_biassteps = 1024
 slider_zinssteps = 1
-slider_timesteps = 10#200
+slider_timesteps = 200
 
 ################################################################################
 # Input values and arrays
@@ -72,6 +72,7 @@ zins_AFMarray = np.hstack((zins_AFMarray,zins_AFMarray[1:]))
 Vs_AFMarray = np.hstack((Vs_AFMarray,Vs_AFMarray[1:]))
 F_AFMarray = np.hstack((F_AFMarray,F_AFMarray[1:]))
 P_AFMarray = np.hstack((P_AFMarray,P_AFMarray[1:]))
+
 
 # Unit conversions and organize arrays for saving
 

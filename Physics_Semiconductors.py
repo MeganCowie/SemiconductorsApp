@@ -67,8 +67,8 @@ def Func_NeNh(E, fc, fv, gc, gv, Ec, Ev): # /(J*m**3)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 89-91)
     # Sze Physics of Semiconductor Devices (pg 19)
 def Func_NCNV(T, mn, mp): # /(m**3)
-    NC = 2*((2*sp.pi*mn*kB*T)/(hbar**2))**(3/2)
-    NV = 2*((2*sp.pi*mp*kB*T)/(hbar**2))**(3/2)
+    NC = 1/np.sqrt(2)*((mn*kB*T)/(sp.pi*hbar**2))**(3/2)
+    NV = 1/np.sqrt(2)*((mp*kB*T)/(sp.pi*hbar**2))**(3/2)
     return NC, NV
 
 # conduction and valence band absolute energies
@@ -208,11 +208,8 @@ def Func_F(Qs,CPD,Vg,zins):
 # Polarization
     # One-dimensional sum of electric dipoles
 def Func_P(zsem, Qsem):
-    d = 1 #arbitrary depth #m
-    A = 1 #arbitrary area #m**2
-    V = A*d #arbitrary volume #m**3
-    p = zsem*Qsem*A #electric dipole  #Cm 
-    P = np.sum(p)/V #electric polarization #C/m**2
+    p = zsem*Qsem #electric dipole  #Cm 
+    P = np.sum(p) #electric polarization #Cm
     return P
 
 # Identify MIS capacitor regime
