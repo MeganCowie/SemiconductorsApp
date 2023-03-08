@@ -115,9 +115,3 @@ def BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CP
     Qarray = np.hstack((Qmetarray,Qinsarray,Qsemarray))
 
     return zgap,Vgap, zvac,Vvac, zmet,Vmet, zarray,Earray,Qarray
-
-
-#save_X = pd.DataFrame({"X": [str(x) for x in zsem]})
-#save_Y = pd.DataFrame({"Y": [str(x) for x in E]})
-#save = pd.concat([save_X,save_Y], axis=1, join="inner")
-#save.to_csv('Xsave_test.csv',index=False)

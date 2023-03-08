@@ -11,15 +11,15 @@ import os
 # Haughton Si values
 
 toggle_type = False
-slider_Vg = 0
-slider_zins = 6
-slider_Eg = 1.1
-slider_epsilonsem = 11.7
-slider_WFmet = 4.64
-slider_EAsem = 4.05
+slider_Vg = 5
+slider_zins = 2#6
+slider_Eg = 1.5#1.1
+slider_epsilonsem = 1.0#11.7
+slider_WFmet = 2.2
+slider_EAsem = 2.3
 slider_emass = 1.08
 slider_hmass = 0.56
-slider_donor = 32.7
+slider_donor = 31.7
 slider_acceptor = 0
 slider_T = 300
 slider_alpha = 0.3
@@ -40,9 +40,9 @@ slider_tipradius = 6.25
 slider_cantheight = 500
 slider_cantarea = 50
 
-slider_biassteps = 10#1024
-slider_zinssteps = 1
-slider_timesteps = 10#200
+slider_biassteps = 1024
+slider_zinssteps = 1024
+slider_timesteps = 1
 
 #slider_zins = slider_zins+slider_amplitude
 
@@ -75,8 +75,8 @@ Vsem_Ef = 0*zsem+Ef/Physics_Semiconductors.e
 # Organize arrays for saving
 save_gaparray_z = pd.DataFrame({'zgap': [str(x) for x in zgap]})
 save_gaparray_V = pd.DataFrame({'Vgap': [str(x) for x in Vgap]})
-save_vacarray_z = pd.DataFrame({'zvac': [str(x) for x in zgap]})
-save_vacarray_V = pd.DataFrame({'Vvac': [str(x) for x in Vgap]})
+save_vacarray_z = pd.DataFrame({'zvac': [str(x) for x in zvac]})
+save_vacarray_V = pd.DataFrame({'Vvac': [str(x) for x in Vvac]})
 save_metarray_z = pd.DataFrame({'zmet': [str(x) for x in zmet]})
 save_metarray_V = pd.DataFrame({'Vmet': [str(x) for x in Vmet]})
 save_semarray_z = pd.DataFrame({'zsem': [str(x) for x in zsem]})
@@ -102,7 +102,7 @@ thisname = "%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.0f_%.0f_%.0f_%.0
 if not os.path.exists(thispath):
     os.mkdir(thispath)
 
-save_gaparrays.to_csv(os.path.join(thispath,'_'.join(['gaparrays_Vs',thisname])), index=False)
-save_vacarrays.to_csv(os.path.join(thispath,'_'.join(['vacarrays_Vs',thisname])), index=False)
-save_metarrays.to_csv(os.path.join(thispath,'_'.join(['metarrays_Vs',thisname])), index=False)
-save_semarrays.to_csv(os.path.join(thispath,'_'.join(['semarrays_Vs',thisname])), index=False)
+save_gaparrays.to_csv(os.path.join(thispath,'_'.join(['gaparrays',thisname])), index=False)
+save_vacarrays.to_csv(os.path.join(thispath,'_'.join(['vacarrays',thisname])), index=False)
+save_metarrays.to_csv(os.path.join(thispath,'_'.join(['metarrays',thisname])), index=False)
+save_semarrays.to_csv(os.path.join(thispath,'_'.join(['semarrays',thisname])), index=False)

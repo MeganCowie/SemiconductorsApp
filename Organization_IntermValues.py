@@ -40,7 +40,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     no,po = Physics_Semiconductors.Func_nopo(NC, NV, Ec, Ev, Ef, T)
     ni = Physics_Semiconductors.Func_ni(NC, NV, Eg, T)
     nb,pb = Physics_Semiconductors.Func_nbpb(Na, Nd, ni)
-    CPD = Physics_Semiconductors.Func_CPD(WFmet, EAsem, Ef, Eg, Ec, Ev, Na, Nd)
+    CPD,Ef,Ec,Ev,Ei = Physics_Semiconductors.Func_CPD(WFmet, EAsem, Ef, Eg, Ec, Ev, Ei, Na, Nd)   
     LD = Physics_Semiconductors.Func_LD(epsilon_sem,po,T)
     Vs = Physics_Semiconductors.Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
     f = Physics_Semiconductors.Func_f(T,Vs,nb,pb)
@@ -50,6 +50,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
     zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs)
     P = Physics_Semiconductors.Func_P(zsem, Qsem)
+
     return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P
 
 

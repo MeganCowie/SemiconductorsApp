@@ -71,11 +71,12 @@ def Func_NCNV(T, mn, mp): # /(m**3)
     NV = 1/np.sqrt(2)*((mp*kB*T)/(sp.pi*hbar**2))**(3/2)
     return NC, NV
 
-# conduction and valence band absolute energies
-# The conduction band level does not impact the Vs or F, so set arbitrarily as 1
+# conduction and valence arbitrary energies
+# The conduction band level does not impact the Vs or F, so set arbitrarily as 1 for now
+# We only need absolute eneries for drawing the band diagram. See CPD definition below. 
     # Jonscher Solid Semiconductors (pg 30)
 def Func_EcEv(Eg): # J
-    Ev = 1*e
+    Ev = 0*e
     Ec = Ev+Eg
     return Ec, Ev
 
@@ -135,13 +136,27 @@ def Func_Ef(NC, NV, Ec, Ev, T, Nd, Na): # J
 # Contact potential difference
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
     # Sze Physics of Semiconductor Devices (pg 199, 225)
-def Func_CPD(WFmet, EAsem, Ef, Eg, Ec, Ev, Na, Nd):
+def Func_CPD(WFmet, EAsem, Ef, Eg, Ec, Ev, Ei, Na, Nd):
     if Na <=1e-9: #n-type
         WFsem = EAsem + (Ec-Ef) # J
     elif Nd <=1e-9: #p-type
         WFsem = EAsem + Eg/2 + (Ef-Ev) # J
     CPD = WFmet - WFsem # J
-    return CPD
+
+    # Now we can state the energy levels explicitly. 
+    # They aren't needed for anything except drawing the band diagram. 
+    # (That is, all equations account just for energy differences rather than absolute energies, except drawing the band diagram.)
+
+    Delta_EcEf = Ec-Ef
+    Delta_EvEf = Ev-Ef
+    Delta_EiEf = Ei-Ef
+
+    Ef = -CPD
+    Ec = Ef+Delta_EcEf
+    Ev = Ef+Delta_EvEf
+    Ei = Ef+Delta_EiEf
+
+    return CPD, Ef,Ec,Ev,Ei
 
 # flatband voltage (assuming no trapped charges)
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 434)
