@@ -114,11 +114,13 @@ Surface_Card = html.Div([
             html.Div("Presets", id="SurfaceText_Presets"),
             dcc.RadioItems(id="SurfaceButtons_presets", options=[
                 {'label': '   MoSe2', 'value': 1},
-                {'label': '   Silicon', 'value': 2},
+                {'label': '   Silicon_A', 'value': 2},
                 {'label': '   Pentacene', 'value': 3},
-                {'label': '   Other', 'value': 4}
+                {'label': '   Figure_ntype', 'value': 4},
+                {'label': '   Figure_ptype', 'value': 5},
+                {'label': '   Other', 'value': 0}
                 ]
-            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=4, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
 
         html.Div([

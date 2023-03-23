@@ -336,7 +336,7 @@ def update_output(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
     return readout_Vg, readout_zins, readout_Eg, readout_epsilonsem, readout_WFmet, readout_EAsem, readout_donor, readout_acceptor, readout_emass, readout_hmass, readout_T, readout_alpha, readout_biassteps, readout_zinssteps
 
 
-# presets
+# surface presets
 @app.callback(
     [Output('SurfaceToggle_type', 'value'),
      Output('SurfaceSlider_Vg', 'value'),
@@ -379,33 +379,33 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
     # Somehow writing this as an or statement doesn't work, so for now it looks like this.
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'SurfaceToggle_type' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_Vg' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_zins' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_Eg' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_epsilonsem' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_WFmet' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_EAsem' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_donor' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_acceptor' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_emass' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_hmass' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_T' in changed_id:
-        button_presets = 4
+        button_presets = 0
     elif 'SurfaceSlider_alpha' in changed_id:
-        button_presets = 4
+        button_presets = 0
     else:
-        button_presets = button_presets
+        button_presets = button_presets_og
 
     toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha)
 
@@ -420,6 +420,8 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
         button_presets = button_presets
 
     return toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp, 'n-type', 'p-type'
+
+
 
 ################################################################################################################################################################
 ################################################################################################################################################################
@@ -481,6 +483,87 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
 def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag):
     fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag)
     return fig2
+
+
+# afm presets
+@app.callback(
+    [Output('AFMSlider_timesteps', 'value'),
+     Output('AFMSlider_amplitude', 'value'),
+     Output('AFMSlider_resfreq', 'value'),
+     Output('AFMSlider_lag', 'value'),
+     Output('AFMSlider_springconst', 'value'),
+     Output('AFMSlider_tipradius', 'value'),
+     Output('AFMSlider_cantheight', 'value'),
+     Output('AFMSlider_cantarea', 'value'),
+     Output('AFMSlider_Qfactor', 'value')],
+     [Input('AFMButtons_presets', 'value'),
+     Input('AFMSlider_timesteps', 'value'),
+     Input('AFMSlider_amplitude', 'value'),
+     Input('AFMSlider_resfreq', 'value'),
+     Input('AFMSlider_lag', 'value'),
+     Input('AFMSlider_springconst', 'value'),
+     Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_cantheight', 'value'),
+     Input('AFMSlider_cantarea', 'value'),
+     Input('AFMSlider_Qfactor', 'value')])
+def presets(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor):
+
+    button_presets_og = button_presets
+
+    # Somehow writing this as an or statement doesn't work, so for now it looks like this.
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if 'SurfaceToggle_type' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_timesteps' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_amplitude' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_resfreq' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_lag' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_springconst' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_tipradius' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_cantheight' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_cantarea' in changed_id:
+        button_presets = 0
+    elif 'AFMSlider_Qfactor' in changed_id:
+        button_presets = 0
+    else:
+        button_presets = button_presets_og
+
+    slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor = Presets.presets_afm(button_presets, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor)
+
+    return slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''
 # Time trace experiment figure
 @app.callback(

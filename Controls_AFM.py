@@ -36,7 +36,23 @@ AFM_Card1 = html.Div([
             html.Div(id='AFMText_lag', className='label_value'),
         ], className='label_container'),
         dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=100, step=5, value=30),
+    
     ], className= 'controls_container'),
+   
+    html.Div([
+
+        html.Div([
+            html.Div("Presets", id="AFMText_Presets"),
+            dcc.RadioItems(id="AFMButtons_presets", options=[
+                {'label': '   Figure', 'value': 1},
+                {'label': '   Other', 'value': 0}
+                ]
+            ,value=1, labelStyle={"width": '50%','display': 'inline-block'}),
+        ], className='presets_container'),
+        
+    ], className= 'controls_container'),
+
+
 ], className='controls', hidden=True, id='display_fmAFMoscillationscontrols')
 
 

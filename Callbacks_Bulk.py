@@ -194,7 +194,7 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
                       yaxis=dict(range=[min_y,max_y]), transition_duration=100, margin=dict(t=0))
     fig.update_xaxes(title_text="f(E)", range=[min_x,max_x], row=1, col=1)
     fig.update_xaxes(title_text="g(E) (/eV cm^3)", row=1, col=2)
-    fig.update_xaxes(title_text="Carriers (/eV cm^3)", row=1, col=3)
+    fig.update_xaxes(title_text="Carriers (/cm^3)", row=1, col=3)
     return fig
 
 

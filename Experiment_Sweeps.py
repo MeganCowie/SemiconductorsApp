@@ -1,4 +1,5 @@
 # Vary the dopant concentration of n-type silicon
+import Presets
 import Physics_Semiconductors
 import Organization_IntermValues
 import Organization_BuildArrays
@@ -8,59 +9,54 @@ import os
 
 
 ################################################################################
-# Haughton Si values
+'''
+# n-type:
+button_presets = 4
+Ec = -0.3333455
+Ef = -0.4166885
+'''
+# p-type:
+button_presets = 5
+Ec = 1.333346
+Ef = 0.4166885
 
-toggle_type = False
-slider_Vg_OG = 0
-slider_zins_OG = 6
-slider_Eg = 1.1
-slider_epsilonsem = 11.7
-slider_WFmet = 4.50
-slider_EAsem = 4.05
-slider_emass = 1.08
-slider_hmass = 0.56
-slider_donor = 30
-slider_acceptor = 0
-slider_T = 300
-slider_alpha = 0.3
-stylen = {'color': '#57c5f7'}
-stylep = {'color': '#7f7f7f'}
-disabledn = False
-disabledp = True
+toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
+CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
-slider_amplitude = 6
-slider_resfreq = 300000
-slider_lag = 0
-slider_hop = 0
-toggle_RTN = True
-toggle_sampletype = False
-slider_springconst = 42
-slider_Qfactor = 18000
-slider_tipradius = 6.25
-slider_cantheight = 2.1
-slider_cantarea = 3750
+button_presets = 1 #AFM
+slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor = Presets.presets_afm(button_presets,0,0,0,0,0,0,0,0,0)
 
-slider_biassteps = 101
-slider_zinssteps = 79
+
+slider_biassteps = 1024
+slider_zinssteps = 1024
 slider_timesteps = 200
+
+slider_zins_OG = slider_zins#+slider_amplitude
+slider_Vg_OG = -0.2
+
 
 ################################################################################
 # Inputs
 
-slider_zins_array = np.array([slider_zins_OG,slider_zins_OG+slider_amplitude])
-slider_Vg_array = np.array([-9,-6,-3,0,3,6,9])
+slider_zins_array = np.array([slider_zins_OG])#,slider_zins_OG+slider_amplitude])
+slider_Vg_array = np.array([slider_Vg_OG])
 
-experiment = 'Nd'
+experiment = 'single'
+#experiment = 'Nd'
+#experiment = 'Na'
 #experiment = 'emass'
 #experiment = 'hmass'
 #experiment = 'Eg'
 #experiment = 'epsilonsem'
 #experiment = 'amplitude'
-#experiment = 'zins'
 #experiment = 'lag'
 
-if experiment=='Nd':
-    ExperimentArray =  np.linspace(30,36,121)
+if experiment=='single':
+    ExperimentArray =  np.linspace(1,1,1)
+elif experiment=='Nd':
+    ExperimentArray =  np.linspace(33,33,1)
+elif experiment=='Na':
+    ExperimentArray =  np.linspace(33,33,1)
 elif experiment=='emass':
     ExperimentArray =  np.linspace(0.1,1.2,23)
 elif experiment=='hmass':
@@ -106,8 +102,12 @@ for slider_zins in slider_zins_array:
 
     for index in range(len(ExperimentArray)):
 
-        if experiment=='Nd':
+        if experiment=='single':
+            pass 
+        elif experiment=='Nd':
             slider_donor = ExperimentArray[index]
+        elif experiment=='Na':
+            slider_acceptor = ExperimentArray[index]
         elif experiment=='emass':
             mn = ExperimentArray[index]*Physics_Semiconductors.me #kg
         elif experiment=='hmass':
@@ -118,8 +118,6 @@ for slider_zins in slider_zins_array:
             epsilon_sem = ExperimentArray[index] #dimensionless
         elif experiment=='amplitude':
             slider_amplitude = ExperimentArray[index]  #nm
-        elif experiment=='zins':
-            zins = ExperimentArray[index]*1e-9 #m
         elif experiment=='lag':
             slider_lag = ExperimentArray[index] #ns
         else:
@@ -166,19 +164,18 @@ for slider_zins in slider_zins_array:
     ##################
     # Save
 
-    thispath = "Xsave_Si_Experiment_AFMarrays/" 
-    thisname = "%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f.csv" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
+    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
 
     if not os.path.exists(thispath):
         os.mkdir(thispath)
 
-    save_Vs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Vs',thisname])), index=False)
-    save_F_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_F',thisname])), index=False)
-    save_Es_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Es',thisname])), index=False)
-    save_Qs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Qs',thisname])), index=False)
-    save_P_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_P',thisname])), index=False)
-    save_df_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_df',thisname])), index=False)
-    save_dg_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_dg',thisname])), index=False)
+    save_Vs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Vs.csv'])), index=False)
+    save_F_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_F.csv'])), index=False)
+    save_Es_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Es.csv'])), index=False)
+    save_Qs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Qs.csv'])), index=False)
+    save_P_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_P.csv'])), index=False)
+    save_df_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_df.csv'])), index=False)
+    save_dg_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_dg.csv'])), index=False)
 
 
 
@@ -211,8 +208,12 @@ for slider_Vg in slider_Vg_array:
 
     for index in range(len(ExperimentArray)):
 
-        if experiment=='Nd':
+        if experiment=='single':
+            pass
+        elif experiment=='Nd':
             slider_donor = ExperimentArray[index]
+        elif experiment=='Na':
+            slider_acceptor = ExperimentArray[index]
         elif experiment=='emass':
             mn = ExperimentArray[index]*Physics_Semiconductors.me #kg
         elif experiment=='hmass':
@@ -223,8 +224,6 @@ for slider_Vg in slider_Vg_array:
             epsilon_sem = ExperimentArray[index] #dimensionless
         elif experiment=='amplitude':
             slider_amplitude = ExperimentArray[index]  #nm
-        elif experiment=='zins':
-            zins = ExperimentArray[index]*1e-9 #m
         elif experiment=='lag':
             slider_lag = ExperimentArray[index] #ns
         else:
@@ -271,16 +270,15 @@ for slider_Vg in slider_Vg_array:
     ##################
     # Save
 
-    thispath = "Xsave_Si_Experiment_AFMarrays/" 
-    thisname = "%.0f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f.csv" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
+    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
 
     if not os.path.exists(thispath):
         os.mkdir(thispath)
 
-    save_Vs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Vs',thisname])), index=False)
-    save_F_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_F',thisname])), index=False)
-    save_Es_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Es',thisname])), index=False)
-    save_Qs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Qs',thisname])), index=False)
-    save_P_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_P',thisname])), index=False)
-    save_df_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_df',thisname])), index=False)
-    save_dg_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_dg',thisname])), index=False)
+    save_Vs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Vs.csv'])), index=False)
+    save_F_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_F.csv'])), index=False)
+    save_Es_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Es.csv'])), index=False)
+    save_Qs_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_Qs.csv'])), index=False)
+    save_P_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_P.csv'])), index=False)
+    save_df_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_df.csv'])), index=False)
+    save_dg_zinsarrays.to_csv(os.path.join(thispath,'_'.join(['zinsarray_dg.csv'])), index=False)

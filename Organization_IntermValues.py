@@ -5,6 +5,10 @@ import Physics_BandDiagram
 import Physics_ncAFM
 
 
+################################################################################
+################################################################################
+# Surface
+
 def Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps):
 
     # values
@@ -48,7 +52,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     Qs = Physics_Semiconductors.Func_Q(epsilon_sem,Es)
     F = Physics_Semiconductors.Func_F(Qs,CPD,Vg,zins)
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
-    zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs)
+    zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs)
     P = Physics_Semiconductors.Func_P(zsem, Qsem)
 
     return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P
@@ -56,7 +60,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 
 ################################################################################
 ################################################################################
-
+# AFM
 
 def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps, zins):
 
@@ -68,8 +72,8 @@ def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps
 
     # arrays
     time_AFMarray = np.linspace(0, 2*np.pi, timesteps)
-    zins_AFMarray = zins+amplitude*np.sin(time_AFMarray-np.pi/2)+amplitude #m
-    zinslag_AFMarray = zins+amplitude*np.sin(time_AFMarray-np.pi/2-lag)+amplitude #m
+    zins_AFMarray = zins+amplitude/2*np.sin(time_AFMarray-np.pi/2)+amplitude/2 #m
+    zinslag_AFMarray = zins+amplitude/2*np.sin(time_AFMarray-np.pi/2-lag)+amplitude/2 #m
 
     return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 

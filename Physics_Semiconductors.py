@@ -137,10 +137,8 @@ def Func_Ef(NC, NV, Ec, Ev, T, Nd, Na): # J
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 431)
     # Sze Physics of Semiconductor Devices (pg 199, 225)
 def Func_CPD(WFmet, EAsem, Ef, Eg, Ec, Ev, Ei, Na, Nd):
-    if Na <=1e-9: #n-type
-        WFsem = EAsem + (Ec-Ef) # J
-    elif Nd <=1e-9: #p-type
-        WFsem = EAsem + Eg/2 + (Ef-Ev) # J
+    
+    WFsem = EAsem + (Ec-Ef) # J
     CPD = WFmet - WFsem # J
 
     # Now we can state the energy levels explicitly. 
@@ -217,7 +215,7 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
 # Force between MIS plates
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_F(Qs,CPD,Vg,zins):
-    F = (-Qs**2/(2*epsilon_o))#-10**(37.35)*(epsilon_o*(Vg-CPD)**2/(2*zins**2)) # N/m**2 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    F = (-Qs**2/(2*epsilon_o))#-10**(37.35)*(epsilon_o*(Vg-CPD)**2/(2*zins**2)) # N/m**2
     return F
 
 # Polarization
@@ -234,26 +232,26 @@ def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
             regime = 1 #accumulation
         elif Vs == 0:
             regime = 2 #flatband
-        elif Ef < (Ec+Vs):
+        elif Ef > (Ei-Vs):
             regime = 3 #depletion
-        elif Ef == (Ec+Vs):
+        elif Ef == (Ei-Vs):
             regime = 4 #threshold
-        elif Vs <= 2*(Ei-Ef):
+        elif Ef < (Ev-Vs):
             regime = 6 #strong inversion
-        elif Ef > (Ec+Vs):
+        else:
             regime = 5 #weak inversion
     elif Nd <=1e-9: #p-type
         if Vs < 0:
             regime = 1 #accumulation
         elif Vs == 0:
             regime = 2 #flatband
-        elif Ef > (Ev+Vs):
+        elif Ef < (Ei-Vs):
             regime = 3 #depletion
-        elif Ef == (Ev+Vs):
+        elif Ef == (Ei-Vs):
             regime = 4 #threshold
-        elif Vs >= 2*(Ei-Ef):
+        elif Ef > (Ec-Vs):
             regime = 6 #strong inversion
-        elif Ef < (Ev+Vs):
+        else:
             regime = 5 #weak inversion
     return regime
 

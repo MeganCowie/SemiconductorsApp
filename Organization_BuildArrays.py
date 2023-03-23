@@ -29,7 +29,7 @@ def Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg_variable,zins)
-        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
+        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln, P_soln]
 
@@ -56,7 +56,7 @@ def Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni):
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg,zins_variable)
-        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
+        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
         P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln]
 
@@ -86,7 +86,7 @@ def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg,zins_variable)
         Fcant_soln = Physics_ncAFM.cantilever(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,cantheight)
-        #zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
+        #zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
         P_soln = 1#Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         return [Vs_soln,F_soln,Fcant_soln,P_soln]
 
@@ -103,13 +103,13 @@ def AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,
 
 ################################################################################
 
-def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,CPD):
+def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD):
 
     # Calculate list any functions that are not constant as a function of zins
     def compute(zins_variable):
         Vs_soln = Physics_Semiconductors.Func_Vs(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
-        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
-        zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln  = Physics_BandDiagram.BandDiagram(Vg,zins_variable,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs_soln,Ec,Ev,Ef,CPD, zsem_soln,Vsem_soln,Esem_soln,Qsem_soln)
+        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
+        zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln  = Physics_BandDiagram.BandDiagram(Vg,zins_variable,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs_soln,Ec,Ev,Ef,Ei,Eg,CPD, zsem_soln,Vsem_soln,Esem_soln,Qsem_soln)
         return [zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln]
 
     # Then parallelize the calculations for every zins
@@ -167,7 +167,7 @@ def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
         #F_soln = Physics_Semiconductors.Func_F(Qs_soln,CPD,Vg_variable,zins)
-        #zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,Na,Nd,ni,nb,pb,Vs_soln)
+        #zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
         #P_soln = Physics_Semiconductors.Func_P(zsem_soln, Qsem_soln)
         df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius,cantarea)
         return [Vs_soln,F_soln,Es_soln,Qs_soln,P_soln,df_soln,dg_soln]
