@@ -9,7 +9,7 @@ import pandas as pd
 import os
 
 ################################################################################
-'''
+
 # n-type:
 button_presets = 4
 Ec = -0.3333455
@@ -19,7 +19,7 @@ Ef = -0.4166885
 button_presets = 5
 Ec = 1.333346
 Ef = 0.4166885
-
+'''
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
@@ -32,9 +32,13 @@ slider_zinssteps = 1024
 slider_timesteps = 200
 
 slider_zins = slider_zins#+slider_amplitude
-slider_Vg = 1.2
+slider_Vg = 0
+
+slider_lag = 500
 
 ################################################################################
+# AFMarrays
+
 # Input values and arrays
 Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
 amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,  zins)
@@ -57,21 +61,20 @@ zvac_AFMarray = np.vstack((zvac_AFMarray,zvac_AFMarray[1:]))
 Vvac_AFMarray = np.vstack((Vvac_AFMarray,Vvac_AFMarray[1:]))
 zmet_AFMarray = np.vstack((zmet_AFMarray,zmet_AFMarray[1:]))
 Vmet_AFMarray = np.vstack((Vmet_AFMarray,Vmet_AFMarray[1:]))
-time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi))
+time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi/frequency))
 zins_AFMarray = np.hstack((zins_AFMarray,zins_AFMarray[1:]))
 Vs_AFMarray = np.hstack((Vs_AFMarray,Vs_AFMarray[1:]))
 F_AFMarray = np.hstack((F_AFMarray,F_AFMarray[1:]))
 P_AFMarray = np.hstack((P_AFMarray,P_AFMarray[1:]))
 
-
-# Unit conversions and organize arrays for saving
-
+# Unit conversions
 time_AFMarray = time_AFMarray
 zins_AFMarray = zins_AFMarray*1e9
 Vs_AFMarray = Vs_AFMarray/Physics_Semiconductors.e
 F_AFMarray = F_AFMarray*(1e-9)**2*1e12
 P_AFMarray = P_AFMarray #units?
 
+ # Organize arrays for saving
 save_AFMarray_time = pd.DataFrame({'time': [str(x) for x in time_AFMarray]})
 save_AFMarray_zins = pd.DataFrame({'zins': [str(x) for x in zins_AFMarray]})
 save_AFMarray_Vs = pd.DataFrame({'Vs': [str(x) for x in Vs_AFMarray]})

@@ -1,3 +1,5 @@
+import numpy as np
+
 def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha):
     if button_presets == 1: #MoSe2
         toggle_type = True
@@ -131,11 +133,11 @@ def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfre
         slider_timesteps = 30
         slider_amplitude = 6
         slider_resfreq = 300000
-        slider_lag = 30
+        slider_lag = 0
         slider_springconst = 42
-        slider_tipradius = 6.25
-        slider_cantheight = 2.1
-        slider_cantarea = 3750
+        slider_tipradius = 5
+        slider_cantheight = 0
+        slider_cantarea = 0
         slider_Qfactor = 18000
     else:
         slider_timesteps = slider_timesteps

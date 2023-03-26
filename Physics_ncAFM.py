@@ -30,18 +30,18 @@ def dfdg(time_AFMarray,F_AFMarray,Fcant_AFMarray,frequency,springconst,amplitude
     dg_addedterm = (springconst*amplitude)/(Qfactor) #N
     tiparea = np.pi*tipradius**2 #m**2
 
-    F_tot = F_AFMarray*tiparea+Fcant_AFMarray*cantarea
+    F_tot = F_AFMarray*tiparea+Fcant_AFMarray*cantarea #N
 
     # Integrals
-    df = df_prefactor*trapz(F_tot*np.sin(time_AFMarray-np.pi/2), time_AFMarray/frequency) #Hz
-    dg = dg_addedterm+dg_prefactor*trapz(F_tot*np.cos(time_AFMarray-np.pi/2), time_AFMarray/frequency) #N
+    df = df_prefactor*trapz(F_tot*np.cos(frequency*time_AFMarray), time_AFMarray) #Hz
+    dg = dg_prefactor*trapz(F_tot*np.sin(frequency*time_AFMarray), time_AFMarray)+dg_addedterm #N
 
     # Convert excitation model to energy units
         # Cockins thesis eq. 2.15
-    E_o = np.pi*springconst*tipradius**2/Qfactor/Physics_Semiconductors.e*1000 #meV
+    E_o = np.pi*springconst*amplitude**2/Qfactor/Physics_Semiconductors.e*1000 #meV
     A_exc = dg
     A_exco = dg_addedterm
-    E_ts = E_o*(A_exc-A_exco)/A_exc #meV
+    E_ts = E_o*(A_exc-A_exco)/A_exco #meV
     dg = E_ts #meV
 
     return df, dg

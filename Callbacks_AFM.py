@@ -27,7 +27,6 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
 
         # Calculations and results
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray = Organization_BuildArrays.Surface_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         Vs_AFMarray, F_AFMarray, Fcant_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,0)
         zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD)
@@ -37,7 +36,7 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
     
         # Stack arrays to show two periods
-        time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi))
+        time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi/frequency))
         zins_AFMarray = np.hstack((zins_AFMarray,zins_AFMarray[1:]))
         zinslag_AFMarray = np.hstack((zinslag_AFMarray,zinslag_AFMarray[1:]))
         Vs_AFMarray = np.hstack((Vs_AFMarray,Vs_AFMarray[1:]))
@@ -179,7 +178,8 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         Vs_zinsarray = [0, 0]
         F_biasarray = [0, 0]
         timesteps = 1
-
+        frequency = 1
+        
         fig1 = make_subplots(
             rows=3, cols=2, shared_yaxes=False, shared_xaxes=False,
             column_widths=[0.3, 0.7], row_heights=[1,1,1],
@@ -211,9 +211,9 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
     fig1.update_xaxes(row=1, col=1, title_text= "Energy (eV)")
     fig1.update_xaxes(row=2, col=1, title_text= "Insulator Thickness (nm)")
     fig1.update_xaxes(row=3, col=1, title_text= "Insulator Thickness (nm)")
-    fig1.update_xaxes(row=1, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
-    fig1.update_xaxes(row=2, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
-    fig1.update_xaxes(row=3, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi])
+    fig1.update_xaxes(row=1, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi/frequency])
+    fig1.update_xaxes(row=2, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi/frequency])
+    fig1.update_xaxes(row=3, col=2, title_text= "Time", showticklabels=False, range=[0, 4*np.pi/frequency])
 
     return fig1
 
@@ -269,6 +269,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             name = "FrequencyShift", mode='lines', showlegend=False,
             line_color=color_other
             ), row=1, col=2)
+        '''
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_A+1.38,
             name = "df_A", mode='lines', showlegend=False,
@@ -294,12 +295,13 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             name = "df_E", mode='lines', showlegend=False,
             line_color=color_Ef
             ), row=1, col=2)
+        '''
         fig2.add_trace(go.Scatter(
             x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
             name = "Dissipation", mode='lines', showlegend=False,
             line_color=color_other
             ), row=2, col=2)
-
+        
     ############################################################################
 
     else:

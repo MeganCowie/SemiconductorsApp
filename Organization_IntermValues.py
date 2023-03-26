@@ -66,14 +66,14 @@ def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps
 
     # values
     amplitude = slider_amplitude*1e-9 #m
-    frequency = slider_resfreq #Hz
-    lag = slider_lag/10**9*frequency #radians
+    frequency = 2*np.pi*slider_resfreq #rad/s
+    lag = slider_lag*10**-9*frequency #rad
     timesteps = slider_timesteps
 
     # arrays
-    time_AFMarray = np.linspace(0, 2*np.pi, timesteps)
-    zins_AFMarray = zins+amplitude/2*np.sin(time_AFMarray-np.pi/2)+amplitude/2 #m
-    zinslag_AFMarray = zins+amplitude/2*np.sin(time_AFMarray-np.pi/2-lag)+amplitude/2 #m
+    time_AFMarray = np.linspace(0, 2*np.pi, timesteps)/frequency #s/rad
+    zins_AFMarray = zins+amplitude/2+amplitude/2*np.cos(frequency*time_AFMarray) #m
+    zinslag_AFMarray = zins+amplitude/2+amplitude/2*np.cos(frequency*time_AFMarray+lag) #m
 
     return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 
