@@ -65,15 +65,15 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps, zins):
 
     # values
-    amplitude = slider_amplitude*1e-9 #m
+    amplitude = slider_amplitude/2*1e-9 #m
     frequency = 2*np.pi*slider_resfreq #rad/s
     lag = slider_lag*10**-9*frequency #rad
     timesteps = slider_timesteps
 
     # arrays
-    time_AFMarray = np.linspace(0, 2*np.pi, timesteps)/frequency #s/rad
-    zins_AFMarray = zins+amplitude/2+amplitude/2*np.cos(frequency*time_AFMarray) #m
-    zinslag_AFMarray = zins+amplitude/2+amplitude/2*np.cos(frequency*time_AFMarray+lag) #m
+    time_AFMarray = np.linspace(0, 2, timesteps+1)*np.pi/frequency #s/rad
+    zins_AFMarray = zins+amplitude+amplitude*np.cos(frequency*time_AFMarray) #m
+    zinslag_AFMarray = zins+amplitude+amplitude*np.cos(frequency*time_AFMarray+lag) #m
 
     return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 

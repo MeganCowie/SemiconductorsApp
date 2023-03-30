@@ -9,7 +9,7 @@ import os
 
 
 ################################################################################
-
+'''
 # n-type:
 button_presets = 4
 Ec = -0.3333455
@@ -19,7 +19,8 @@ Ef = -0.4166885
 button_presets = 5
 Ec = 1.333346
 Ef = 0.4166885
-'''
+
+
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
@@ -41,7 +42,7 @@ slider_Vg_OG = 0
 slider_zins_array = np.array([slider_zins_OG])#,slider_zins_OG+slider_amplitude])
 slider_Vg_array = np.array([slider_Vg_OG])
 
-#experiment = 'single'
+experiment = 'single'
 #experiment = 'Nd'
 #experiment = 'Na'
 #experiment = 'emass'
@@ -49,7 +50,7 @@ slider_Vg_array = np.array([slider_Vg_OG])
 #experiment = 'Eg'
 #experiment = 'epsilonsem'
 #experiment = 'amplitude'
-experiment = 'lag'
+#experiment = 'lag'
 
 if experiment=='single':
     ExperimentArray =  np.linspace(1,1,1)
@@ -71,7 +72,6 @@ elif experiment=='zins':
     ExperimentArray =  np.linspace(4,20,17)
 elif experiment=='lag':
     ExperimentArray =  np.linspace(0,500,6)
-
 
 ################################################################################
 # biasarrays
@@ -131,12 +131,13 @@ for slider_zins in slider_zins_array:
 
         # Calculations and results
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray)
+        Vs_biasarray,F_biasarray,Es_biasarray,Qs_biasarray,P_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray,timesteps)   
 
         # Account for alpha
         Vg = slider_Vg*Physics_Semiconductors.e #J
         Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
 
+    
         # Unit conversions
         Vs_biasarray = Vs_biasarray/Physics_Semiconductors.e
         F_biasarray = F_biasarray*(1e-9)**2*1e12
@@ -168,7 +169,7 @@ for slider_zins in slider_zins_array:
     ##################
     # Save
 
-    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
+    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.1f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_alpha, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_cantheight, slider_cantarea)
 
     if not os.path.exists(thispath):
         os.mkdir(thispath)
@@ -241,7 +242,8 @@ for slider_Vg in slider_Vg_array:
 
         # Calculations and results
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray,df_zinsarray,dg_zinsarray = Organization_BuildArrays.All_zinsarrays(Vg,zins,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray)
+        Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray,df_zinsarray,dg_zinsarray = Organization_BuildArrays.All_zinsarrays(Vg,zins,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray,timesteps)
+
 
         # Unit conversions
         Vs_zinsarray = Vs_zinsarray/Physics_Semiconductors.e
@@ -274,7 +276,7 @@ for slider_Vg in slider_Vg_array:
     ##################
     # Save
 
-    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
+    thispath = "Xsave_Sweeps_%s_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.1f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (experiment,slider_Vg, slider_zins, slider_alpha, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_cantheight, slider_cantarea)
 
     if not os.path.exists(thispath):
         os.mkdir(thispath)

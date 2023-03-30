@@ -155,14 +155,14 @@ def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
 ################################################################################
 ################################################################################
 
-def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray):
+def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray,timesteps):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
         Vs_AFMarray_soln,F_AFMarray_soln, Fcant_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
-        Vs_soln = Vs_AFMarray_soln[0]
-        F_soln = F_AFMarray_soln[0]
-        P_soln = P_AFMarray_soln[0]
+        Vs_soln = Vs_AFMarray_soln[int(timesteps/2)]
+        F_soln = F_AFMarray_soln[int(timesteps/2)]
+        P_soln = P_AFMarray_soln[int(timesteps/2)]
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)
@@ -188,14 +188,14 @@ def All_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,s
 
 ################################################################################
 
-def All_zinsarrays(Vg,zins,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray):
+def All_zinsarrays(Vg,zins,zins_array,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,cantheight,cantarea,time_AFMarray,zinslag_AFMarray,timesteps):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(zins_variable):
         Vs_AFMarray_soln,F_AFMarray_soln, Fcant_AFMarray_soln, P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray-zins+zins_variable,Vg,zins_variable,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
-        Vs_soln = Vs_AFMarray_soln[0]
-        F_soln = F_AFMarray_soln[0]
-        P_soln = P_AFMarray_soln[0]
+        Vs_soln = Vs_AFMarray_soln[int(timesteps/2)]
+        F_soln = F_AFMarray_soln[int(timesteps/2)]
+        P_soln = P_AFMarray_soln[int(timesteps/2)]
         f_soln = Physics_Semiconductors.Func_f(T,Vs_soln,nb,pb)
         Es_soln = Physics_Semiconductors.Func_E(nb,pb,Vs_soln,epsilon_sem,T,f_soln)
         Qs_soln = Physics_Semiconductors.Func_Q(epsilon_sem,Es_soln)

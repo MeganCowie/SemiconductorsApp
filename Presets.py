@@ -136,8 +136,8 @@ def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfre
         slider_lag = 0
         slider_springconst = 42
         slider_tipradius = 5
-        slider_cantheight = 0
-        slider_cantarea = 0
+        slider_cantheight = 5
+        slider_cantarea = 3750
         slider_Qfactor = 18000
     else:
         slider_timesteps = slider_timesteps

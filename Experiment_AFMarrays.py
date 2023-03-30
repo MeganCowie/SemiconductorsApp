@@ -9,6 +9,7 @@ import pandas as pd
 import os
 
 ################################################################################
+'''
 
 # n-type:
 button_presets = 4
@@ -19,7 +20,7 @@ Ef = -0.4166885
 button_presets = 5
 Ec = 1.333346
 Ef = 0.4166885
-'''
+
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
@@ -34,7 +35,7 @@ slider_timesteps = 200
 slider_zins = slider_zins#+slider_amplitude
 slider_Vg = 0
 
-slider_lag = 500
+slider_lag = 300
 
 ################################################################################
 # AFMarrays
@@ -98,7 +99,7 @@ Vvac_AFMarray = pd.DataFrame(Vvac_AFMarray/Physics_Semiconductors.e)
 ################################################################################
 # Save
 
-thispath = "Xsave_AFMarrays_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.1f_%.1f_%.0f_%.0f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_alpha, slider_cantheight, slider_cantarea)
+thispath = "Xsave_AFMarrays_%.1f_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_%.3f_%.3f_%.1f_%.1f_%.1f_%.0f_%.2f_%.0f_%.0f_%.2f_%.2f_%.3f_%.0f/" % (slider_Vg, slider_zins, slider_alpha, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_Qfactor, slider_tipradius, slider_cantheight, slider_cantarea)
 
 if not os.path.exists(thispath):
     os.mkdir(thispath)
