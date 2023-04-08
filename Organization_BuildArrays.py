@@ -130,13 +130,13 @@ def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,
 
 ################################################################################
 
-def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray,cantheight,cantarea):
+def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps):
 
     # Calculate list any functions that are not constant as a function of Vg
     def compute(Vg_variable):
         Vs_AFMarray_soln,F_AFMarray_soln,Fcant_AFMarray_soln,P_AFMarray_soln = AFM_timearrays(zinslag_AFMarray,Vg_variable,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
-        Vs_soln = Vs_AFMarray_soln[0]
-        F_soln = F_AFMarray_soln[0]
+        Vs_soln = Vs_AFMarray_soln[int(timesteps/2)]
+        F_soln = F_AFMarray_soln[int(timesteps/2)]
         df_soln,dg_soln = Physics_ncAFM.dfdg(time_AFMarray,F_AFMarray_soln,Fcant_AFMarray_soln,frequency,springconst,amplitude,Qfactor,tipradius,cantarea)
         return [Vs_soln,F_soln,df_soln,dg_soln]
 

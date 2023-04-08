@@ -125,7 +125,6 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
     E = (np.arange(300)/80)*Physics_Semiconductors.e #J
     Eg = 1.1*Physics_Semiconductors.e  #J
 
-
     # Calculated results
     Ec,Ev = Physics_Semiconductors.Func_EcEv(Eg)
     NC,NV = Physics_Semiconductors.Func_NCNV(T, mn, mp)
@@ -161,14 +160,14 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
         line_color=color_Ev
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
-        x = np.array([min_x, max_x]), y = np.array([1,1])*Ef/Physics_Semiconductors.e,
-        name = "Fermi Energy", mode='lines',
-        line_color=color_Ef
-        ), row=1, col=1)
-    fig.add_trace(go.Scatter(
         x = np.array([min_x, max_x]), y = np.array([1,1])*Ei/Physics_Semiconductors.e,
         name = "Intrinsic Energy", mode='lines',
         line_color=color_Ei
+        ), row=1, col=1)
+    fig.add_trace(go.Scatter(
+        x = np.array([min_x, max_x]), y = np.array([1,1])*Ef/Physics_Semiconductors.e,
+        name = "Fermi Energy", mode='lines',
+        line_color=color_Ef
         ), row=1, col=1)
     fig.add_trace(go.Scatter(
         x = gc*Physics_Semiconductors.e/(1000**3), y = E/Physics_Semiconductors.e,
@@ -195,6 +194,7 @@ def fig_carriers(slider_donor, slider_acceptor, slider_T, slider_emass, slider_h
     fig.update_xaxes(title_text="f(E)", range=[min_x,max_x], row=1, col=1)
     fig.update_xaxes(title_text="g(E) (/eV cm^3)", row=1, col=2)
     fig.update_xaxes(title_text="Carriers (/cm^3)", row=1, col=3)
+    
     return fig
 
 

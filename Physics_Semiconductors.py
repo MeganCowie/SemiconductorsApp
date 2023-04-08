@@ -76,7 +76,7 @@ def Func_NCNV(T, mn, mp): # /(m**3)
 # We only need absolute eneries for drawing the band diagram. See CPD definition below. 
     # Jonscher Solid Semiconductors (pg 30)
 def Func_EcEv(Eg): # J
-    Ev = 0*e
+    Ev = 1*e
     Ec = Ev+Eg
     return Ec, Ev
 
@@ -121,7 +121,7 @@ def Func_nbpb(Na, Nd, ni): # /m**3
     # Neamen Semiconductor Physics & Devices, Ed 2 (pg 115)
     # Jonscher Solid Semiconductors (pg 33)
 def Func_Ef(NC, NV, Ec, Ev, T, Nd, Na): # J
-    guess = 1*e
+    guess = -1*e
     def Ef_eqn(Ef_soln):
         no, po = Func_nopo(NC, NV, Ec, Ev, Ef_soln, T)
         expression = po-no+Nd-Na

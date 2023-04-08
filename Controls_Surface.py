@@ -41,13 +41,13 @@ Surface_Card = html.Div([
             html.Div("Band Gap (eV)", className='label_name', id="SurfaceText_Eglabel"),
             html.Div(id='SurfaceText_Eg', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_Eg', className='slider', marks=None, min=0.1, max=3, step=0.1, value=1.5),
+        dcc.Slider(id='SurfaceSlider_Eg', className='slider', marks=None, min=0.1, max=12, step=0.1, value=1.5),
 
         html.Div([
             html.Div("Rel. Permittivity (S)", className='label_name', id="SurfaceText_epsilonsemlabel"),
             html.Div(id='SurfaceText_epsilonsem', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_epsilonsem', className='slider', marks=None, min=0.01, max=22, step=0.01, value=5.9),
+        dcc.Slider(id='SurfaceSlider_epsilonsem', className='slider', marks=None, min=0.1, max=22, step=0.1, value=5.9),
 
         html.Div([
             html.Div("Work Func. (M) (eV)", className='label_name', id="SurfaceText_WFmetlabel"),
@@ -113,14 +113,18 @@ Surface_Card = html.Div([
         html.Div([
             html.Div("Presets", id="SurfaceText_Presets"),
             dcc.RadioItems(id="SurfaceButtons_presets", options=[
-                {'label': '   MoSe2', 'value': 1},
                 {'label': '   Silicon_A', 'value': 2},
-                {'label': '   Pentacene', 'value': 3},
-                {'label': '   Figure_ntype', 'value': 4},
-                {'label': '   Figure_ptype', 'value': 5},
+                {'label': '   Figure_ntype', 'value': 8},
+                {'label': '   Silicon_B', 'value': 3},
+                {'label': '   Figure_ptype', 'value': 9},
+                {'label': '   Silicon_C', 'value': 4},
+                {'label': '   MoSe2', 'value': 1},
+                {'label': '   Silicon_D', 'value': 5},
+                {'label': '   Pentacene', 'value': 7},
+                {'label': '   Silicon_E', 'value': 6},
                 {'label': '   Other', 'value': 0}
                 ]
-            ,value=4, labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
 
         html.Div([

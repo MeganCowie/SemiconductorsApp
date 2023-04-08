@@ -91,7 +91,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(CarrierIntegrals_text, dangerously_allow_html=True), hidden=True, id='display_CarrierIntegralstext'),
 
-        html.Button('Bulk Carrier Statistics', className='toggle-label', n_clicks=0, id='header_BulkCarrierStatistics'),
+        html.Button('Bulk Carrier Statistics', className='toggle-label', n_clicks=1, id='header_BulkCarrierStatistics'),
         html.Div([
             html.Br(),
             Controls_Bulk.Bulk_Card,
@@ -99,7 +99,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(BulkCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_BulkCarrierStatisticstext'),
 
-        html.Button('Surface Carrier Statistics', className='toggle-label', n_clicks=0, id='header_SurfaceCarrierStatistics'),
+        html.Button('Surface Carrier Statistics', className='toggle-label', n_clicks=1, id='header_SurfaceCarrierStatistics'),
         html.Div([
             html.Br(),
             Controls_Surface.Surface_Card, 
@@ -107,7 +107,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(SurfaceCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_SurfaceCarrierStatisticstext'),
 
-        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=1, id='header_fmAFMoscillations'),
+        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=0, id='header_fmAFMoscillations'),
         html.Div([
             html.Br(),
             Controls_AFM.AFM_Card1, 

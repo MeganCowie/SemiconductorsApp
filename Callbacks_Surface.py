@@ -16,6 +16,7 @@ import Organization_BuildArrays
 
 def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps, slider_zinssteps):
 
+
     #########################################################
     # Input values
     Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins+6,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
@@ -239,7 +240,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     fig0.update_xaxes(title_standoff=5, title_text="z (nm)", row=6, col=1)
     fig0.update_xaxes(title_standoff=5, title_text="", row=1, col=2, range=[-10, 10])
     fig0.update_xaxes(title_standoff=5, title_text="", row=3, col=2, range=[-10, 10])
-    fig0.update_xaxes(title_standoff=5, title_text= "Gate Bias (eV)",row=7,col=2, range=[-1.5, 1.5])
+    fig0.update_xaxes(title_standoff=5, title_text= "Gate Bias (eV)",row=7,col=2, range=[-10, 10])
     fig0.update_xaxes(title_standoff=5, title_text="", row=1, col=3)
     fig0.update_xaxes(title_standoff=5, title_text="", row=3, col=3)
     fig0.update_xaxes(title_standoff=5, title_text= "Insulator Thickness (nm)", range=[min(zins_array*1e9), max(zins_array*1e9)], row=7, col=3)

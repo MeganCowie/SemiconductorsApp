@@ -35,7 +35,7 @@ AFM_Card1 = html.Div([
             html.Div("Lag (ns)", className='label_name', id="AFMText_laglabel"),
             html.Div(id='AFMText_lag', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=3000, step=5, value=30),
+        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=100, step=5, value=30),
     
     ], className= 'controls_container'),
    
@@ -82,7 +82,7 @@ AFM_Card2 = html.Div([
             html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
             html.Div(id='AFMText_tipradius', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=1, max=25, step=0.01, value=6.25),
+        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=0.1, max=25, step=0.01, value=6.25),
 
         html.Div([
             html.Div("Cantilever height (um)", className='label_name', id="AFMText_cantheightlabel"),

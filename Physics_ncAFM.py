@@ -22,7 +22,6 @@ def cantilever(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni,cantheight):
     F_cant = Physics_Semiconductors.Func_F(Qs_cant,CPD,Vg,zins+cantheight)
     return F_cant
 
-
 # Frequency shift and dissipation definitions
 def dfdg(time_AFMarray,F_AFMarray,Fcant_AFMarray,frequency,springconst,amplitude,Qfactor,tipradius,cantarea):
     df_prefactor = -1*(frequency**2)/(2*np.pi*springconst*amplitude) #Hz**2/N
