@@ -35,22 +35,56 @@ AFM_Card1 = html.Div([
             html.Div("Lag (ns)", className='label_name', id="AFMText_laglabel"),
             html.Div(id='AFMText_lag', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=100, step=5, value=30),
-    
-    ], className= 'controls_container'),
-   
-    html.Div([
+        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=10000, step=5, value=30),
 
+    ], className= 'controls_container'),
+
+
+    html.Div([
+    
+        html.Div([
+            html.Div("Geometry", id="AFMText_Geometry"),
+            dcc.Checklist(id="AFMbuttons_geometry", options=[
+                {'label': 'Sample', 'value': 1},
+                {'label': 'Cantilever', 'value': 2},
+                {'label': 'Overlayer', 'value': 3},
+                {'label': 'All', 'value': 4},
+            ],
+            value=[1,2,3],labelStyle={"width": '100%','display': 'inline-block'}),
+        ], className='presets_container'),
+
+        html.Div([
+            html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
+            html.Div(id='AFMText_tipradius', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=0.1, max=25, step=0.01, value=6.25),
+
+        html.Div([
+            html.Div("Cantilever height (um)", className='label_name', id="AFMText_cantheightlabel"),
+            html.Div(id='AFMText_cantheight', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_cantheight', className='slider', marks=None, min=0, max=10, step=0.01, value=2.1),
+
+        html.Div([
+            html.Div("Cantilever area (um^2)", className='label_name', id="AFMText_cantarealabel"),
+            html.Div(id='AFMText_cantarea', className='label_value'),
+        ], className='label_container'),
+        dcc.Slider(id='AFMSlider_cantarea', className='slider', marks=None, min=0, max=10000, step=10, value=3750),
+        
+    ], className= 'controls_container'),
+
+    html.Div([
         html.Div([
             html.Div("Presets", id="AFMText_Presets"),
             dcc.RadioItems(id="AFMButtons_presets", options=[
                 {'label': '   Figure', 'value': 1},
+                {'label': '   Silicon_A', 'value': 2},
                 {'label': '   Other', 'value': 0}
                 ]
-            ,value=1, labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
-        
     ], className= 'controls_container'),
+
 
 
 ], className='controls', hidden=True, id='display_fmAFMoscillationscontrols')
@@ -78,25 +112,29 @@ AFM_Card2 = html.Div([
         ], className='label_container'),
         dcc.Slider(id='AFMSlider_Qfactor', className='slider', marks=None, min=1000, max=30000, step=1000, value=18000),
 
-        html.Div([
-            html.Div("Tip Radius (nm)", className='label_name', id="AFMText_tipradiuslabel"),
-            html.Div(id='AFMText_tipradius', className='label_value'),
-        ], className='label_container'),
-        dcc.Slider(id='AFMSlider_tipradius', className='slider', marks=None, min=0.1, max=25, step=0.01, value=6.25),
-
-        html.Div([
-            html.Div("Cantilever height (um)", className='label_name', id="AFMText_cantheightlabel"),
-            html.Div(id='AFMText_cantheight', className='label_value'),
-        ], className='label_container'),
-        dcc.Slider(id='AFMSlider_cantheight', className='slider', marks=None, min=0, max=10, step=0.01, value=2.1),
-
-        html.Div([
-            html.Div("Cantilever area (um^2)", className='label_name', id="AFMText_cantarealabel"),
-            html.Div(id='AFMText_cantarea', className='label_value'),
-        ], className='label_container'),
-        dcc.Slider(id='AFMSlider_cantarea', className='slider', marks=None, min=0, max=10000, step=10, value=3750),
-
     ], className= 'controls_container'),
+
+    html.Div([
+        html.Div([
+            html.Div("Experiment", id="AFMText_Experiment"),
+            dcc.Checklist(id="AFMbuttons_experiment", options=[
+                {'label': '   A=6, zins var', 'value': 1},
+                {'label': '   ', 'value': 1.5},
+                {'label': '   A=6, zins var', 'value': 2},
+                {'label': '   ', 'value': 2.5},
+                {'label': '   zins=0 , A var', 'value': 3},
+                {'label': '   ', 'value': 3.5},
+                {'label': '   zins=2 , A var', 'value': 4},
+                {'label': '   ', 'value': 4.5},
+                {'label': '   zins=4 , A var', 'value': 5},
+                {'label': '   ', 'value': 5.5},
+                {'label': '   zins=6 , A var', 'value': 6},
+                {'label': '   ', 'value': 6.5},
+                ]
+            ,value=[3,3.5], labelStyle={"width": '50%','display': 'inline-block'}),
+        ], className='presets_container'),
+    ], className= 'controls_container'),
+
 ], className='controls', hidden=True, id='display_BiasSweepExperimentcontrols')
 
 

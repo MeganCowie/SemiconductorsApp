@@ -62,29 +62,29 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
 ################################################################################
 # AFM
 
-def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps, zins):
+def AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins):
 
     # values
     amplitude = slider_amplitude/2*1e-9 #m
     frequency = 2*np.pi*slider_resfreq #rad/s
     lag = slider_lag*10**-9*frequency #rad
     timesteps = slider_timesteps
-
+    tipradius = slider_tipradius*1e-9 #m
+    cantheight = slider_cantheight*1e-6 #m
+    cantarea = slider_cantarea*(1e-6)**2 #m^2
+    
     # arrays
     time_AFMarray = np.linspace(0, 2, timesteps+1)*np.pi/frequency #s/rad
     zins_AFMarray = zins+amplitude+amplitude*np.cos(frequency*time_AFMarray) #m
     zinslag_AFMarray = zins+amplitude+amplitude*np.cos(frequency*time_AFMarray+lag) #m
 
-    return amplitude,frequency,lag,timesteps,time_AFMarray,zins_AFMarray,zinslag_AFMarray
+    return amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray
 
 
-def AFM2_inputvalues(slider_springconst,slider_Qfactor,slider_tipradius,slider_cantheight,slider_cantarea):
+def AFM2_inputvalues(slider_springconst,slider_Qfactor):
 
     # values
     springconst = slider_springconst #N/m
     Qfactor = slider_Qfactor
-    tipradius = slider_tipradius*1e-9 #m
-    cantheight = slider_cantheight*1e-6 #m
-    cantarea = slider_cantarea*(1e-6)**2 #m^2
 
-    return springconst,Qfactor,tipradius,cantheight,cantarea
+    return springconst,Qfactor

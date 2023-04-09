@@ -91,7 +91,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(CarrierIntegrals_text, dangerously_allow_html=True), hidden=True, id='display_CarrierIntegralstext'),
 
-        html.Button('Bulk Carrier Statistics', className='toggle-label', n_clicks=1, id='header_BulkCarrierStatistics'),
+        html.Button('Bulk Carrier Statistics', className='toggle-label', n_clicks=0, id='header_BulkCarrierStatistics'),
         html.Div([
             html.Br(),
             Controls_Bulk.Bulk_Card,
@@ -448,9 +448,13 @@ def presets(button_presets,slider_Vg, slider_zins, slider_Eg, slider_epsilonsem,
      Input('AFMSlider_amplitude', 'value'),
      Input('AFMSlider_resfreq', 'value'),
      Input('AFMSlider_lag', 'value'),
+     Input('AFMSlider_tipradius', 'value'),
+     Input('AFMSlider_cantheight', 'value'),
+     Input('AFMSlider_cantarea', 'value'),
+     Input('AFMbuttons_geometry', 'value'),
      Input('AFMbutton_Calculate', 'n_clicks')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, calculatebutton):
-    fig1 = Callbacks_AFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, calculatebutton)
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_tipradius, slider_cantheight, slider_cantarea, geometrybuttons, calculatebutton):
+    fig1 = Callbacks_AFM.fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, slider_biassteps,slider_zinssteps, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_tipradius, slider_cantheight, slider_cantarea, geometrybuttons, calculatebutton)
     return fig1
 
 # Bias experiment figure
@@ -478,10 +482,12 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_cantheight', 'value'),
      Input('AFMSlider_cantarea', 'value'),
      Input('AFMSlider_Qfactor', 'value'),
-     Input('AFMbutton_CalculateBiasExp', 'n_clicks'),
-     Input('AFMSlider_lag', 'value')])
-def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag):
-    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, calculatebutton, slider_lag)
+     Input('AFMSlider_lag', 'value'),
+     Input('AFMbuttons_geometry', 'value'),
+     Input('AFMbuttons_experiment', 'value'),
+     Input('AFMbutton_CalculateBiasExp', 'n_clicks')])
+def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons, experimentbuttons, calculatebutton, slider_lag):
+    fig2 = Callbacks_AFM.fig2_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude, slider_resfreq, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons, experimentbuttons, calculatebutton, slider_lag)
     return fig2
 
 

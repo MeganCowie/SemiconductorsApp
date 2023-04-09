@@ -71,7 +71,7 @@ Surface_Card = html.Div([
             html.Div("Acceptors (cm-3)", className='label_name', id="SurfaceText_acceptorlabel"),
             html.Div(id='SurfaceText_acceptor', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_acceptor', className='slider', marks=None, min=25, max=35, step=0.001, value=0, disabled=True),
+        dcc.Slider(id='SurfaceSlider_acceptor', className='slider', marks=None, min=25, max=40, step=0.001, value=0, disabled=True),
 
         html.Div([
             html.Div("Elec. Eff. Mass (me)", className='label_name', id="SurfaceText_emasslabel"),
