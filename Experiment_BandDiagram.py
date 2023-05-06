@@ -10,26 +10,28 @@ import os
 
 ################################################################################
 
+'''
 # n-type:
 button_presets = 4
 Ec = -0.3333455
 Ef = -0.4166885
-'''
 # p-type:
 button_presets = 5
 Ec = 1.333346
 Ef = 0.4166885
 '''
 
+
+button_presets = 2 # silicon surface
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
+#CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
-CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
+slider_biassteps = 512
+slider_zinssteps = 512
 
-slider_biassteps = 1024
-slider_zinssteps = 1024
+slider_zins = 3+3#slider_zins
+slider_Vg = -2
 
-#slider_zins = slider_zins+slider_amplitude
-slider_Vg = 1.2
 
 ################################################################################
 # Input values

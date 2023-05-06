@@ -21,7 +21,6 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_Calculate' in changed_id:
 
-          
         # Input values and arrays
         Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
         amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
@@ -29,7 +28,9 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         # Calculations and results
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_AFMarray, F_AFMarray, Fcant_AFMarray, Fover_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray,zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,cantheight)
+        Vscant_zinsarray,Fcant_zinsarray,Escant_zinsarray,Qscant_zinsarray,Pcant_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array+cantheight,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray,zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vscant_AFMarray, Fcant_AFMarray, Pcant_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray+cantheight,zinslag_AFMarray+cantheight,Vg,zins+cantheight,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD)
 
         # Account for alpha
@@ -43,7 +44,6 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         Vs_AFMarray = np.hstack((Vs_AFMarray,Vs_AFMarray[1:]))
         F_AFMarray = np.hstack((F_AFMarray,F_AFMarray[1:]))*np.pi*tipradius**2
         Fcant_AFMarray = np.hstack((Fcant_AFMarray,Fcant_AFMarray[1:]))*cantarea
-        Fover_AFMarray = np.hstack((Fover_AFMarray,Fover_AFMarray[1:]))*np.pi*tipradius**2        
         zsem_AFMarray_steps = np.vstack((zsem_AFMarray,zsem_AFMarray[1:]))
         Vsem_AFMarray_steps = np.vstack((Vsem_AFMarray,Vsem_AFMarray[1:]))
         zgap_AFMarray_steps = np.vstack((zgap_AFMarray,zgap_AFMarray[1:]))
@@ -52,16 +52,17 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         Vvac_AFMarray_steps = np.vstack((Vvac_AFMarray,Vvac_AFMarray[1:]))
         zmet_AFMarray_steps = np.vstack((zmet_AFMarray,zmet_AFMarray[1:]))
         Vmet_AFMarray_steps = np.vstack((Vmet_AFMarray,Vmet_AFMarray[1:]))
-    
+        F_zinsarray = F_zinsarray*np.pi*tipradius**2
+        Fcant_zinsarray = Fcant_zinsarray*cantarea
+
+        Ftot_zinsarray = 0*zins_array
         Ftot_AFMarray = 0*time_AFMarray
         if 1 in geometrybuttons:
+            Ftot_zinsarray+=F_zinsarray
             Ftot_AFMarray+=F_AFMarray
         if 2 in geometrybuttons:
+            Ftot_zinsarray+=Fcant_zinsarray
             Ftot_AFMarray+=Fcant_AFMarray
-        if 3 in geometrybuttons:
-            Ftot_AFMarray+=Fover_AFMarray
-        if 4 in geometrybuttons:
-            Ftot_AFMarray+=F_AFMarray+Fcant_AFMarray+Fover_AFMarray
 
 
         #########################################################
@@ -110,7 +111,7 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         fig1.add_trace(go.Scatter(
             x = zins_array*1e9, y = Vs_zinsarray/Physics_Semiconductors.e,
             name = "ContactPotential", mode='lines', showlegend=False,
-            line_color=color_vac
+            line_color=color_other
             ), row=2, col=1)
         fig1.add_trace(go.Scatter(
             x = [zinslag_AFMarray[0]*1e9], y = [Vs_AFMarray[0]/Physics_Semiconductors.e],
@@ -118,12 +119,12 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
             marker=dict(color=color_indicator,size=10),
             ), row=2, col=1)
         fig1.add_trace(go.Scatter(
-            x = zins_array*1e9, y = F_zinsarray*(1e-9)**2*1e12,
-            name = "Force", mode='lines', showlegend=False,
-            line_color=color_vac
+            x = zins_array*1e9, y = Ftot_zinsarray*1e12,
+            name = "Total Force", mode='lines', showlegend=False,
+            line_color=color_other
             ), row=3, col=1)
         fig1.add_trace(go.Scatter(
-            x = [zinslag_AFMarray[0]*1e9], y = [F_AFMarray[0]*(1e-9)**2*1e12],
+            x = [zinslag_AFMarray[0]*1e9], y = [Ftot_AFMarray[0]*1e12],
             name = "Force", mode='markers', showlegend=False,
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=1)
@@ -148,32 +149,13 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
             name = "SurfacePotential", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=2, col=2)
-        if 1 in geometrybuttons:
-            fig1.add_trace(go.Scatter(
-                x = time_AFMarray, y = F_AFMarray*(1e-9)**2*1e12,
-                name = "Sample Force", mode='lines', showlegend=False,
-                line_color=color_Ef
-                ), row=3, col=2)
-        if 2 in geometrybuttons:
-            fig1.add_trace(go.Scatter(
-                x = time_AFMarray, y = Fcant_AFMarray*(1e-9)**2*1e12,
-                name = "Cantilever Force", mode='lines', showlegend=False,
-                line_color=color_n
-                ), row=3, col=2)
-        if 3 in geometrybuttons:
-            fig1.add_trace(go.Scatter(
-                x = time_AFMarray, y = Fover_AFMarray*(1e-9)**2*1e12,
-                name = "Overlayer Force", mode='lines', showlegend=False,
-                line_color=color_p
-                ), row=3, col=2)
-        if 4 in geometrybuttons:
-            fig1.add_trace(go.Scatter(
-                x = time_AFMarray, y = Ftot_AFMarray*(1e-9)**2*1e12,
-                name = "Total Force", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=3, col=2)
         fig1.add_trace(go.Scatter(
-            x = [time_AFMarray[0]], y = [Ftot_AFMarray[0]*(1e-9)**2*1e12],
+            x = time_AFMarray, y = Ftot_AFMarray*1e12,
+            name = "Total Force", mode='lines', showlegend=False,
+            line_color=color_other
+            ), row=3, col=2)
+        fig1.add_trace(go.Scatter(
+            x = [time_AFMarray[0]], y = [Ftot_AFMarray[0]*1e12,],
             name = "Total Force", mode='markers',
             marker=dict(color=color_indicator,size=10),
             ), row=3, col=2)
@@ -190,18 +172,44 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
 
                 go.Scatter(x=zins_array*1e9, y=Vs_zinsarray/Physics_Semiconductors.e,mode="lines", line_color=color_vac),
                 go.Scatter(x=[zinslag_AFMarray[step]*1e9], y=[Vs_AFMarray[step]/Physics_Semiconductors.e],mode="markers", marker=dict(color=color_indicator, size=10)),
-                go.Scatter(x=zins_array*1e9, y=F_zinsarray*(1e-9)**2*1e12,mode="lines", line_color=color_vac),
-                go.Scatter(x=[zinslag_AFMarray[step]*1e9], y=[F_AFMarray[step]*(1e-9)**2*1e12],mode="markers", marker=dict(color=color_indicator, size=10)),
+                go.Scatter(x=zins_array*1e9, y=Ftot_zinsarray*1e12,mode="lines", line_color=color_vac),
+                go.Scatter(x=[zinslag_AFMarray[step]*1e9], y=[Ftot_AFMarray[step]*1e12],mode="markers", marker=dict(color=color_indicator, size=10)),
 
                 go.Scatter(x=time_AFMarray,y=zins_AFMarray*1e9,mode="lines", line_color=color_other),
                 go.Scatter(x=[time_AFMarray[step]],y=[zins_AFMarray[step]*1e9],mode="markers", marker=dict(color=color_indicator, size=10)),
                 go.Scatter(x=time_AFMarray,y=Vs_AFMarray/Physics_Semiconductors.e,mode="lines", line_color=color_other),
                 go.Scatter(x=[time_AFMarray[step]],y=[Vs_AFMarray[step]/Physics_Semiconductors.e],mode="markers", marker=dict(color=color_indicator, size=10)),
-                go.Scatter(x=time_AFMarray,y=F_AFMarray*(1e-9)**2*1e12,mode="lines", line_color=color_other),
-                go.Scatter(x=[time_AFMarray[step]],y=[F_AFMarray[step]*(1e-9)**2*1e12],mode="markers", marker=dict(color=color_indicator, size=10)),
+                go.Scatter(x=time_AFMarray,y=Ftot_AFMarray*1e12,mode="lines", line_color=color_other),
+                go.Scatter(x=[time_AFMarray[step]],y=[Ftot_AFMarray[step]*1e12],mode="markers", marker=dict(color=color_indicator, size=10)),
                 ],traces=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
                 for step in range(2*timesteps-1)]
-        
+
+        if 1 in geometrybuttons:
+            fig1.add_trace(go.Scatter(
+                x = zins_array*1e9, y = F_zinsarray*1e12,
+                name = "Sample Force", mode='lines', showlegend=False,
+                line_color=color_Ec
+                ), row=3, col=1)
+        if 2 in geometrybuttons:
+            fig1.add_trace(go.Scatter(
+                x = zins_array*1e9, y = Fcant_zinsarray*1e12,
+                name = "Cantilever Force", mode='lines', showlegend=False,
+                line_color=color_Ev
+                ), row=3, col=1)
+        if 1 in geometrybuttons:
+            fig1.add_trace(go.Scatter(
+                x = time_AFMarray, y = F_AFMarray*1e12,
+                name = "Sample Force", mode='lines', showlegend=False,
+                line_color=color_Ec
+                ), row=3, col=2)
+        if 2 in geometrybuttons:
+            fig1.add_trace(go.Scatter(
+                x = time_AFMarray, y = Fcant_AFMarray*1e12,
+                name = "Cantilever Force", mode='lines', showlegend=False,
+                line_color=color_Ev
+                ), row=3, col=2)
+
+
     ############################################################################
 
     else:
@@ -256,41 +264,62 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
 
 def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_alpha,slider_biassteps,slider_zinssteps, slider_timesteps,slider_amplitude,slider_resfreq,slider_springconst,slider_tipradius,slider_cantheight, slider_cantarea, slider_Qfactor,slider_lag,geometrybuttons,experimentbuttons,calculatebutton):
 
+    fig2 = make_subplots(
+        rows=3, cols=2, shared_yaxes=False, shared_xaxes=True,
+        column_widths=[0.5, 0.5], row_heights=[1,1,1],
+        specs=[[{}, {}], [{}, {}], [{}, {}]])
+    fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
+    fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
+    fig2.add_trace(go.Scatter(y=[], x=[]), row=3, col=1)
+    fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
+    fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)  
+
+
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'AFMbutton_CalculateBiasExp' in changed_id:
+         
+        #######################
 
-        # Input values and arrays
-        Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
-        amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
-        springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
+        if len(experimentbuttons)==0:
 
-        # Calculations and results
-        NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-        Vs_biasarray,F_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
-        
-        # Account for alpha
-        Vg = slider_Vg*Physics_Semiconductors.e #J
-        Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
+            # Input values and arrays
+            Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+            amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
+            springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
 
+            # Calculations and results
+            NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            
+            # Account for alpha
+            Vg = slider_Vg*Physics_Semiconductors.e #J
+            Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
 
-        #########################################################
-        #########################################################
-        fig2 = make_subplots(
-            rows=2, cols=2, shared_yaxes=False, shared_xaxes=True,
-            column_widths=[0.5, 0.5], row_heights=[1,1],
-            specs=[[{}, {}], [{}, {}]])
-        fig2.add_trace(go.Scatter(
-            x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
-            name = "ContactPotential", mode='lines', showlegend=False,
-            line_color=color_other
-            ), row=1, col=1)
-        fig2.add_trace(go.Scatter(
-            x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
-            name = "Force", mode='lines', showlegend=False,
-            line_color=color_other
-            ), row=2, col=1)
-        
-
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
+                name = "FrequencyShift", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=1, col=2)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
+                name = "Excitation", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=2) 
 
     ####################### # zins experiment 1
 
@@ -312,105 +341,185 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_6 = np.genfromtxt ('Data/Si_zins1/Data_zins6_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_0+2.1633, name = "df_0", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_0+2.1633, name = "Data_0", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_1+1.7296, name = "df_1", mode='lines', showlegend=False, line_color=color_1
+                x = Data_Vg, y = Data_df_1+1.7296, name = "Data_1", mode='lines', showlegend=False, line_color=color_1
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2+1.3667, name = "df_2", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_2+1.3667, name = "Data_2", mode='lines', showlegend=False, line_color=color_2
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_3+1.1592, name = "df_3", mode='lines', showlegend=False, line_color=color_3
+                x = Data_Vg, y = Data_df_3+1.1592, name = "Data_3", mode='lines', showlegend=False, line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_4+0.9784, name = "df_4", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_4+0.9784, name = "Data_4", mode='lines', showlegend=False, line_color=color_4
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_5+0.8258, name = "df_5", mode='lines', showlegend=False, line_color=color_5
+                x = Data_Vg, y = Data_df_5+0.8258, name = "Data_5", mode='lines', showlegend=False, line_color=color_5
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6+0.7484, name = "df_6", mode='lines', showlegend=False, line_color=color_6
+                x = Data_Vg, y = Data_df_6+0.7484, name = "Data_6", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_0-0.027, name = "dg_0", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_0-0.027, name = "Data_0", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_1-0.027, name = "dg_1", mode='lines', showlegend=False, line_color=color_1
+                x = Data_Vg, y = Data_dg_1-0.027, name = "Data_1", mode='lines', showlegend=False, line_color=color_1
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2-0.027, name = "dg_2", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_2-0.027, name = "Data_2", mode='lines', showlegend=False, line_color=color_2
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_3-0.027, name = "dg_3", mode='lines', showlegend=False, line_color=color_3
+                x = Data_Vg, y = Data_dg_3-0.027, name = "Data_3", mode='lines', showlegend=False, line_color=color_3
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_4-0.027, name = "dg_4", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_4-0.027, name = "Data_4", mode='lines', showlegend=False, line_color=color_4
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_5-0.027, name = "dg_5", mode='lines', showlegend=False, line_color=color_5
+                x = Data_Vg, y = Data_dg_5-0.027, name = "Data_5", mode='lines', showlegend=False, line_color=color_5
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6-0.027, name = "dg_6", mode='lines', showlegend=False, line_color=color_6
+                x = Data_Vg, y = Data_dg_6-0.027, name = "Data_6", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 1.5 in experimentbuttons:
 
-            slider_zins = slider_zins+2   
+            slider_zins = slider_zins   
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)  
+                line_color=color_0
+                ), row=2, col=2) 
+            
+
+            slider_zins = slider_zins+2
+            Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
+            amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
+            springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
+            NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vg = slider_Vg*Physics_Semiconductors.e #J
+            Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_2
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_2
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_2
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
+                name = "FrequencyShift", mode='lines', showlegend=False,
+                line_color=color_2
+                ), row=1, col=2)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
+                name = "Excitation", mode='lines', showlegend=False,
+                line_color=color_2
+                ), row=2, col=2) 
             
             slider_zins = slider_zins-2+4   
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_4
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_4
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_4
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_4
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)  
+                line_color=color_4
+                ), row=2, col=2) 
             
             slider_zins = slider_zins-4+6   
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_6
                 ), row=2, col=2)             
 
 
@@ -429,28 +538,28 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_6 = np.genfromtxt ('Data/Si_zins2/Data_zins6_A06_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_0+2.1633, name = "df_0", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_0+2.1633, name = "Data_0", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2+1.3667, name = "df_2", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_2+1.3667, name = "Data_2", mode='lines', showlegend=False, line_color=color_2
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_4+0.9784, name = "df_4", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_4+0.9784, name = "Data_4", mode='lines', showlegend=False, line_color=color_4
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6+0.7484, name = "df_6", mode='lines', showlegend=False, line_color=color_6
+                x = Data_Vg, y = Data_df_6+0.7484, name = "Data_6", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_0, name = "dg_0", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_0, name = "Data_0", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2, name = "dg_2", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_2
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_4, name = "dg_4", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_4, name = "Data_4", mode='lines', showlegend=False, line_color=color_4
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6, name = "dg_6", mode='lines', showlegend=False, line_color=color_6
+                x = Data_Vg, y = Data_dg_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 2.5 in experimentbuttons:
@@ -460,35 +569,65 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
                 line_color=color_other
-                ), row=2, col=2) 
+                ), row=2, col=2)  
 
             slider_zins = slider_zins+2   
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_other
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=2, col=2)  
@@ -498,16 +637,31 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_other
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=2, col=2)  
@@ -517,19 +671,34 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_other
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_other
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
                 line_color=color_other
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
                 line_color=color_other
-                ), row=2, col=2)             
+                ), row=2, col=2)              
 
     ####################### # amplitude 1 experiment
 
@@ -543,81 +712,130 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_10 = np.genfromtxt ('Data/Si_zins2/Data_zins0_A10_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2, name = "df_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6, name = "df_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_10, name = "df_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2, name = "dg_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6, name = "dg_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_10, name = "dg_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 3.5 in experimentbuttons:
+            slider_zins_OG = slider_zins
 
-            slider_amplitude = 2   
+            slider_amplitude = 2  
+            slider_zins = slider_zins_OG+2.6 
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
-                name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force 2", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization 2", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
+                name = "2 FrequencyShift 2", mode='lines', showlegend=False,
+                line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
-                name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
+                name = "Excitation 2", mode='lines', showlegend=False,
+                line_color=color_0
                 ), row=2, col=2)  
             
-            slider_amplitude = 6   
+            slider_amplitude = 6  
+            slider_zins = slider_zins_OG+1.3
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
-                name = "FrequencyShift", mode='lines', showlegend=False,
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential 6", mode='lines', showlegend=False,
                 line_color=color_other
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force 6", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization 6", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
+                name = "6 FrequencyShift 6", mode='lines', showlegend=False,
+                line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)  
+                line_color=color_3
+                ), row=2, col=2)   
             
             slider_amplitude = 10  
+            slider_zins = slider_zins_OG+0
             Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array=Organization_IntermValues.Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsilonsem,slider_WFmet,slider_EAsem,slider_donor,slider_acceptor,slider_emass,slider_hmass,slider_T,slider_biassteps,slider_zinssteps)
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
-                name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                name = "ContactPotential 10", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force 10", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization 10", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
+                name = "10 FrequencyShift 10", mode='lines', showlegend=False,
+                line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
-                name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
+                name = "Excitation 10", mode='lines', showlegend=False,
+                line_color=color_6
                 ), row=2, col=2)             
 
     ####################### # amplitude 2 experiment
@@ -632,22 +850,22 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_10 = np.genfromtxt ('Data/Si_zins2/Data_zins2_A10_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2, name = "df_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6, name = "df_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_10, name = "df_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2, name = "dg_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6, name = "dg_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_10, name = "dg_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 4.5 in experimentbuttons:
@@ -657,18 +875,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_0
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=2, col=2)  
             
             slider_amplitude = 6   
@@ -676,18 +909,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_3
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=2, col=2)  
             
             slider_amplitude = 10  
@@ -695,21 +943,36 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_6
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)          
+                line_color=color_6
+                ), row=2, col=2)       
 
-    ####################### # amplitude 2 experiment
+    ####################### # amplitude 3 experiment
 
         if 5 in experimentbuttons:
             Data_Vg = np.genfromtxt ('Data/Si_zins2/Data_zins_A_Vg.csv', delimiter=",")
@@ -721,22 +984,22 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_10 = np.genfromtxt ('Data/Si_zins2/Data_zins4_A10_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2, name = "df_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6, name = "df_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_10, name = "df_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2, name = "dg_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6, name = "dg_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_10, name = "dg_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 5.5 in experimentbuttons:
@@ -746,18 +1009,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_0
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=2, col=2)  
             
             slider_amplitude = 6   
@@ -765,18 +1043,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_3
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=2, col=2)  
             
             slider_amplitude = 10  
@@ -784,21 +1077,36 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_6
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)          
+                line_color=color_6
+                ), row=2, col=2)        
             
-    ####################### # amplitude 2 experiment
+    ####################### # amplitude 4 experiment
 
         if 6 in experimentbuttons:
             Data_Vg = np.genfromtxt ('Data/Si_zins2/Data_zins_A_Vg.csv', delimiter=",")
@@ -810,22 +1118,22 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             Data_dg_10 = np.genfromtxt ('Data/Si_zins2/Data_zins6_A10_dg.csv', delimiter=",")
 
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_2, name = "df_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_df_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_6, name = "df_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_df_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_df_10, name = "df_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_df_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_2, name = "dg_2", mode='lines', showlegend=False, line_color=color_0
+                x = Data_Vg, y = Data_dg_2, name = "Data_2", mode='lines', showlegend=False, line_color=color_0
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_6, name = "dg_6", mode='lines', showlegend=False, line_color=color_2
+                x = Data_Vg, y = Data_dg_6, name = "Data_6", mode='lines', showlegend=False, line_color=color_3
                 ), row=2, col=2)
             fig2.add_trace(go.Scatter(
-                x = Data_Vg, y = Data_dg_10, name = "dg_10", mode='lines', showlegend=False, line_color=color_4
+                x = Data_Vg, y = Data_dg_10, name = "Data_10", mode='lines', showlegend=False, line_color=color_6
                 ), row=2, col=2)
 
         if 6.5 in experimentbuttons:
@@ -835,18 +1143,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_2,dg_biasarray_2 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_2,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_0
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_0
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_2,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_0
                 ), row=2, col=2)  
             
             slider_amplitude = 6   
@@ -854,18 +1177,33 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_4,dg_biasarray_4 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_4,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_3
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_3
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_4,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_3
                 ), row=2, col=2)  
             
             slider_amplitude = 10  
@@ -873,71 +1211,74 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             amplitude,frequency,lag,timesteps,tipradius,cantheight,cantarea,time_AFMarray,zins_AFMarray,zinslag_AFMarray=Organization_IntermValues.AFM1_inputvalues(slider_amplitude,slider_resfreq,slider_lag,slider_timesteps,slider_tipradius,slider_cantheight,slider_cantarea, zins)
             springconst,Qfactor=Organization_IntermValues.AFM2_inputvalues(slider_springconst,slider_Qfactor)
             NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
-            Vs_biasarray,F_biasarray,df_biasarray_6,dg_biasarray_6 = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
+            Vs_biasarray,F_biasarray,DP_biasarray,df_biasarray,dg_biasarray = Organization_BuildArrays.AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons)
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray_6,
+                    x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
+                    name = "ContactPotential", mode='lines', showlegend=False,
+                    line_color=color_6
+                    ), row=1, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = F_biasarray*(1e-9)**2*1e12,
+                name = "Force", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=2, col=1)
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = DP_biasarray,
+                name = "Polarization", mode='lines', showlegend=False,
+                line_color=color_6
+                ), row=3, col=1)        
+            fig2.add_trace(go.Scatter(
+                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
                 name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
+                line_color=color_6
                 ), row=1, col=2)
             fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray_6,
+                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
                 name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)          
+                line_color=color_6
+                ), row=2, col=2)  
 
-
+        Data_Vg = np.genfromtxt ('Data/Si_DopantDensity/Data_Vg.csv', delimiter=",")
+        Data_df_A = np.genfromtxt ('Data/Si_DopantDensity/Data_df_A.csv', delimiter=",")
         '''
-        Data_Vg = np.genfromtxt ('Data/Data_Vg.csv', delimiter=",")
-        Data_df_A = np.genfromtxt ('Data/Data_df_A.csv', delimiter=",")
-        Data_df_B = np.genfromtxt ('Data/Data_df_B.csv', delimiter=",")
-        Data_df_C = np.genfromtxt ('Data/Data_df_C.csv', delimiter=",")
-        Data_df_D = np.genfromtxt ('Data/Data_df_D.csv', delimiter=",")
-        Data_df_E = np.genfromtxt ('Data/Data_df_E.csv', delimiter=",")
+        Data_df_B = np.genfromtxt ('Data/Si_DopantDensity/Data_df_B.csv', delimiter=",")
+        Data_df_C = np.genfromtxt ('Data/Si_DopantDensity/Data_df_C.csv', delimiter=",")
+        Data_df_D = np.genfromtxt ('Data/Si_DopantDensity/Data_df_D.csv', delimiter=",")
+        Data_df_E = np.genfromtxt ('Data/Si_DopantDensity/Data_df_E.csv', delimiter=",")
+        '''
 
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_A+1.38,
-            name = "df_A", mode='lines', showlegend=False,
+            name = "Data_A", mode='lines', showlegend=False,
             line_color=color_indicator
             ), row=1, col=2)
+        '''
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_B+1.69,
-            name = "df_B", mode='lines', showlegend=False,
+            name = "Data_B", mode='lines', showlegend=False,
             line_color=color_Ev
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_C+1.69,
-            name = "df_C", mode='lines', showlegend=False,
+            name = "Data_C", mode='lines', showlegend=False,
             line_color=color_Ec
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_D+1.35,
-            name = "df_D", mode='lines', showlegend=False,
+            name = "Data_D", mode='lines', showlegend=False,
             line_color=color_Ei
             ), row=1, col=2)
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_E+1.35,
-            name = "df_E", mode='lines', showlegend=False,
+            name = "Data_E", mode='lines', showlegend=False,
             line_color=color_Ef
             ), row=1, col=2)
         '''
 
 
-    #######################
-
-        if len(experimentbuttons)==0:
-
-            fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = df_biasarray,
-                name = "FrequencyShift", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=1, col=2)
-            fig2.add_trace(go.Scatter(
-                x = Vg_array/Physics_Semiconductors.e, y = dg_biasarray,
-                name = "Excitation", mode='lines', showlegend=False,
-                line_color=color_other
-                ), row=2, col=2)    
+   
 
     ############################################################################
 
@@ -948,27 +1289,21 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         df_biasarray = np.linspace(-10,10,10) #placeholder
         dg_biasarray = np.linspace(-10,10,10) #placeholder
 
-        fig2 = make_subplots(
-            rows=2, cols=2, shared_yaxes=False, shared_xaxes=False,
-            column_widths=[0.5, 0.5], row_heights=[1,1],
-            specs=[[{}, {}], [{}, {}]])
-        fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=1)
-        fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=1)
-        fig2.add_trace(go.Scatter(y=[], x=[]), row=1, col=2)
-        fig2.add_trace(go.Scatter(y=[], x=[]), row=2, col=2)
 
     ############################################################################
 
 
-    fig2.update_layout(transition_duration=300, height=600,margin=dict(t=0),showlegend=False)
+    fig2.update_layout(transition_duration=300, height=900,margin=dict(t=0),showlegend=False)
 
     fig2.update_yaxes(row=1, col=1, title_text= "Contact Potential (eV)")
     fig2.update_yaxes(row=2, col=1, title_text= "Force (pN/nm^2)")
+    fig2.update_yaxes(row=3, col=1, title_text= "Change in polarization (units)")
     fig2.update_yaxes(row=1, col=2, title_text = "Frequency Shift (Hz)")
     fig2.update_yaxes(row=2, col=2, title_text = "Dissipation (meV / cycle)")
 
     fig2.update_xaxes(row=1, col=1, showticklabels=True)
-    fig2.update_xaxes(row=2, col=1, title_standoff=5, title_text= "Gate Bias (eV)")
+    fig2.update_xaxes(row=2, col=1, showticklabels=True)
+    fig2.update_xaxes(row=3, col=1, title_standoff=5, title_text= "Gate Bias (eV)")
     fig2.update_xaxes(row=1, col=2, showticklabels=True)
     fig2.update_xaxes(row=2, col=2, title_standoff=5, title_text= "Gate Bias (eV)")
 

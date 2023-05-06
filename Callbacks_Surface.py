@@ -35,9 +35,6 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
     zgap,Vgap, zvac,Vvac, zmet,Vmet, zarray,Earray,Qarray  = Physics_BandDiagram.BandDiagram(Vg,zins,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ef,Ei,Eg,CPD, zsem,Vsem,Esem,Qsem)
 
-    Vins_temp = Physics_Semiconductors.e*Qs_biasarray/Physics_Semiconductors.Func_Cins(zins)
-
-
     # Account for alpha
     Vg = slider_Vg*Physics_Semiconductors.e #J
     Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
@@ -110,11 +107,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         line_color=color_met
         ), row=6, col=1)
 
-    fig0.add_trace(go.Scatter(
-        x = Vg_array/Physics_Semiconductors.e, y = Vins_temp/Physics_Semiconductors.e,
-        name = "Cins temp", mode='lines', showlegend=False,
-        line_color=color_Ev
-        ), row=1, col=2, secondary_y=False)
+
     fig0.add_trace(go.Scatter(
         x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
         name = "Contact Potential (bias)", mode='lines', showlegend=False,
@@ -137,12 +130,12 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         ), row=3, col=2)
     fig0.add_trace(go.Scatter(
         x = Vg_array/Physics_Semiconductors.e, y = Es_biasarray*1e-9,
-        name = "Qs (bias)", mode='lines', showlegend=False,
+        name = "Es (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=5, col=2)
     fig0.add_trace(go.Scatter(
         x = [Vg/Physics_Semiconductors.e], y = [Es*1e-9],
-        name = "This Qs (bias)", mode='markers', showlegend=False,
+        name = "This Es (bias)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=5, col=2)
     fig0.add_trace(go.Scatter(
@@ -156,15 +149,15 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         marker=dict(color=color_indicator,size=10),
         ), row=6, col=2)
     fig0.add_trace(go.Scatter(
-        x = Vg_array/Physics_Semiconductors.e, y = P_biasarray-P_biasarray_top,
+        x = Vg_array/Physics_Semiconductors.e, y =np.abs(P_biasarray-P_biasarray_top),
         name = "P (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=7, col=2)
-    #fig0.add_trace(go.Scatter(
-    #    x = [Vg/Physics_Semiconductors.e], y = [P],
-    #    name = "This P (bias)", mode='markers', showlegend=False,
-    #    marker=dict(color=color_indicator,size=10),
-    #    ), row=7, col=2)
+    fig0.add_trace(go.Scatter(
+        x = [Vg/Physics_Semiconductors.e], y = [P],
+        name = "This P (bias)", mode='markers', showlegend=False,
+        marker=dict(color=color_indicator,size=10),
+        ), row=7, col=2)
 
     fig0.add_trace(go.Scatter(
         x = zins_array*1e9, y = Vs_zinsarray/Physics_Semiconductors.e,
@@ -218,12 +211,12 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         ), row=7, col=3)
     
     fig0.add_trace(go.Scatter(
-        x = Vs_biasarray/Physics_Semiconductors.e, y = np.log(np.abs(Qs_biasarray/Physics_Semiconductors.e*(1e-9)**2)),
+        x = Vs_biasarray/Physics_Semiconductors.e, y = np.abs(Qs_biasarray/Physics_Semiconductors.e*(1e-9)**2),
         name = "Vs-Qs", mode='lines', showlegend=False,
         line_color=color_other
         ), row=7, col=1)
     fig0.add_trace(go.Scatter(
-        x = [Vs/Physics_Semiconductors.e], y = [np.log(np.abs(Qs/Physics_Semiconductors.e*(1e-9)**2))],
+        x = [Vs/Physics_Semiconductors.e], y = [np.abs(Qs/Physics_Semiconductors.e*(1e-9)**2)],
         name = "This Vs-Qs", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=7, col=1)
@@ -266,7 +259,7 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
     fig0.update_yaxes(title_standoff=5, title_text="F (pN/nm^2)", row=3, col=3)#, range=[min(F_biasarray[biasrange_indexmin], F_biasarray[biasrange_indexmax]), max(F_biasarray)])
     fig0.update_yaxes(title_standoff=5, title_text="Es (V/nm)", row=5, col=3)
     fig0.update_yaxes(title_standoff=5, title_text="Qs (e/nm^2)", row=6, col=3)
-    fig0.update_yaxes(title_standoff=5, title_text="log(|Qs| (e/nm^2))", row=7, col=1)
+    fig0.update_yaxes(title_standoff=5, title_text="|Qs| (e/nm^2)", row=7, col=1)
     fig0.update_yaxes(title_standoff=5, title_text="P", row=7, col=2)
     fig0.update_yaxes(title_standoff=5, title_text="P", row=7, col=3)
 

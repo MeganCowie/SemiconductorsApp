@@ -29,13 +29,13 @@ AFM_Card1 = html.Div([
             html.Div("Resonant Frequency (Hz)", className='label_name', id="AFMText_resfreqlabel"),
             html.Div(id='AFMText_resfreq', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_resfreq', className='slider', marks=None, min=100000, max=10000000, step=100000, value=300000),
+        dcc.Slider(id='AFMSlider_resfreq', className='slider', marks=None, min=290000, max=360000, step=10000, value=300000),
 
         html.Div([
             html.Div("Lag (ns)", className='label_name', id="AFMText_laglabel"),
             html.Div(id='AFMText_lag', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=10000, step=5, value=30),
+        dcc.Slider(id='AFMSlider_lag', className='slider', marks=None, min=0, max=200, step=5, value=30),
 
     ], className= 'controls_container'),
 
@@ -47,10 +47,8 @@ AFM_Card1 = html.Div([
             dcc.Checklist(id="AFMbuttons_geometry", options=[
                 {'label': 'Sample', 'value': 1},
                 {'label': 'Cantilever', 'value': 2},
-                {'label': 'Overlayer', 'value': 3},
-                {'label': 'All', 'value': 4},
             ],
-            value=[1,2,3],labelStyle={"width": '100%','display': 'inline-block'}),
+            value=[1,2],labelStyle={"width": '100%','display': 'inline-block'}),
         ], className='presets_container'),
 
         html.Div([

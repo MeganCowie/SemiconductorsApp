@@ -27,7 +27,7 @@ Surface_Card = html.Div([
             html.Div("Insulator Thickness (nm)", className='label_name', id="SurfaceText_zinslabel"),
             html.Div(id='SurfaceText_zins', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_zins', className='slider', marks=None, min=1, max=25, step=0.1, value=5.2),
+        dcc.Slider(id='SurfaceSlider_zins', className='slider', marks=None, min=0.001, max=100, step=0.1, value=5.2),
     ], className= 'controls_container'),
 
     html.Div([

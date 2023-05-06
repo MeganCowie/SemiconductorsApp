@@ -29,7 +29,7 @@ def Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsi
 
     # arrays
     Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha)*Physics_Semiconductors.e #J
-    zins_array = np.linspace(0.5,20,zinssteps)*1e-9 #m
+    zins_array = np.linspace(0.1,25,zinssteps)*1e-9 #m
 
     return Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array
 
@@ -53,7 +53,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     F = Physics_Semiconductors.Func_F(Qs,CPD,Vg,zins)
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
     zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs)
-    P = Physics_Semiconductors.Func_P(zsem, Qsem)
+    P,Qtot,wd = Physics_Semiconductors.Func_P(zsem, Qsem)
 
     return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P
 

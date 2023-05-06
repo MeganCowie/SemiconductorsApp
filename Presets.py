@@ -22,17 +22,17 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     elif button_presets == 2: #Si_A
         toggle_type = False
         slider_Vg = 0
-        slider_zins = 6
-        slider_Eg = 1.1
+        slider_zins = 12#10
+        slider_Eg = 0.7
         slider_epsilonsem = 11.7
-        slider_WFmet = 4.6
+        slider_WFmet = 4.75#4.65
         slider_EAsem = 4.05
         slider_emass = 1.08
         slider_hmass = 0.56
-        slider_donor = np.log10(10**15*  1.77*10**17)
+        slider_donor = np.log10(10**15*  5.00*10**17)#np.log10(10**15*  7.78*10**17)
         slider_acceptor = 0
         slider_T = 300
-        slider_alpha = 0.1
+        slider_alpha = 0
         stylen = {'color': '#57c5f7'}
         stylep = {'color': '#7f7f7f'}
         disabledn = False
@@ -40,14 +40,14 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     elif button_presets == 3: #Si_B
         toggle_type = False
         slider_Vg = 0
-        slider_zins = 4.2
-        slider_Eg = 1.1
+        slider_zins = 12
+        slider_Eg = 0.7
         slider_epsilonsem = 11.7
-        slider_WFmet = 5.05
-        slider_EAsem = 4.5
+        slider_WFmet = 4.75
+        slider_EAsem = 4.05
         slider_emass = 1.08
         slider_hmass = 0.56
-        slider_donor = np.log10(10**15*  1.5*10**17)
+        slider_donor = np.log10(10**15* 6.25*10**16)
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0
@@ -199,7 +199,7 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
             slider_acceptor = 0
     return toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp
 
-def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor):
+def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons):
 
     if button_presets == 1: #Figure
         slider_timesteps = 30
@@ -211,16 +211,18 @@ def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfre
         slider_cantheight = 5
         slider_cantarea = 3750
         slider_Qfactor = 18000
+        geometrybuttons = [1]
     elif button_presets == 2: #Silicon_A
         slider_timesteps = 30
         slider_amplitude = 6
-        slider_resfreq = 300000
-        slider_lag = 0
+        slider_resfreq = 310000
+        slider_lag = 100
         slider_springconst = 42
-        slider_tipradius = 1.8
-        slider_cantheight = 5.3
-        slider_cantarea = 3000
-        slider_Qfactor = 25000
+        slider_tipradius = 5
+        slider_cantheight = 6
+        slider_cantarea = 2900
+        slider_Qfactor = 18000
+        geometrybuttons = [1,2]
     else:
         slider_timesteps = slider_timesteps
         slider_amplitude = slider_amplitude
@@ -231,7 +233,8 @@ def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfre
         slider_cantheight = slider_cantheight
         slider_cantarea = slider_cantarea
         slider_Qfactor = slider_Qfactor
-    return slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor
+        geometrybuttons = geometrybuttons
+    return slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons
 
 
 

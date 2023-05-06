@@ -215,15 +215,25 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
 # Force between MIS plates
     # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
 def Func_F(Qs,CPD,Vg,zins):
-    F = (-Qs**2/(2*epsilon_o))#-10**(37.35)*(epsilon_o*(Vg-CPD)**2/(2*zins**2)) # N/m**2
+    F = (-Qs**2/(2*epsilon_o))
     return F
+
+# Differential capacitance
+    # Derivative of Qs-Vs
+def Func_Cs(Qs_biasarray,Vs_biasarray):
+    Cs_biasarray = np.gradient(Qs_biasarray,Vs_biasarray) # units?
+    return Cs_biasarray
 
 # Polarization
     # One-dimensional sum of electric dipoles
 def Func_P(zsem, Qsem):
-    p = zsem*Qsem #electric dipole  #Cm 
-    P = np.sum(p) #electric polarization #Cm
-    return P
+    Qtot = np.sum(Qsem)
+    wd = zsem[-1]
+    tiparea = 1 #this line included for clarity - it will cancel out, but technically tiparea=a
+    probedepth = 1 #unit depth
+    p = zsem*Qsem*tiparea #electric dipole  #Cm 
+    P = np.sum(p)/(tiparea*probedepth) #electric polarization #C/m^2
+    return P,Qtot,wd
 
 # Identify MIS capacitor regime
 def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):

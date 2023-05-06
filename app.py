@@ -107,7 +107,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(SurfaceCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_SurfaceCarrierStatisticstext'),
 
-        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=0, id='header_fmAFMoscillations'),
+        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=1, id='header_fmAFMoscillations'),
         html.Div([
             html.Br(),
             Controls_AFM.AFM_Card1, 
@@ -501,7 +501,8 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Output('AFMSlider_tipradius', 'value'),
      Output('AFMSlider_cantheight', 'value'),
      Output('AFMSlider_cantarea', 'value'),
-     Output('AFMSlider_Qfactor', 'value')],
+     Output('AFMSlider_Qfactor', 'value'),
+     Output('AFMbuttons_geometry', 'value')],
      [Input('AFMButtons_presets', 'value'),
      Input('AFMSlider_timesteps', 'value'),
      Input('AFMSlider_amplitude', 'value'),
@@ -511,8 +512,9 @@ def update_figure(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_W
      Input('AFMSlider_tipradius', 'value'),
      Input('AFMSlider_cantheight', 'value'),
      Input('AFMSlider_cantarea', 'value'),
-     Input('AFMSlider_Qfactor', 'value')])
-def presets(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor):
+     Input('AFMSlider_Qfactor', 'value'),
+     Input('AFMbuttons_geometry', 'value')])
+def presets(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons):
 
     button_presets_og = button_presets
 
@@ -538,12 +540,14 @@ def presets(button_presets,slider_timesteps, slider_amplitude, slider_resfreq, s
         button_presets = 0
     elif 'AFMSlider_Qfactor' in changed_id:
         button_presets = 0
+    elif 'AFMbuttons_geometry' in changed_id:
+        button_presets = 0
     else:
         button_presets = button_presets_og
 
-    slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor = Presets.presets_afm(button_presets, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor)
+    slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons = Presets.presets_afm(button_presets, slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons)
 
-    return slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor
+    return slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor, geometrybuttons
 
 
 
