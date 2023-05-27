@@ -148,13 +148,14 @@ def fig0_surface(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WF
         name = "This Qs (bias)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=6, col=2)
+    
     fig0.add_trace(go.Scatter(
-        x = Vg_array/Physics_Semiconductors.e, y =np.abs(P_biasarray-P_biasarray_top),
+        x = Vg_array/Physics_Semiconductors.e, y =np.abs(Vs_biasarray-Vs_biasarray_top),
         name = "P (bias)", mode='lines', showlegend=False,
         line_color=color_other
         ), row=7, col=2)
     fig0.add_trace(go.Scatter(
-        x = [Vg/Physics_Semiconductors.e], y = [P],
+        x = [Vg/Physics_Semiconductors.e], y = [Vs],
         name = "This P (bias)", mode='markers', showlegend=False,
         marker=dict(color=color_indicator,size=10),
         ), row=7, col=2)

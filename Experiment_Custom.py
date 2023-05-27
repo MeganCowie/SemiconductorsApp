@@ -11,7 +11,7 @@ from joblib import Parallel, delayed
 
 ################################################################################
 
-button_presets = 2 # silicon surface
+button_presets = 3 # silicon surface
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 
 button_presets = 2 #silicon AFM
@@ -22,7 +22,7 @@ slider_zinssteps = 1
 slider_timesteps = 1
 
 slider_lag = 0
-slider_zins = 12+6
+slider_zins = 12
 
 
 ################################################################################
@@ -34,6 +34,8 @@ save_P_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_
 save_Qtot_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
 save_wd_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
 save_regime_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
+save_Qs_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
+save_Vs_biasarrays = pd.DataFrame({"Vg_array": [str(x) for x in Vg_array/Physics_Semiconductors.e]})
 
 
 # Input values and arrays
@@ -45,6 +47,8 @@ P_biasarray = np.array([])
 Qtot_biasarray = np.array([])
 wd_biasarray = np.array([])
 regime_biasarray = np.array([])
+Qs_biasarray = np.array([])
+Vs_biasarray = np.array([])
 for Vg_variable in Vg_array:
     NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime_soln, zsem_soln,Vsem_soln,Esem_soln,Qsem_soln, P_soln = Organization_IntermValues.Surface_calculations(Vg_variable,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
     p_soln = zsem_soln*Qsem_soln #electric dipole  #Cm 
@@ -55,24 +59,31 @@ for Vg_variable in Vg_array:
     Qtot_biasarray= np.append(Qtot_biasarray,Qtot_soln)
     wd_biasarray= np.append(wd_biasarray,wd_soln)
     regime_biasarray = np.append(regime_biasarray,regime_soln)
-    #print(Vg_variable/Physics_Semiconductors.e)
+    Qs_biasarray= np.append(Qs_biasarray,Qs)
+    Vs_biasarray= np.append(Vs_biasarray,Vs)
 
 
 # Unit conversions
 P_biasarray = P_biasarray #?
-Qtot_biasarray = Qtot_biasarray/Physics_Semiconductors.e*(1e-9)**2 #?
+Qtot_biasarray = Qtot_biasarray/Physics_Semiconductors.e*(1e-9)**2 #/nm^2
 wd_biasarray = wd_biasarray*10**9 #nm
+Qs_biasarray = Qs_biasarray/Physics_Semiconductors.e*(1e-9)**2 #/nm^2
+Vs_biasarray = Vs_biasarray/Physics_Semiconductors.e
 
 # Organize arrays for saving
 save_P_biasarray = pd.DataFrame({str(1): [str(x) for x in P_biasarray]})
 save_Qtot_biasarray = pd.DataFrame({str(1): [str(x) for x in Qtot_biasarray]})
 save_wd_biasarray = pd.DataFrame({str(1): [str(x) for x in wd_biasarray]})
 save_regime_biasarray = pd.DataFrame({str(1): [str(x) for x in regime_biasarray]})
+save_Qs_biasarray = pd.DataFrame({str(1): [str(x) for x in Qs_biasarray]})
+save_Vs_biasarray = pd.DataFrame({str(1): [str(x) for x in Vs_biasarray]})
 
 save_P_biasarrays = pd.concat([save_P_biasarrays,save_P_biasarray], axis=1, join="outer")
 save_Qtot_biasarrays = pd.concat([save_Qtot_biasarrays,save_Qtot_biasarray], axis=1, join="outer")
 save_wd_biasarrays = pd.concat([save_wd_biasarrays,save_wd_biasarray], axis=1, join="outer")
 save_regime_biasarrays = pd.concat([save_regime_biasarrays,save_regime_biasarray], axis=1, join="outer")
+save_Qs_biasarrays = pd.concat([save_Qs_biasarrays,save_Qs_biasarray], axis=1, join="outer")
+save_Vs_biasarrays = pd.concat([save_Vs_biasarrays,save_Vs_biasarray], axis=1, join="outer")
 
 ##################
 # Save
@@ -86,4 +97,6 @@ save_P_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_P.csv'])), i
 save_Qtot_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Qtot.csv'])), index=False)
 save_wd_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_wd.csv'])), index=False)
 save_regime_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_regime.csv'])), index=False)
+save_Qs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Qs.csv'])), index=False)
+save_Vs_biasarrays.to_csv(os.path.join(thispath,'_'.join(['biasarray_Vs.csv'])), index=False)
 

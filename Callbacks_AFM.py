@@ -29,8 +29,8 @@ def fig1_AFM(slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_zinsarray,F_zinsarray,Es_zinsarray,Qs_zinsarray,P_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         Vscant_zinsarray,Fcant_zinsarray,Escant_zinsarray,Qscant_zinsarray,Pcant_zinsarray = Organization_BuildArrays.Surface_zinsarrays(zins_array+cantheight,Vg,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray,zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        Vscant_AFMarray, Fcant_AFMarray, Pcant_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray+cantheight,zinslag_AFMarray+cantheight,Vg,zins+cantheight,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vs_AFMarray, Es_AFMarray, Qs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray,zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
+        Vscant_AFMarray, Escant_AFMarray, Qscant_AFMarray, Fcant_AFMarray, Pcant_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray+cantheight,zinslag_AFMarray+cantheight,Vg,zins+cantheight,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD)
 
         # Account for alpha
@@ -1242,6 +1242,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
 
         Data_Vg = np.genfromtxt ('Data/Si_DopantDensity/Data_Vg.csv', delimiter=",")
         Data_df_A = np.genfromtxt ('Data/Si_DopantDensity/Data_df_A.csv', delimiter=",")
+
         '''
         Data_df_B = np.genfromtxt ('Data/Si_DopantDensity/Data_df_B.csv', delimiter=",")
         Data_df_C = np.genfromtxt ('Data/Si_DopantDensity/Data_df_C.csv', delimiter=",")
@@ -1254,6 +1255,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             name = "Data_A", mode='lines', showlegend=False,
             line_color=color_indicator
             ), row=1, col=2)
+
         '''
         fig2.add_trace(go.Scatter(
             x = Data_Vg, y = Data_df_B+1.69,

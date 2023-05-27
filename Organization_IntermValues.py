@@ -53,7 +53,7 @@ def Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T):
     F = Physics_Semiconductors.Func_F(Qs,CPD,Vg,zins)
     regime = Physics_Semiconductors.Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev)
     zsem, Vsem, Esem, Qsem = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs)
-    P,Qtot,wd = Physics_Semiconductors.Func_P(zsem, Qsem)
+    P = Physics_Semiconductors.Func_P(epsilon_sem,Es)
 
     return NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P
 

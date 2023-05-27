@@ -47,7 +47,7 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_EAsem = 4.05
         slider_emass = 1.08
         slider_hmass = 0.56
-        slider_donor = np.log10(10**15* 6.25*10**16)
+        slider_donor = np.log10(10**15* 2.00*10**17)
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0
@@ -58,14 +58,14 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     elif button_presets == 4: #Si_C
         toggle_type = False
         slider_Vg = 0
-        slider_zins = 17.5
-        slider_Eg = 1.1
+        slider_zins = 12
+        slider_Eg = 0.7
         slider_epsilonsem = 11.7
-        slider_WFmet = 5.22
-        slider_EAsem = 4.5
+        slider_WFmet = 4.75
+        slider_EAsem = 4.05
         slider_emass = 1.08
         slider_hmass = 0.56
-        slider_donor = np.log10(10**15*  1.5*10**17)
+        slider_donor = np.log10(10**15* 7.80*10**15)
         slider_acceptor = 0
         slider_T = 300
         slider_alpha = 0

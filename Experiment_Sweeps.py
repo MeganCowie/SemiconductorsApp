@@ -28,14 +28,17 @@ toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet,
 button_presets = 2 #silicon AFM
 slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor,geometrybuttons = Presets.presets_afm(button_presets,0,0,0,0,0,0,0,0,0,0)
 
-slider_biassteps = 1024#512
+slider_biassteps = 1024
 slider_zinssteps = 1#512
-slider_timesteps = 30
+slider_timesteps = 200
 
 slider_lag = 0
 
-slider_zins_OG = 12
+slider_zins_OG = 12+6
 slider_Vg_OG = 0
+
+
+slider_donor = np.log10(10**15*  1.00*10**19)
 
 ################################################################################
 # Inputs
@@ -43,7 +46,7 @@ slider_Vg_OG = 0
 slider_zins_array = np.array([slider_zins_OG])
 slider_Vg_array = np.array([])
 
-#experiment = 'single'
+experiment = 'single'
 #experiment = 'Nd'
 #experiment = 'Na'
 #experiment = 'emass'
@@ -51,7 +54,7 @@ slider_Vg_array = np.array([])
 #experiment = 'Eg'
 #experiment = 'epsilonsem'
 #experiment = 'amplitude'
-experiment = 'lag'
+#experiment = 'lag'
 
 if experiment=='single':
     ExperimentArray =  np.linspace(1,1,1)
@@ -72,7 +75,7 @@ elif experiment=='amplitude':
 elif experiment=='zins':
     ExperimentArray =  np.linspace(4,20,17)
 elif experiment=='lag':
-    ExperimentArray =  np.linspace(51,75,25)
+    ExperimentArray =  np.linspace(125,174,25)
 
 ################################################################################
 # biasarrays

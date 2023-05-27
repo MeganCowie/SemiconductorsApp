@@ -226,7 +226,7 @@ def Func_Cs(Qs_biasarray,Vs_biasarray):
 
 # Polarization
     # One-dimensional sum of electric dipoles
-def Func_P(zsem, Qsem):
+def Func_Pold(zsem, Qsem):
     Qtot = np.sum(Qsem)
     wd = zsem[-1]
     tiparea = 1 #this line included for clarity - it will cancel out, but technically tiparea=a
@@ -234,6 +234,11 @@ def Func_P(zsem, Qsem):
     p = zsem*Qsem*tiparea #electric dipole  #Cm 
     P = np.sum(p)/(tiparea*probedepth) #electric polarization #C/m^2
     return P,Qtot,wd
+
+def Func_P(epsilon_sem,Es):
+    P = epsilon_o*(epsilon_sem-1)*Es
+    return P
+
 
 # Identify MIS capacitor regime
 def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
