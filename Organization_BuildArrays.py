@@ -1,7 +1,6 @@
 # All this script does is build arrays. There is zero physics in here.
 
 from joblib import Parallel, delayed
-from pytictoc import TicToc
 
 import Physics_Semiconductors
 import Physics_BandDiagram
