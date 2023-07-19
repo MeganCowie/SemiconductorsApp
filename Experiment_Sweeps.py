@@ -22,6 +22,7 @@ Ef = 0.4166885
 
 
 button_presets = 2 # silicon surface
+#button_presets = 7 # pentacene surface
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 #CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
@@ -29,16 +30,16 @@ button_presets = 2 #silicon AFM
 slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor,geometrybuttons = Presets.presets_afm(button_presets,0,0,0,0,0,0,0,0,0,0)
 
 slider_biassteps = 1024
-slider_zinssteps = 1#512
+slider_zinssteps = 512
 slider_timesteps = 200
 
-slider_lag = 0
+slider_lag = 100
 
-slider_zins_OG = 12+6
+slider_zins_OG = slider_zins#+slider_amplitude
 slider_Vg_OG = 0
 
 
-slider_donor = np.log10(10**15*  1.00*10**19)
+#slider_donor = np.log10(10**15*  (5.00*10**17-2*10**17))
 
 ################################################################################
 # Inputs
@@ -54,28 +55,38 @@ experiment = 'single'
 #experiment = 'Eg'
 #experiment = 'epsilonsem'
 #experiment = 'amplitude'
+#experiment = 'zins'
 #experiment = 'lag'
+#experiment = 'WFmet'
+#experiment = 'EAsem'
+#experiment = 'T'
 
 if experiment=='single':
     ExperimentArray =  np.linspace(1,1,1)
 elif experiment=='Nd':
-    ExperimentArray =  np.linspace(33,33,1)
+    ExperimentArray =  np.linspace(30,34,30)
 elif experiment=='Na':
     ExperimentArray =  np.linspace(33,33,1)
 elif experiment=='emass':
-    ExperimentArray =  np.linspace(0.1,1.2,23)
+    ExperimentArray =  np.linspace(0.1,2,20)
 elif experiment=='hmass':
-    ExperimentArray =  np.linspace(0.1,1.2,23)
+    ExperimentArray =  np.linspace(0.1,2,20)
 elif experiment=='Eg':
     ExperimentArray =  np.linspace(0.2,1.5,27)
 elif experiment=='epsilonsem':
-    ExperimentArray =  np.linspace(1,20,39)
+    ExperimentArray =  np.linspace(5,18,27)
 elif experiment=='amplitude':
     ExperimentArray =  np.linspace(2,30,29)
 elif experiment=='zins':
-    ExperimentArray =  np.linspace(4,20,17)
+    ExperimentArray =  np.linspace(1,20,50)
 elif experiment=='lag':
-    ExperimentArray =  np.linspace(125,174,25)
+    ExperimentArray =  np.linspace(0,100,101)
+elif experiment=='WFmet':
+    ExperimentArray =  np.linspace(2,6,33)
+elif experiment=='EAsem':
+    ExperimentArray =  np.linspace(2,6,33)
+elif experiment=='T':
+    ExperimentArray =  np.linspace(10,500,50)
 
 ################################################################################
 # biasarrays
@@ -117,17 +128,25 @@ for slider_zins in slider_zins_array:
         elif experiment=='Na':
             slider_acceptor = ExperimentArray[index]
         elif experiment=='emass':
-            mn = ExperimentArray[index]*Physics_Semiconductors.me #kg
+            slider_emass = ExperimentArray[index]
         elif experiment=='hmass':
-            mp = ExperimentArray[index]*Physics_Semiconductors.me #kg
+            slider_hmass = ExperimentArray[index]
         elif experiment=='Eg':
-            Eg = ExperimentArray[index]*Physics_Semiconductors.e #J
+            slider_Eg = ExperimentArray[index]
         elif experiment=='epsilonsem':
-            epsilon_sem = ExperimentArray[index] #dimensionless
+            slider_epsilonsem = ExperimentArray[index]
         elif experiment=='amplitude':
-            slider_amplitude = ExperimentArray[index]  #nm
+            slider_amplitude = ExperimentArray[index]
+        elif experiment=='zins':
+            slider_zins = ExperimentArray[index]
         elif experiment=='lag':
-            slider_lag = ExperimentArray[index] #ns
+            slider_lag = ExperimentArray[index]
+        elif experiment=='WFmet':
+            slider_WFmet = ExperimentArray[index]
+        elif experiment=='EAsem':
+            slider_EAsem = ExperimentArray[index]
+        elif experiment=='T':
+            slider_T = ExperimentArray[index]
         else:
             print('Error: Experiment not defined.')
 

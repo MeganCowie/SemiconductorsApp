@@ -76,10 +76,11 @@ AFM_Card1 = html.Div([
             html.Div("Presets", id="AFMText_Presets"),
             dcc.RadioItems(id="AFMButtons_presets", options=[
                 {'label': '   Figure', 'value': 1},
-                {'label': '   Silicon_A', 'value': 2},
-                {'label': '   Other', 'value': 0}
-                ]
-            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
+                {'label': '   Silicon_A & Pen', 'value': 2},
+                {'label': '   Other', 'value': 0},
+                {'label': '   MoSe2', 'value': 3}
+               ]
+            ,value=3, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
     ], className= 'controls_container'),
 
@@ -129,7 +130,7 @@ AFM_Card2 = html.Div([
                 {'label': '   zins=6 , A var', 'value': 6},
                 {'label': '   ', 'value': 6.5},
                 ]
-            ,value=[3,3.5], labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=[], labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
     ], className= 'controls_container'),
 

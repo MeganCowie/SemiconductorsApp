@@ -124,7 +124,7 @@ Surface_Card = html.Div([
                 {'label': '   Silicon_E', 'value': 6},
                 {'label': '   Other', 'value': 0}
                 ]
-            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=1, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
 
         html.Div([

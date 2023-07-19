@@ -294,6 +294,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             # Account for alpha
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
+            Vg_array = np.linspace(-3,2,biassteps)*Physics_Semiconductors.e #J
 
             fig2.add_trace(go.Scatter(
                 x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
@@ -1240,44 +1241,15 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
                 line_color=color_6
                 ), row=2, col=2)  
 
-        Data_Vg = np.genfromtxt ('Data/Si_DopantDensity/Data_Vg.csv', delimiter=",")
-        Data_df_A = np.genfromtxt ('Data/Si_DopantDensity/Data_df_A.csv', delimiter=",")
-
-        '''
-        Data_df_B = np.genfromtxt ('Data/Si_DopantDensity/Data_df_B.csv', delimiter=",")
-        Data_df_C = np.genfromtxt ('Data/Si_DopantDensity/Data_df_C.csv', delimiter=",")
-        Data_df_D = np.genfromtxt ('Data/Si_DopantDensity/Data_df_D.csv', delimiter=",")
-        Data_df_E = np.genfromtxt ('Data/Si_DopantDensity/Data_df_E.csv', delimiter=",")
-        '''
+        Data_Vg = np.genfromtxt ('Data/MoSe2/Data_Vg.csv', delimiter=",")
+        Data_df = np.genfromtxt ('Data/MoSe2/Data_df.csv', delimiter=",")
 
         fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df_A+1.38,
+            x = Data_Vg, y = Data_df+3.5,
             name = "Data_A", mode='lines', showlegend=False,
             line_color=color_indicator
             ), row=1, col=2)
 
-        '''
-        fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df_B+1.69,
-            name = "Data_B", mode='lines', showlegend=False,
-            line_color=color_Ev
-            ), row=1, col=2)
-        fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df_C+1.69,
-            name = "Data_C", mode='lines', showlegend=False,
-            line_color=color_Ec
-            ), row=1, col=2)
-        fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df_D+1.35,
-            name = "Data_D", mode='lines', showlegend=False,
-            line_color=color_Ei
-            ), row=1, col=2)
-        fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df_E+1.35,
-            name = "Data_E", mode='lines', showlegend=False,
-            line_color=color_Ef
-            ), row=1, col=2)
-        '''
 
 
    

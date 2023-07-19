@@ -107,7 +107,7 @@ app.layout = dbc.Container(
             ], className='controlsgraph'), 
         html.Div(dcc.Markdown(SurfaceCarrierStatistics_text, dangerously_allow_html=True), hidden=True, id='display_SurfaceCarrierStatisticstext'),
 
-        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=1, id='header_fmAFMoscillations'),
+        html.Button('fm-AFM Oscillations', className='toggle-label', n_clicks=0, id='header_fmAFMoscillations'),
         html.Div([
             html.Br(),
             Controls_AFM.AFM_Card1, 
