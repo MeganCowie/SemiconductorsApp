@@ -29,7 +29,8 @@ def Surface_inputvalues(slider_Vg,slider_zins,slider_alpha,slider_Eg,slider_epsi
 
     # arrays
     Vg_array = np.linspace(-10,10,biassteps)*(1-slider_alpha)*Physics_Semiconductors.e #J
-    zins_array = np.linspace(0.1,25,zinssteps)*1e-9 #m
+    #Vg_array = np.linspace(-3,2,biassteps)*(1-slider_alpha)*Physics_Semiconductors.e #J
+    zins_array = np.linspace(0.1,50,zinssteps)*1e-9 #m
 
     return Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T,sampletype,biassteps,zinssteps,Vg_array,zins_array
 

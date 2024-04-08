@@ -4,17 +4,17 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
     if button_presets == 1: #MoSe2
         toggle_type = False
         slider_Vg = -1.4
-        slider_zins = 21.6
-        slider_Eg = 1.5
-        slider_epsilonsem = 5.4
-        slider_WFmet = 6.81
-        slider_EAsem = 3.2
+        slider_zins = 9.0
+        slider_Eg = 0.8
+        slider_epsilonsem = 7.5
+        slider_WFmet = 4.10
+        slider_EAsem = 3.72
         slider_emass = 1
         slider_hmass = 1
-        slider_donor = np.log10(10**15*  4.53*10**17)
+        slider_donor = np.log10(10**15*  4.90*10**17)
         slider_acceptor = 0
         slider_T = 300
-        slider_alpha = 0
+        slider_alpha = 0.05
         stylen = {'color': '#7f7f7f'}
         stylep = {'color': '#57c5f7'}
         disabledn = False
@@ -120,7 +120,7 @@ def presets_surface(button_presets, toggle_type, slider_Vg, slider_zins, slider_
         slider_emass = 1
         slider_hmass = 1
         slider_donor = 0
-        slider_acceptor = np.log10(10**15*  7.11*10**16)
+        slider_acceptor = np.log10(10**15*  5.5*10**16)
         slider_T = 300
         slider_alpha = 0.6
         stylen = {'color': '#57c5f7'}
@@ -227,11 +227,11 @@ def presets_afm(button_presets,slider_timesteps, slider_amplitude, slider_resfre
         slider_timesteps = 30
         slider_amplitude = 6
         slider_resfreq = 330000
-        slider_lag = 0
+        slider_lag = 100
         slider_springconst = 42
-        slider_tipradius = 4
-        slider_cantheight = 9
-        slider_cantarea = 2100
+        slider_tipradius = 5
+        slider_cantheight = 6
+        slider_cantarea = 2900
         slider_Qfactor = 18000
         geometrybuttons = [1,2]
     else:

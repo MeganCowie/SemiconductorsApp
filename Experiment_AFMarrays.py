@@ -24,18 +24,16 @@ Ef = 0.4166885
 
 button_presets = 2 # silicon surface
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
-#CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
 button_presets = 2 #silicon AFM
 slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor,geometrybuttons = Presets.presets_afm(button_presets,0,0,0,0,0,0,0,0,0,0)
 
 
-slider_biassteps = 1024
-slider_zinssteps = 56
+slider_biassteps = 256
+slider_zinssteps = 128
 slider_timesteps = 20000
 
-slider_Vg_array = np.array([-9.9]) #np.linspace(-10,10,slider_biassteps)
-#slider_Vg_array = slider_Vg_array[0::8]
+slider_Vg_array = np.array([-8,-7,-6,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]) #np.linspace(-10,10,slider_biassteps)
 slider_zins = slider_zins
 slider_lag = 0
 
@@ -57,7 +55,8 @@ for slider_Vg in slider_Vg_array:
         NC,NV,Ec,Ev,Ei,Ef,no,po,ni,nb,pb,CPD,LD,Vs,Es,Qs,F,regime, zsem,Vsem,Esem,Qsem, P = Organization_IntermValues.Surface_calculations(Vg,zins,Eg,epsilon_sem,WFmet,EAsem,Nd,Na,mn,mp,T)
         Vs_AFMarray, Es_AFMarray, Qs_AFMarray, F_AFMarray, P_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray,zinslag_AFMarray,Vg,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
         Vscant_AFMarray, Escant_AFMarray, Qscant_AFMarray, Fcant_AFMarray, Pcant_AFMarray = Organization_BuildArrays.AFM_timearrays(time_AFMarray,zins_AFMarray+cantheight,zinslag_AFMarray+cantheight,Vg,zins+cantheight,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni)
-        zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray = Organization_BuildArrays.AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD)
+        zsem_AFMarray,Vsem_AFMarray,zgap_AFMarray,Vgap_AFMarray,zvac_AFMarray,Vvac_AFMarray,zmet_AFMarray,Vmet_AFMarray,zarray_AFMarray,Qarray_AFMarray,Earray_AFMarray = Organization_BuildArrays.AFM_banddiagramarrays(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD)
+
 
         # Stack arrays to show two periods
         time_AFMarray = np.hstack((time_AFMarray,time_AFMarray[1:]+2*np.pi/frequency))
@@ -73,14 +72,17 @@ for slider_Vg in slider_Vg_array:
         Qscant_AFMarray = np.hstack((Qscant_AFMarray,Qscant_AFMarray[1:]))
         Fcant_AFMarray = np.hstack((Fcant_AFMarray,Fcant_AFMarray[1:]))*cantarea
         Pcant_AFMarray = np.hstack((Pcant_AFMarray,Pcant_AFMarray[1:]))
-        zsem_AFMarray_steps = np.vstack((zsem_AFMarray,zsem_AFMarray[1:]))
-        Vsem_AFMarray_steps = np.vstack((Vsem_AFMarray,Vsem_AFMarray[1:]))
-        zgap_AFMarray_steps = np.vstack((zgap_AFMarray,zgap_AFMarray[1:]))
-        Vgap_AFMarray_steps = np.vstack((Vgap_AFMarray,Vgap_AFMarray[1:]))
-        zvac_AFMarray_steps = np.vstack((zvac_AFMarray,zvac_AFMarray[1:]))
-        Vvac_AFMarray_steps = np.vstack((Vvac_AFMarray,Vvac_AFMarray[1:]))
-        zmet_AFMarray_steps = np.vstack((zmet_AFMarray,zmet_AFMarray[1:]))
-        Vmet_AFMarray_steps = np.vstack((Vmet_AFMarray,Vmet_AFMarray[1:]))
+        zsem_AFMarray = np.vstack((zsem_AFMarray,zsem_AFMarray[1:]))
+        Vsem_AFMarray = np.vstack((Vsem_AFMarray,Vsem_AFMarray[1:]))
+        zgap_AFMarray = np.vstack((zgap_AFMarray,zgap_AFMarray[1:]))
+        Vgap_AFMarray = np.vstack((Vgap_AFMarray,Vgap_AFMarray[1:]))
+        zvac_AFMarray = np.vstack((zvac_AFMarray,zvac_AFMarray[1:]))
+        Vvac_AFMarray = np.vstack((Vvac_AFMarray,Vvac_AFMarray[1:]))
+        zmet_AFMarray = np.vstack((zmet_AFMarray,zmet_AFMarray[1:]))
+        Vmet_AFMarray = np.vstack((Vmet_AFMarray,Vmet_AFMarray[1:]))
+        zarray_AFMarray = np.vstack((zarray_AFMarray,zarray_AFMarray[1:]))
+        Qarray_AFMarray = np.vstack((Qarray_AFMarray,Qarray_AFMarray[1:]))
+        Earray_AFMarray = np.vstack((Earray_AFMarray,Earray_AFMarray[1:]))
 
         Ftot_AFMarray = 0*time_AFMarray
         if 1 in geometrybuttons:
@@ -130,6 +132,9 @@ for slider_Vg in slider_Vg_array:
         Vmet_AFMarray = pd.DataFrame(Vmet_AFMarray/Physics_Semiconductors.e)
         zvac_AFMarray = pd.DataFrame(zvac_AFMarray*1e9)
         Vvac_AFMarray = pd.DataFrame(Vvac_AFMarray/Physics_Semiconductors.e)
+        zarray_AFMarray = pd.DataFrame(zarray_AFMarray*1e9)
+        Qarray_AFMarray = pd.DataFrame(Qarray_AFMarray*1e9)
+        Earray_AFMarray = pd.DataFrame(Earray_AFMarray*1e9)
 
 
         ################################################################################
@@ -147,3 +152,6 @@ for slider_Vg in slider_Vg_array:
         Vmet_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_Vmet.csv'])), index=False)
         zvac_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_zvac.csv'])), index=False)
         Vvac_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_Vvac.csv'])), index=False)
+        zarray_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_zarray.csv'])), index=False)
+        Qarray_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_Qarray.csv'])), index=False)
+        Earray_AFMarray.to_csv(os.path.join(thispath,'_'.join(['banddiagram_Earray.csv'])), index=False)

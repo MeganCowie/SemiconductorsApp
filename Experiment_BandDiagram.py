@@ -29,7 +29,7 @@ slider_biassteps = 512
 slider_zinssteps = 512
 
 slider_zins = 18
-slider_Vg_array = np.array([-4.5, 3.1])
+slider_Vg_array = np.array([-3])
 
 for slider_Vg in slider_Vg_array:
 

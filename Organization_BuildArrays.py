@@ -132,6 +132,60 @@ def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,
 
 ################################################################################
 
+def AFM_banddiagrams(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD):
+
+    # Calculate list any functions that are not constant as a function of zins
+    def compute(zins_variable):
+        Vs_soln = Physics_Semiconductors.Func_Vs(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
+        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
+        zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln  = Physics_BandDiagram.BandDiagram(Vg,zins_variable,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs_soln,Ec,Ev,Ef,Ei,Eg,CPD, zsem_soln,Vsem_soln,Esem_soln,Qsem_soln)
+        return [zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln]
+
+    # Then parallelize the calculations for every zins
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(zins) for zins in zins_AFMarray
+    )
+    return [
+        np.asarray([zsem_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([Vsem_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([zgap_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([Vgap_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([zvac_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([Vvac_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([zmet_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln in result]),
+        np.asarray([Vmet_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln, in result]),
+    ]
+
+
+def AFM_banddiagramarrays(zins_AFMarray,Vg,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs,Ec,Ev,Ei,Ef,Eg,CPD):
+
+    # Calculate list any functions that are not constant as a function of zins
+    def compute(zins_variable):
+        Vs_soln = Physics_Semiconductors.Func_Vs(Vg,zins_variable,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni)
+        zsem_soln, Vsem_soln, Esem_soln, Qsem_soln = Physics_BandDiagram.BandBending(T,epsilon_sem,nb,pb,Vs_soln)
+        zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln  = Physics_BandDiagram.BandDiagram(Vg,zins_variable,T,Nd,Na,WFmet,EAsem,epsilon_sem, ni,nb,pb,Vs_soln,Ec,Ev,Ef,Ei,Eg,CPD, zsem_soln,Vsem_soln,Esem_soln,Qsem_soln)
+        return [zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Qarray_soln,Earray_soln]
+
+    # Then parallelize the calculations for every zins
+    result = Parallel(n_jobs=-1)(
+        delayed(compute)(zins) for zins in zins_AFMarray
+    )
+    return [
+        np.asarray([zsem_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Vsem_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([zgap_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Vgap_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([zvac_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Vvac_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([zmet_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Vmet_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([zarray_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Earray_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+        np.asarray([Qarray_soln for zsem_soln,Vsem_soln,zgap_soln,Vgap_soln,zvac_soln,Vvac_soln,zmet_soln,Vmet_soln,zarray_soln,Earray_soln,Qarray_soln in result]),
+    ]
+
+################################################################################
+
 def AFM_biasarrays(Vg_array,zins,Na,Nd,epsilon_sem,T,CPD,LD,nb,pb,ni,frequency,springconst,amplitude,Qfactor,tipradius,time_AFMarray,zins_AFMarray,zinslag_AFMarray,cantheight,cantarea,timesteps,geometrybuttons):
 
     # Calculate list any functions that are not constant as a function of Vg

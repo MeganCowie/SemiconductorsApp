@@ -22,30 +22,29 @@ Ef = 0.4166885
 
 
 button_presets = 2 # silicon surface
+#button_presets = 1 # MoSe2 surface
 #button_presets = 7 # pentacene surface
 toggle_type, slider_Vg, slider_zins, slider_Eg, slider_epsilonsem, slider_WFmet, slider_EAsem, slider_donor, slider_acceptor, slider_emass, slider_hmass, slider_T, slider_alpha, button_presets, stylen, stylep, disabledn, disabledp = Presets.presets_surface(button_presets,0,0,0,0,0,0,0,0,0,0,0,0,0)
 #CPD = slider_WFmet - (slider_EAsem + (Ec-Ef)) # J
 
-button_presets = 2 #silicon AFM
+button_presets = 2 #silicon & Pentacene AFM
+#button_presets = 3 #MoSe2 AFM
 slider_timesteps, slider_amplitude, slider_resfreq, slider_lag, slider_springconst, slider_tipradius, slider_cantheight, slider_cantarea, slider_Qfactor,geometrybuttons = Presets.presets_afm(button_presets,0,0,0,0,0,0,0,0,0,0)
 
-slider_biassteps = 1024
+slider_biassteps = 256
 slider_zinssteps = 512
 slider_timesteps = 200
 
-slider_lag = 100
-
 slider_zins_OG = slider_zins#+slider_amplitude
 slider_Vg_OG = 0
+slider_lag = 0
 
-
-#slider_donor = np.log10(10**15*  (5.00*10**17-2*10**17))
 
 ################################################################################
 # Inputs
 
-slider_zins_array = np.array([slider_zins_OG])
-slider_Vg_array = np.array([])
+slider_zins_array = np.array([])
+slider_Vg_array = np.array([-8,-7,-6,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10])
 
 experiment = 'single'
 #experiment = 'Nd'
@@ -60,33 +59,39 @@ experiment = 'single'
 #experiment = 'WFmet'
 #experiment = 'EAsem'
 #experiment = 'T'
+#experiment = 'alpha'
+#experiment = 'Q'
 
 if experiment=='single':
     ExperimentArray =  np.linspace(1,1,1)
 elif experiment=='Nd':
-    ExperimentArray =  np.linspace(30,34,30)
+    ExperimentArray =  np.linspace(30,34,201)
 elif experiment=='Na':
-    ExperimentArray =  np.linspace(33,33,1)
+    ExperimentArray =  np.linspace(30,34,201)
 elif experiment=='emass':
-    ExperimentArray =  np.linspace(0.1,2,20)
+    ExperimentArray =  np.linspace(0.1,2,96)
 elif experiment=='hmass':
-    ExperimentArray =  np.linspace(0.1,2,20)
+    ExperimentArray =  np.linspace(0.1,2,96)
 elif experiment=='Eg':
-    ExperimentArray =  np.linspace(0.2,1.5,27)
+    ExperimentArray =  np.linspace(0.2,3,113)
 elif experiment=='epsilonsem':
-    ExperimentArray =  np.linspace(5,18,27)
+    ExperimentArray =  np.linspace(1,14,105)
 elif experiment=='amplitude':
-    ExperimentArray =  np.linspace(2,30,29)
+    ExperimentArray =  np.linspace(1,12,89)
 elif experiment=='zins':
-    ExperimentArray =  np.linspace(1,20,50)
+    ExperimentArray =  np.linspace(1,20,153)
 elif experiment=='lag':
     ExperimentArray =  np.linspace(0,100,101)
 elif experiment=='WFmet':
-    ExperimentArray =  np.linspace(2,6,33)
+    ExperimentArray =  np.linspace(1,10,145)
 elif experiment=='EAsem':
-    ExperimentArray =  np.linspace(2,6,33)
+    ExperimentArray =  np.linspace(1,10,145)
 elif experiment=='T':
-    ExperimentArray =  np.linspace(10,500,50)
+    ExperimentArray =  np.linspace(4,400,199)
+elif experiment=='alpha':
+    ExperimentArray =  np.linspace(0,1,101)
+elif experiment=='Q':
+    ExperimentArray =  np.linspace(10000,30000,101)
 
 ################################################################################
 # biasarrays
@@ -147,6 +152,10 @@ for slider_zins in slider_zins_array:
             slider_EAsem = ExperimentArray[index]
         elif experiment=='T':
             slider_T = ExperimentArray[index]
+        elif experiment=='alpha':
+            slider_alpha = ExperimentArray[index]
+        elif experiment=='Q':
+            slider_Qfactor = ExperimentArray[index]
         else:
             print('Error: Experiment not defined.')
 
@@ -245,7 +254,7 @@ for slider_Vg in slider_Vg_array:
     ##################
     # Initialize arrays
 
-    zins_array = np.linspace(0.01,25,slider_zinssteps)*1e-9 #m
+    zins_array = np.linspace(0.01,50,slider_zinssteps)*1e-9 #m
 
     save_Vs_zinsarrays = pd.DataFrame({"zins_array": [str(x) for x in zins_array*1e9]})
     save_F_zinsarrays = pd.DataFrame({"zins_array": [str(x) for x in zins_array*1e9]})

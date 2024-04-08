@@ -89,7 +89,7 @@ Surface_Card = html.Div([
             html.Div("Temperature (K)", className='label_name', id="SurfaceText_Tlabel"),
             html.Div(id='SurfaceText_T', className='label_value'),
         ], className='label_container'),
-        dcc.Slider(id='SurfaceSlider_T', className='slider', marks=None, min=200, max=500, step=1, value=300),
+        dcc.Slider(id='SurfaceSlider_T', className='slider', marks=None, min=10, max=500, step=1, value=300),
     ], className= 'controls_container'),
 
     html.Div([
@@ -124,7 +124,7 @@ Surface_Card = html.Div([
                 {'label': '   Silicon_E', 'value': 6},
                 {'label': '   Other', 'value': 0}
                 ]
-            ,value=1, labelStyle={"width": '50%','display': 'inline-block'}),
+            ,value=2, labelStyle={"width": '50%','display': 'inline-block'}),
         ], className='presets_container'),
 
         html.Div([

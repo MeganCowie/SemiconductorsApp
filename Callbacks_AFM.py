@@ -294,7 +294,6 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
             # Account for alpha
             Vg = slider_Vg*Physics_Semiconductors.e #J
             Vg_array = np.linspace(-10,10,biassteps)*Physics_Semiconductors.e #J
-            Vg_array = np.linspace(-3,2,biassteps)*Physics_Semiconductors.e #J
 
             fig2.add_trace(go.Scatter(
                 x = Vg_array/Physics_Semiconductors.e, y = Vs_biasarray/Physics_Semiconductors.e,
@@ -1244,12 +1243,11 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
         Data_Vg = np.genfromtxt ('Data/MoSe2/Data_Vg.csv', delimiter=",")
         Data_df = np.genfromtxt ('Data/MoSe2/Data_df.csv', delimiter=",")
 
-        fig2.add_trace(go.Scatter(
-            x = Data_Vg, y = Data_df+3.5,
-            name = "Data_A", mode='lines', showlegend=False,
-            line_color=color_indicator
-            ), row=1, col=2)
-
+        #fig2.add_trace(go.Scatter(
+        #    x = Data_Vg, y = Data_df+3.8,
+        #    name = "Data_A", mode='lines', showlegend=False,
+        #    line_color=color_indicator
+        #    ), row=1, col=2)
 
 
    
@@ -1278,7 +1276,7 @@ def fig2_AFM(slider_Vg,slider_zins,slider_Eg,slider_epsilonsem,slider_WFmet,slid
     fig2.update_xaxes(row=1, col=1, showticklabels=True)
     fig2.update_xaxes(row=2, col=1, showticklabels=True)
     fig2.update_xaxes(row=3, col=1, title_standoff=5, title_text= "Gate Bias (eV)")
-    fig2.update_xaxes(row=1, col=2, showticklabels=True)
+    fig2.update_xaxes(row=1, col=2, showticklabels=True,range=[-10,10])
     fig2.update_xaxes(row=2, col=2, title_standoff=5, title_text= "Gate Bias (eV)")
 
     return fig2
