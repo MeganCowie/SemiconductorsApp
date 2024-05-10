@@ -230,7 +230,7 @@ def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni, x, D_dens):
         expression = Vg_variable-CPD-Vs+e*Qs/Cins #J
         ic(expression, fs, Es, Qs, Cins)
         return expression
-    Vs = fsolve(Vs_eqn, guess, args=(Vg,zins), full_output=True) #J
+    Vs = fsolve(Vs_eqn, guess, args=(Vg,zins), full_output=True)[0] #J
     return Vs
 
 # Force between MIS plates
@@ -291,6 +291,7 @@ def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
             regime = 5 #weak inversion
     return regime
 
+# Vs equation outside of a function so I can plot it
 def Vs_eqn_(Vs,Vg_variable,zins_variable):
         fs = Func_f(T,Vs,nb,pb)
         #fs = Func_f_D(T,Vs,nb,pb, x, D_dens)
@@ -308,24 +309,7 @@ if __name__ == "__main__":
     # the overgrowth thickness is 3 nm (i.e. patterned dopants are 3nm-3.5nm under the surface)
     # the insulator thickness is ~5nm (this may not be true, should be checked)
 
-    '''
-        # Surface potential
-    def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni, x, D_dens):
-        if Na <=1e-9: #n-type
-            guess = 1*e
-        elif Nd <= 1e-9: #p-type
-            guess = -1*e
-        def Vs_eqn(Vs,Vg_variable,zins_variable):
-            fs = Func_f_D(T,Vs,nb,pb, x, D_dens)
-            Es = Func_E(nb,pb,Vs,epsilon_sem,T,fs)
-            Qs = Func_Q(epsilon_sem,Es)
-            Cins = Func_Cins(zins_variable)
-            expression = Vg_variable-CPD-Vs+e*Qs/Cins #J
-            return expression
-        Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0] #J
-        return V
-        s
-    '''
+
 
     Vg = 5/e # gate bias in joules
     zins = 5e-9 # m
@@ -343,19 +327,19 @@ if __name__ == "__main__":
     x = 3.5e-9 # patterned dopants are 3nm-3.5nm under the surface
     D_dens = 1e18 # patterned dopant density in m^-2 
 
-    '''
-    ic(Vg, zins, CPD, Na, Nd, epsilon_sem, T, Eg, mn, mp, NC, NV, ni, nb, pb, x)
-    for i in range(1):
-        zins = 1e-9*(i+1)   # patterned dopants are assumed to be n-type with a density between 1e18/m^2 and 0.
+    # try and solve for Vs
+    for i in range(5):
         Vs = Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni, x, D_dens)
         ic(Vs)
-    '''
+    # answer comes out as same as the guess, fsolve says it's converging though
+
+    # try plotting the Vs equation
 
     Vs_list = []
     f_vs_list = []
     ic(e)
     for i in range(100):
-        Vs = 1*e*(i-50)/100
+        Vs = 1*e*(i-50)
         f_Vs = Vs_eqn_(Vs,Vg,zins)
         Vs_list.append(Vs)
         f_vs_list.append(f_Vs)
@@ -366,5 +350,7 @@ if __name__ == "__main__":
 
 
     sns.lineplot(x=Vs_list, y=f_vs_list)
+    plt.xlabel("Vs (J)")
+    plt.ylabel("f(Vs)")
     plt.show()
 
