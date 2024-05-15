@@ -1,5 +1,7 @@
 # Semiconductors App
 
+## Note: This code became a bit of a labyrinth and needs to be re-worked. For now, a simple self-contained script to plot the MIS capacitor is at MIScapacitor.py. 
+
 This is an app to visualize semiconductor physics in the bulk and at the
 surface of a material, and in particular what we measure in an ncAFM experiment.
 
