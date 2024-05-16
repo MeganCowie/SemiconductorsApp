@@ -7,6 +7,7 @@
 import numpy as np
 import scipy.constants as sp
 from scipy.optimize import fsolve
+from icecream import ic
 
 ################################################################################
 ################################################################################
@@ -176,6 +177,24 @@ def Func_f(T,V,nb,pb):
     f = np.sqrt(np.exp(-u)+u-1+nb/pb*(np.exp(u)-u-1)) #dimensionless
     return f
 
+# integration constants
+    # Hudlet (1995) Electrostatic forces between metallic tip and semiconductor surfaces
+    # added a term for patterned dopants under surface
+def Func_f_D(T,V,nb,pb, x, D_dens):
+    u = V/(kB*T) #dimensionless
+    f = np.sqrt(np.exp(-u)+u-1+nb/pb*(np.exp(u)-u-1) + D_dens*dist(x)*u/pb) #dimensionless
+    return f
+
+# define distribution of patterned dopants
+# it should be a thin gaussian distribution centered at x = overgrowth thickness (3 nm in this case)
+# and a standard deviation of 2nm (Bohr radius is about 1nm).
+def dist(x):
+    # we add a 1 at the beginning to "fix" the units of dist(x) to be m^-1 
+    # (the 1 "has" units of m^-1)
+    # this doesn't change the maths at all really, but it's a good habit to keep units in mind
+    return 1*np.exp(-0.5*(x-3e-9)**2/(2e-9)**2)
+
+
 # Spatial electric field inside semiconductor
 def Func_E(nb,pb,V,epsilon_sem,T,f):
     LD = np.sqrt(kB*T*epsilon_o*epsilon_sem/(pb*e**2)) # m
@@ -197,19 +216,21 @@ def Func_Cins(zins):
     return Cins
 
 # Surface potential
-def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni):
+def Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni, x, D_dens):
     if Na <=1e-9: #n-type
         guess = 1*e
     elif Nd <= 1e-9: #p-type
         guess = -1*e
     def Vs_eqn(Vs,Vg_variable,zins_variable):
         fs = Func_f(T,Vs,nb,pb)
+        #fs = Func_f_D(T,Vs,nb,pb, x, D_dens)
         Es = Func_E(nb,pb,Vs,epsilon_sem,T,fs)
         Qs = Func_Q(epsilon_sem,Es)
         Cins = Func_Cins(zins_variable)
         expression = Vg_variable-CPD-Vs+e*Qs/Cins #J
+        ic(expression, fs, Es, Qs, Cins)
         return expression
-    Vs = fsolve(Vs_eqn, guess, args=(Vg,zins))[0] #J
+    Vs = fsolve(Vs_eqn, guess, args=(Vg,zins), full_output=True)[0] #J
     return Vs
 
 # Force between MIS plates
@@ -270,5 +291,66 @@ def Func_regime(Na,Nd,Vs,Ei,Ef,Ec,Ev):
             regime = 5 #weak inversion
     return regime
 
+# Vs equation outside of a function so I can plot it
+def Vs_eqn_(Vs,Vg_variable,zins_variable):
+        fs = Func_f(T,Vs,nb,pb)
+        #fs = Func_f_D(T,Vs,nb,pb, x, D_dens)
+        Es = Func_E(nb,pb,Vs,epsilon_sem,T,fs)
+        Qs = Func_Q(epsilon_sem,Es)
+        Cins = Func_Cins(zins_variable)
+        output = Vg_variable-CPD-Vs+e*Qs/Cins #J
+        return output
 
+
+if __name__ == "__main__":
+    # find Vs for an MIS capacitor with the dopants patterned under the surface
+    # the bulk dopants are assumed to be p-type with a density of 9.15e14/cm^3
+    # the patterned dopants under the surface are assumed to be n-type with a density between 1e14/cm^2 and 0.
+    # the overgrowth thickness is 3 nm (i.e. patterned dopants are 3nm-3.5nm under the surface)
+    # the insulator thickness is ~5nm (this may not be true, should be checked)
+
+
+
+    Vg = 5/e # gate bias in joules
+    zins = 5e-9 # m
+    CPD = 500e-3 # V
+    Na = 9.15e20 # bulk dopant density in m^-3
+    Nd = 0 #m^-3
+    epsilon_sem = 11.8*epsilon_o
+    T = 300 #K
+    Eg = 0.7*1.6022e-19 # silicon bandgap in J
+    mn = 1.1 * me # electron effective mass
+    mp = 0.6 * me # hole effective mass
+    NC, NV = Func_NCNV(T, mn, mp) # effective density of conduction and valence band states
+    ni = Func_ni(NC, NV, Eg, T) # intrinsic carrier density
+    nb, pb = Func_nbpb(Na,Nd,ni) # bulk carrier concentrations
+    x = 3.5e-9 # patterned dopants are 3nm-3.5nm under the surface
+    D_dens = 1e18 # patterned dopant density in m^-2 
+
+    # try and solve for Vs
+    for i in range(5):
+        Vs = Func_Vs(Vg,zins,CPD,Na,Nd,epsilon_sem,T,nb,pb,ni, x, D_dens)
+        ic(Vs)
+    # answer comes out as same as the guess, fsolve says it's converging though
+
+    # try plotting the Vs equation
+
+    Vs_list = []
+    f_vs_list = []
+    ic(e)
+    for i in range(100):
+        Vs = 1*e*(i-50)
+        f_Vs = Vs_eqn_(Vs,Vg,zins)
+        Vs_list.append(Vs)
+        f_vs_list.append(f_Vs)
+    
+    # plot using seaborn
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+
+
+    sns.lineplot(x=Vs_list, y=f_vs_list)
+    plt.xlabel("Vs (J)")
+    plt.ylabel("f(Vs)")
+    plt.show()
 
